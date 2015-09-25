@@ -1,0 +1,40 @@
+\documentclass[10pt]{article}
+
+\begin{document}
+	\section{Evaluation of Existing IT Infastructure Monitoring Systems}
+		\paragraph{•}
+		This section will review current IT infrustructure monitoring systems and evaluate them on
+		several points as follows:
+		\begin{itemize}
+			\item Support for timeseries monitoring and real time alerting
+			\item How they can be configured to monitor custom metrics
+			\item How are alert thresholds defined
+			\item How configuration and custom code is delivered to nodes (if requried)
+			\item How the user configures the system
+			\item How dependencies are handled
+		\end{itemize}
+	
+	\subsection{Nagios}
+	\paragraph{Timeseries monitoring and real time alerting}
+	Nagios is primarily focused at real time alerting and therefore has very little in the way of 
+	timeseries monitoring.  Additional plugins are available which can be used to graph metrics
+	over time but these cannot be used to make decisions on the status of a given system or service.
+	All that is supported in terms of alerting on historical data is to refrain from alerting until
+	a given condition has been observed in the previous $n$ checks, there is no support for alerting
+	based on trends in historical data.
+	
+	\paragraph{Support for custom metrics}
+	Nagios has support for custom metrics through the NRPE (Nagios Remote Plugin Executor) plugin.
+	These plugins can be any sort of executable which prints out a message to represent the data read
+	as well as a specific exit code which defines the level of the alert, for example "OK", "Critical"
+	.etc
+	
+	\paragraph{Alert threshold definition}
+	Thresholds for NRPE agents must be set on the remote server itself.  These thresholds are passed
+	into the remote plugin as an argument when it is executed and are used internally by the script to
+	output the approprate alert level.
+	
+	\paragraph{Code/Config delivery to nodes}
+	Nagios does not have any in built functionality to distribute configuration files or plugin code to
+	remote nodes. In order to automate this, additional software such as Puppet would be required.
+\end{document}
