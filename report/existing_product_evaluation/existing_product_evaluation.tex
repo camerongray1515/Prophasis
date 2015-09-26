@@ -27,7 +27,7 @@
 	\paragraph{Support for custom metrics}
 	Nagios has support for custom metrics through the NRPE (Nagios Remote Plugin Executor) plugin.
 	These plugins can be any sort of executable which prints out a message to represent the data read
-	as well as a specific exit code which defines the level of the alert, for example "OK", "Critical"
+	as well as a specific exit code which defines the status, for example "OK", "Critical"
 	.etc
 	
 	\paragraph{Alert threshold definition}
@@ -48,4 +48,31 @@
 	Rigid tree - No way to define that a service/host is dependant on a given host OR another host being
 	available.  This reduces its usefulness in modern networks where redundancy and failover is
 	commonplace. These are defined in config files that live on the Nagios server.
+	
+	\subsection{Icinga 2}
+	\paragraph{Timeseries monitoring and real time alerting}
+	Like Nagios, Icinga's primary focus is around real time alerting however it has now introuced support
+	for graphing performance metrics.  No support for alerting based on trends in historical data beyond
+	Nagios's idea of a state change changing to HARD once it has been observed $n$ times.
+	
+	\paragraph{Support for Custom Metrics}
+	Custom metrics can be written as scripts in any language as long as they echo a message to describe
+	the status of what they are checkign and use a certain exit code to define the status e.g. "OK",
+	"CRITICAL", "WARNING".etc.
+	
+	\paragraph{Alert threshold definition}
+	Thresholds are passed into the check commands as command line arguments.  Therefore they are defined
+	on the machines being monitored individually.
+	
+	\paragraph{Code/Config delivery to nodes}
+	Icinga 2 does not have any built-in mechanism to distribute code and config files to remote hosts.
+	In order for this to be achieved, additional software such as Puppet would be required.
+	
+	\paragraph{How the user configures the system}
+	Configuration is managed through configuration files stored on disk.  Configuration files exist both
+	on the Icinga server as well as the nodes being monitored.
+	
+	\paragraph{How dependencies are handled}
+	Same as Nagios with a rigid tree.  No way to define a host/service as being dependent on one of 
+	several different machines as is common in modern environments with redundancy/failover systems.
 \end{document}
