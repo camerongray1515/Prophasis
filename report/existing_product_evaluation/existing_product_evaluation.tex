@@ -11,7 +11,6 @@
 			\item How are alert thresholds defined
 			\item How configuration and custom code is delivered to nodes (if requried)
 			\item How the user configures the system
-			\item How dependencies are handled
 		\end{itemize}
 	
 	\subsection{Nagios}
@@ -37,4 +36,9 @@
 	\paragraph{Code/Config delivery to nodes}
 	Nagios does not have any in built functionality to distribute configuration files or plugin code to
 	remote nodes. In order to automate this, additional software such as Puppet would be required.
+	
+	\paragraph{How the user configures the system}
+	Configuration for Nagios is primarily managed through text files stored on disk.  Third party
+	configuraiton tools are available to allow the system to be configured through a web interface.
+	Configuration lives on both the Nagios server as well as on the machines being monitored.	
 \end{document}
