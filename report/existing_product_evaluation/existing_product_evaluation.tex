@@ -11,6 +11,7 @@
 			\item How are alert thresholds defined
 			\item How configuration and custom code is delivered to nodes (if requried)
 			\item How the user configures the system
+			\item How dependencies are handled
 		\end{itemize}
 	
 	\subsection{Nagios}
@@ -20,7 +21,8 @@
 	over time but these cannot be used to make decisions on the status of a given system or service.
 	All that is supported in terms of alerting on historical data is to refrain from alerting until
 	a given condition has been observed in the previous $n$ checks, there is no support for alerting
-	based on trends in historical data.
+	based on trends in historical data.  Supports basic display of changes in state of hosts/services
+	over time but not individual metrics.
 	
 	\paragraph{Support for custom metrics}
 	Nagios has support for custom metrics through the NRPE (Nagios Remote Plugin Executor) plugin.
@@ -40,5 +42,10 @@
 	\paragraph{How the user configures the system}
 	Configuration for Nagios is primarily managed through text files stored on disk.  Third party
 	configuraiton tools are available to allow the system to be configured through a web interface.
-	Configuration lives on both the Nagios server as well as on the machines being monitored.	
+	Configuration lives on both the Nagios server as well as on the machines being monitored.
+	
+	\paragraph{How dependencies are handled}
+	Rigid tree - No way to define that a service/host is dependant on a given host OR another host being
+	available.  This reduces its usefulness in modern networks where redundancy and failover is
+	commonplace. These are defined in 
 \end{document}
