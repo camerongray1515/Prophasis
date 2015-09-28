@@ -1,0 +1,33 @@
+Plugin
+======
+Python module that follows a defined interface, when called it checks a
+single aspect of the system and returns data from it in the form of both
+a value (which is used to eventually establish the alert level or for
+graphing, often numeric) and a message which provides more information
+such as "disk failure in bay 2".
+
+Agent
+=====
+Runs on remote host, listens for HTTP(S) requests and executes plugins.
+Returns the data retrieved from the plugin as JSON.
+Agent is also responsible for updating and installing plugins on the
+system.
+
+Core
+====
+The core runs on the montoring server and is responsible for sending
+requests for data to the agents as and when required.  It is also
+responsible for inserting the retrieved data into the database.
+
+Web
+===
+This is a web interface to both view the data collected as well as for
+configuring the system.  All configuration is managed through the web
+interface to keep it in one place.
+
+Alerter
+=======
+The alerter sits on top of the data and constantly checks it against
+defined alert levels to ensure that everything is working correctly.
+If it finds anything that is outwith these levels it will send out
+appropriate notifications.
