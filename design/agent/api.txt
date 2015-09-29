@@ -1,0 +1,33 @@
+The following are requests accepted by the agent and the responses
+that will be given
+
+===============================================================================
+Request: GET /check-plugin-version/
+    Args:
+        plugin-id: The unique identifier of the plugin from its manifest file
+        plugin-version: The version of the plugin in the server's repo
+
+Response:
+    update_required: Whether the agent wants and updated copy of the plugin or
+        not 
+===============================================================================
+
+===============================================================================
+Request: POST /update-plugin/
+    Args:
+        plugin-id: The unique identifier of the plugin from its manifest file
+        plugin-payload: Gzipped and TARed copy of the plugin's source to be
+            placed on disk on the agent
+Response:
+    success: Whether the plugin was updated successfully
+    message (optional): An error message if success is false
+===============================================================================
+
+===============================================================================
+Request: GET /get-plugin-data/
+    Args:
+        plugin-id: The unique identifier of the plugin from its manifest file
+Response:
+    value: Value returned by the plugin
+    message: Message returned by the plugin
+===============================================================================
