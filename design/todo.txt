@@ -1,0 +1,2 @@
+Replace SystemExit calls with better error logging to keep the agent running
+    despite errors

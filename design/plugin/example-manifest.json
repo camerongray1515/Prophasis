@@ -1,0 +1,6 @@
+{
+    "name": "Plugin's Name Here",
+    "id": "Unique idenfier for the plugin",
+    "version": 1.0,
+    "description": "A description of the plugin can go here"
+}

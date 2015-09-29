@@ -1,0 +1,6 @@
+{
+    "name": "Test Plugin",
+    "id": "me.camerongray.proj.test_plugin",
+    "version": 1.0,
+    "description": "This is a test plugin that does nothing, woo! uselessness!"
+}
