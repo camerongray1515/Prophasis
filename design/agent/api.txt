@@ -8,8 +8,10 @@ Request: GET /check-plugin-version/
         plugin-version: The version of the plugin in the server's repo
 
 Response:
-    update_required: Whether the agent wants and updated copy of the plugin or
+    update-required: Whether the agent wants and updated copy of the plugin or
         not 
+    success: Whether the plugin was updated successfully
+    error (optional): An error message if success is false
 ===============================================================================
 
 ===============================================================================
@@ -20,7 +22,7 @@ Request: POST /update-plugin/
             placed on disk on the agent
 Response:
     success: Whether the plugin was updated successfully
-    message (optional): An error message if success is false
+    error (optional): An error message if success is false
 ===============================================================================
 
 ===============================================================================
@@ -30,4 +32,6 @@ Request: GET /get-plugin-data/
 Response:
     value: Value returned by the plugin
     message: Message returned by the plugin
+    success: Whether the plugin was updated successfully
+    error (optional): An error message if success is false
 ===============================================================================
