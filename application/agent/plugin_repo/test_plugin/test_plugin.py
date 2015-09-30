@@ -1,5 +1,7 @@
 from plugin import PluginInterface, PluginResult
+import os
 
 class Plugin(PluginInterface):
     def get_data(self):
-        return PluginResult(1, "This is a message")
+        (avg, _, _) = os.getloadavg()
+        return PluginResult(avg)
