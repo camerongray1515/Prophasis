@@ -1,2 +1,4 @@
 Replace SystemExit calls with better error logging to keep the agent running
     despite errors
+
+Is BCrypt required given the CPU load and slowdown it causes?
