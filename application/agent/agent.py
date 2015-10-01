@@ -3,6 +3,9 @@ from plugin_handling import get_plugin_metadata, get_data_from_plugin
 from exceptions import PluginExecutionError
 from agent_config import get_config
 from functools import wraps
+from tornado.wsgi import WSGIContainer
+from tornado.httpserver import HTTPServer
+from tornado.ioloop import IOLoop
 agent = Flask(__name__)
 
 config = get_config()
@@ -61,4 +64,7 @@ def get_plugin_data():
     return jsonify({"success": True, "value": value, "message": message})
 
 if __name__ == "__main__":
-    agent.run(debug=True)
+    # agent.run(debug=True)
+    http_server = HTTPServer(WSGIContainer(agent))
+    http_server.listen(5000)
+    IOLoop.instance().start()
