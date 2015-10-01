@@ -6,7 +6,7 @@ from exceptions import PluginExecutionError
 from agent_config import get_config, setup_wizard, get_config_value
 from functools import wraps
 from tornado.wsgi import WSGIContainer
-from tornado import httpserver
+from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 agent = Flask(__name__)
 
@@ -78,9 +78,13 @@ if __name__ == "__main__":
     if args.run_server:
         config = get_config()
         if get_config_value(config, "use_ssl"):
-            pass
+            http_server = HTTPServer(WSGIContainer(agent),
+                ssl_options={
+                    "certfile": get_config_value(config, "ssl_crt"),
+                    "keyfile": get_config_value(config, "ssl_key")
+                })
         else:
-            http_server = httpserver.HTTPServer(WSGIContainer(agent))
+            http_server = HTTPServer(WSGIContainer(agent))
 
         http_server.listen(get_config_value(config, "port"))
         IOLoop.instance().start()

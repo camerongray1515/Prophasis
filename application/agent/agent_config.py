@@ -54,17 +54,20 @@ def setup_wizard():
 
         {"prompt": "Path to cert file (.crt)",
         "config_key": "ssl_crt",
-        "ask_condition": lambda config: config["use_ssl"]
+        "ask_condition": lambda config: config["use_ssl"],
+        "answer_converter": lambda x: os.path.abspath(x)
         },
 
         {"prompt": "Path to key file (.key)",
         "config_key": "ssl_key",
-        "ask_condition": lambda config: config["use_ssl"]
+        "ask_condition": lambda config: config["use_ssl"],
+        "answer_converter": lambda x: os.path.abspath(x)
         },
 
         {"prompt": "What directory should installed plugins be kept in?",
-        "default": "plugin_repo",
-        "config_key": "plugin_repo"
+        "default": os.path.join(os.path.dirname(__file__), "plugin_repo"),
+        "config_key": "plugin_repo",
+        "answer_converter": lambda x: os.path.abspath(x)
         },
     ]
 
