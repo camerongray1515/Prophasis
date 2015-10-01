@@ -1,17 +1,13 @@
 import os
 import json
 import importlib
-from agent_config import get_config
+from agent_config import get_config, get_config_value
 from exceptions import PluginExecutionError
 
 config = get_config()
 def get_plugin_repo_dir():
-    try:
-        plugin_repo_dir = os.path.normpath(os.path.join(os.path.dirname(
-            os.path.realpath(__file__)), config["plugin_repo"]))
-    except KeyError:
-        raise SystemExit("Config does not contain plugin_repo option, did you "
-            "run setup?")
+    plugin_repo_dir = os.path.normpath(os.path.join(os.path.dirname(
+        os.path.realpath(__file__)), get_config_value(config, "plugin_repo")))
 
     if not os.path.isdir(plugin_repo_dir):
         raise SystemExit("Plugin repository does not exist at path: {0}".format(

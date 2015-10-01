@@ -23,6 +23,13 @@ def get_config():
 
     return config
 
+def get_config_value(config, key):
+    try:
+        return config[key]
+    except KeyError:
+        raise SystemExit("Key \"{0}\" does not exist in config.json, did you "
+            "run setup?".format(key))
+
 def setup_wizard():
     config = {}
 

@@ -3,7 +3,7 @@ import bcrypt
 from flask import Flask, jsonify, request, Response
 from plugin_handling import get_plugin_metadata, get_data_from_plugin
 from exceptions import PluginExecutionError
-from agent_config import get_config, setup_wizard
+from agent_config import get_config, setup_wizard, get_config_value
 from functools import wraps
 from tornado.wsgi import WSGIContainer
 from tornado import httpserver
@@ -23,11 +23,8 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         auth = request.authorization
-        try:
-            correct_key_hash = config["auth_key_hash"].encode("ascii")
-        except KeyError:
-            raise SystemExit("Config does not contain auth_key option, "
-                "did you run setup?")
+        correct_key_hash = get_config_value(config, "auth_key_hash").encode(
+            "ascii")
 
         auth_valid = False
 
@@ -80,20 +77,12 @@ def get_plugin_data():
 if __name__ == "__main__":
     if args.run_server:
         config = get_config()
-        try:
-            if config["use_ssl"]:
-                pass
-            else:
-                http_server = httpserver.HTTPServer(WSGIContainer(agent))
-        except KeyError:
-            raise SystemExit("Use_SSL is not specified in config.json, did you"
-                " run setup?")
+        if get_config_value(config, "use_ssl"):
+            pass
+        else:
+            http_server = httpserver.HTTPServer(WSGIContainer(agent))
 
-        try:
-            http_server.listen(config["port"])
-        except KeyError:
-            raise SystemExit("Port is not specified in config.json, did you "
-                "run setup?")
+        http_server.listen(get_config_value(config, "port"))
         IOLoop.instance().start()
     elif args.setup:
         setup_wizard()
