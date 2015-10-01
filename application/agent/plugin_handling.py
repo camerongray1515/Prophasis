@@ -5,22 +5,26 @@ from agent_config import get_config
 from exceptions import PluginExecutionError
 
 config = get_config()
-try:
-    plugin_repo_dir = os.path.normpath(os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), config["plugin_repo"]))
-except KeyError:
-    raise SystemExit("Config does not contain plugin_repo option, did you "
-        "run setup?")
+def get_plugin_repo_dir():
+    try:
+        plugin_repo_dir = os.path.normpath(os.path.join(os.path.dirname(
+            os.path.realpath(__file__)), config["plugin_repo"]))
+    except KeyError:
+        raise SystemExit("Config does not contain plugin_repo option, did you "
+            "run setup?")
 
-if not os.path.isdir(plugin_repo_dir):
-    raise SystemExit("Plugin repository does not exist at path: {0}".format(
-        plugin_repo_dir))
+    if not os.path.isdir(plugin_repo_dir):
+        raise SystemExit("Plugin repository does not exist at path: {0}".format(
+            plugin_repo_dir))
+
+    return plugin_repo_dir
 
 def get_plugin_metadata(plugin_id):
     """
         Returns a tuple containing the plugin's directory and its
         manifest or (None, None) if the plugin cannot be found.
     """
+    plugin_repo_dir = get_plugin_repo_dir()
     for directory in os.listdir(plugin_repo_dir):
         manifest_file = os.path.join(plugin_repo_dir, directory,
             "manifest.json")

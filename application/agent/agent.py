@@ -1,15 +1,14 @@
 import argparse
+import bcrypt
 from flask import Flask, jsonify, request, Response
 from plugin_handling import get_plugin_metadata, get_data_from_plugin
 from exceptions import PluginExecutionError
-from agent_config import get_config
+from agent_config import get_config, setup_wizard
 from functools import wraps
 from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 agent = Flask(__name__)
-
-config = get_config()
 
 parser = argparse.ArgumentParser()
 g = parser.add_mutually_exclusive_group(required=True)
@@ -25,13 +24,21 @@ def requires_auth(f):
     def decorated(*args, **kwargs):
         auth = request.authorization
         try:
-            key = config["auth_key"]
+            correct_key_hash = config["auth_key_hash"].encode("ascii")
         except KeyError:
             raise SystemExit("Config does not contain auth_key option, "
                 "did you run setup?")
 
-        if not (auth and key and (auth.username == "core"and
-            auth.password == key)):
+        auth_valid = False
+
+        if auth and correct_key_hash:
+            key_correct = bcrypt.hashpw(auth.password.encode("ascii"),
+                correct_key_hash) == correct_key_hash
+
+            if auth.username == "core" and key_correct:
+                auth_valid = True
+
+        if not auth_valid:
             return Response("Auth required", 401,
                 {"WWW-Authenticate": "Basic realm=\"Auth Required\""})
         return f(*args, **kwargs)
@@ -72,8 +79,13 @@ def get_plugin_data():
 
 if __name__ == "__main__":
     if args.run_server:
+        config = get_config()
         http_server = HTTPServer(WSGIContainer(agent))
-        http_server.listen(5000)
+        try:
+            http_server.listen(config["port"])
+        except KeyError:
+            raise SystemExit("Port is not specified in config.json, did you "
+                "run setup?")
         IOLoop.instance().start()
     elif args.setup:
-        print("Setup wizard goes here")
+        setup_wizard()

@@ -1,4 +1,5 @@
-{
-    "plugin_repo": "plugin_repo",
-    "auth_key": "0M1IyIDVrWmFZrbRUgmH"
-}
+{"plugin_repo": "plugin_repo",
+"port": "4048",
+"auth_key_hash": "$2b$12$jA2rXeoKzrEWODZBmSgZQug4lAGE.7Ntysap/uLlKNNG0WzAtL8Qi",
+"auth_key": "925c9a9130fbbe85703881100af6d42b38fe04dd23bb7273b7c2248de4ad37eb",
+"use_ssl": false}
