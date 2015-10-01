@@ -6,7 +6,7 @@ from exceptions import PluginExecutionError
 from agent_config import get_config, setup_wizard
 from functools import wraps
 from tornado.wsgi import WSGIContainer
-from tornado.httpserver import HTTPServer
+from tornado import httpserver
 from tornado.ioloop import IOLoop
 agent = Flask(__name__)
 
@@ -80,7 +80,15 @@ def get_plugin_data():
 if __name__ == "__main__":
     if args.run_server:
         config = get_config()
-        http_server = HTTPServer(WSGIContainer(agent))
+        try:
+            if config["use_ssl"]:
+                pass
+            else:
+                http_server = httpserver.HTTPServer(WSGIContainer(agent))
+        except KeyError:
+            raise SystemExit("Use_SSL is not specified in config.json, did you"
+                " run setup?")
+
         try:
             http_server.listen(config["port"])
         except KeyError:
