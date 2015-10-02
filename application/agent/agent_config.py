@@ -69,6 +69,12 @@ def setup_wizard():
         "config_key": "plugin_repo",
         "answer_converter": lambda x: os.path.abspath(x)
         },
+
+        {"prompt": "What directory should be used for tempoary files?",
+        "default": "/tmp",
+        "config_key": "temp_dir",
+        "answer_converter": lambda x: os.path.abspath(x)
+        },
     ]
 
     for question in questions:

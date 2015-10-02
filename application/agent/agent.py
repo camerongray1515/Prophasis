@@ -1,5 +1,9 @@
 import argparse
 import bcrypt
+import os
+import uuid
+import tarfile
+import json
 from flask import Flask, jsonify, request, Response
 from plugin_handling import get_plugin_metadata, get_data_from_plugin
 from exceptions import PluginExecutionError
@@ -8,6 +12,7 @@ from functools import wraps
 from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
+from shutil import rmtree
 agent = Flask(__name__)
 
 parser = argparse.ArgumentParser()
@@ -41,7 +46,7 @@ def requires_auth(f):
         return f(*args, **kwargs)
     return decorated
 
-@agent.route("/check-plugin-version")
+@agent.route("/check-plugin-version/")
 @requires_auth
 def check_plugin_verison():
     plugin_id = request.args.get("plugin-id")
@@ -60,7 +65,7 @@ def check_plugin_verison():
 
     return jsonify({"success": True, "update-required": False})
 
-@agent.route("/get-plugin-data")
+@agent.route("/get-plugin-data/")
 @requires_auth
 def get_plugin_data():
     plugin_id = request.args.get("plugin-id")
@@ -74,9 +79,78 @@ def get_plugin_data():
 
     return jsonify({"success": True, "value": value, "message": message})
 
+@agent.route("/update-plugin/", methods=["POST"])
+@requires_auth
+def update_plugin():
+    plugin_file = request.files.get("plugin")
+    if not plugin_file:
+        return error_response("File not specified")
+
+    temp_dir_path = get_config_value(config, "temp_dir")
+    plugin_repo = get_config_value(config, "plugin_repo")
+    filename = str(uuid.uuid4())
+    try:
+        try:
+            plugin_file.save(os.path.join(temp_dir_path,
+                filename + ".tar.gz"))
+        except Exception as e:
+            return error_response("Failed to create tempoary file: {0}".format(
+                str(e)))
+
+        try:
+            plugin_archive = tarfile.open(os.path.join(temp_dir_path,
+                filename + ".tar.gz"))
+            os.mkdir(os.path.join(temp_dir_path, filename))
+
+            plugin_archive.extractall(os.path.join(temp_dir_path, filename))
+        except Exception as e:
+            return error_response("Failed to extract plugin: {0}".format(
+                str(e)))
+
+        # Figure out the name of the directory containin the plugin, if there
+        # is more than one file/directory in the temp directory, raise an error
+        # as the tar file is most likely not correctly formatted
+        files = os.listdir(os.path.join(temp_dir_path, filename))
+        if len(files) != 1 or not os.path.isdir(os.path.join(temp_dir_path,
+            filename, files[0])):
+            return error_response("Plugin archive appears to be malformed")
+
+        try:
+            with open(os.path.join(temp_dir_path, filename, files[0], 
+                "manifest.json"), "r") as f:
+                manifest = json.load(f)
+                plugin_id = manifest["id"]
+        except (FileNotFoundError, KeyError) as e:
+            return error_response("Manifest file could not be read: {0}"
+                "".format(str(e)))
+
+        # Do the actual installation by deleting any current versions of the
+        # plugin and then copying the uploaded version into the repo
+        (directory, _) = get_plugin_metadata(plugin_id)
+        if directory:
+            rmtree(os.path.join(plugin_repo, directory))
+        os.rename(os.path.join(temp_dir_path, filename, files[0]),
+            os.path.join(plugin_repo, files[0]))
+        
+        return jsonify({"success": True})
+    finally:
+        try:
+            os.remove(os.path.join(temp_dir_path, filename + ".tar.gz"))
+            rmtree(os.path.join(temp_dir_path, filename))
+        except FileNotFoundError:
+            pass # We don't care if either file doesn't exist
+
 if __name__ == "__main__":
     if args.run_server:
         config = get_config()
+        print("Agent starting up...")
+        # Create directories if they don't exist
+        for directory in ["plugin_repo", "temp_dir"]:
+            dir_path = get_config_value(config, directory)
+            if not os.path.isdir(dir_path):
+                print("Creating directory at {0}".format(dir_path))
+                os.mkdir(dir_path)
+
         if get_config_value(config, "use_ssl"):
             http_server = HTTPServer(WSGIContainer(agent),
                 ssl_options={
@@ -87,6 +161,8 @@ if __name__ == "__main__":
             http_server = HTTPServer(WSGIContainer(agent))
 
         http_server.listen(get_config_value(config, "port"))
+        print("Running!")
         IOLoop.instance().start()
     elif args.setup:
         setup_wizard()
+
