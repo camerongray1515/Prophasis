@@ -15,6 +15,11 @@ def hosts():
     return render_template("hosts.html", nav_section="hosts", section="Hosts",
         title="Manage Hosts")
 
+@web.route("/hosts/add/")
+def hosts_add():
+    return render_template("hosts-add.html", nav_section="hosts",
+        section="Hosts", title="Add Host")
+
 @web.route("/host-groups/")
 def host_groups():
     return render_template("host-groups.html", nav_section="host-groups",
