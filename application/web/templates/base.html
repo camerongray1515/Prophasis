@@ -1,0 +1,22 @@
+{% include "blocks/header.html" %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            {{ section }}
+            <small>{{ title }}</small>
+        </h1>
+        <ol class="breadcrumb">
+            {% block breadcrumbs %}{% endblock %}
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        {% block content %}{% endblock %}
+    </section> <!-- /.content -->
+</div> <!-- /.content-wrapper -->
+
+{% include "blocks/footer.html" %}
