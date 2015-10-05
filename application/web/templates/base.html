@@ -15,8 +15,18 @@
 
     <!-- Main content -->
     <section class="content">
+        {% raw %}
+        <script id="alert-template" type="text/x-handlebars-template">
+            <div class="alert alert-{{ type }}"><p>{{ message }}</p></div>
+        </script>
+        {% endraw %}
+        <div class="row">
+            <div id="alert-container" class="col-md-12"></div>
+        </div>
+
         {% block content %}{% endblock %}
     </section> <!-- /.content -->
 </div> <!-- /.content-wrapper -->
+
 
 {% include "blocks/footer.html" %}
