@@ -12,7 +12,11 @@ ui = {
     "showAlert": function(type, message, container) {
         container = (typeof container === "undefined") ? "alert-container" : container;
 
-        var html = ui.renderTemplate("alert-template", {"type": type, "message": message});
+        var prefix = (type == "success") ? "Success!" : "Error!";
+
+        var html = ui.renderTemplate("alert-template", {"type": type,
+            "prefix": prefix, "message": message});
+
         $("#" + container).hide();
         $("#" + container).html(html);
         $("#" + container).fadeIn();
@@ -21,3 +25,26 @@ ui = {
         }, 5000);
     }
 }
+
+forms = {
+    "autoPost": function(e) {
+        e.preventDefault();
+        var endpoint = $(this).attr("action");
+        var formData = $(this).serialize();
+        $.post(endpoint, formData, function(data) {
+            var alertType = "danger";
+            if (data.success) {
+                alertType = "success";
+            }
+
+            ui.showAlert(alertType, data.message);
+        });
+    },
+    "bindEventHandlers": function() {
+        $("form.auto-post").submit(forms.autoPost);
+    }
+}
+
+$(document).ready(function() {
+    forms.bindEventHandlers();
+});

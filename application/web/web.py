@@ -1,6 +1,8 @@
 from flask import Flask, render_template
+from api import api
 
 web = Flask(__name__)
+web.register_blueprint(api)
 
 @web.route("/example/")
 def example():

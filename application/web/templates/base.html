@@ -17,7 +17,9 @@
     <section class="content">
         {% raw %}
         <script id="alert-template" type="text/x-handlebars-template">
-            <div class="alert alert-{{ type }}"><p>{{ message }}</p></div>
+            <div class="alert alert-{{ type }}">
+                <p><strong>{{ prefix }}</strong> {{ message }}</p>
+            </div>
         </script>
         {% endraw %}
         <div class="row">
