@@ -29,16 +29,38 @@ ui = {
 forms = {
     "autoPost": function(e) {
         e.preventDefault();
-        var endpoint = $(this).attr("action");
-        var formData = $(this).serialize();
-        $.post(endpoint, formData, function(data) {
-            var alertType = "danger";
-            if (data.success) {
-                alertType = "success";
-            }
 
-            ui.showAlert(alertType, data.message);
-        });
+        var submittedForm = this;
+
+        function doPost() {
+            var endpoint = $(submittedForm).attr("action");
+            var formData = $(submittedForm).serialize();
+            $.post(endpoint, formData, function(data) {
+                var alertType = "danger";
+                if (data.success) {
+                    alertType = "success";
+
+                    var removeClosest = $(submittedForm).attr("data-auto-post-remove-closest");
+                    if (removeClosest) {
+                        $(submittedForm).closest(removeClosest).fadeOut();
+                    }
+                }
+
+                ui.showAlert(alertType, data.message);
+            });
+        }
+
+        var confirmationMessage = $(this).attr("data-auto-post-confirmation");
+        if (confirmationMessage) {
+            bootbox.confirm(confirmationMessage, function(result) {
+                if (result) {
+                    doPost();
+                }
+            });
+        } else {
+            doPost();
+        }
+
     },
     "bindEventHandlers": function() {
         $("form.auto-post").submit(forms.autoPost);

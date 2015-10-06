@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from api import api
+from models import Host
 
 web = Flask(__name__)
 web.register_blueprint(api)
@@ -14,8 +15,10 @@ def home():
 
 @web.route("/hosts/")
 def hosts():
+    hosts = Host.query.all()
+
     return render_template("hosts.html", nav_section="hosts", section="Hosts",
-        title="Manage Hosts")
+        title="Manage Hosts", hosts=hosts)
 
 @web.route("/hosts/add/")
 def hosts_add():

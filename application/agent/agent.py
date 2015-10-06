@@ -13,6 +13,7 @@ from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from shutil import rmtree
+from responses import error_response
 agent = Flask(__name__)
 
 parser = argparse.ArgumentParser()
@@ -20,9 +21,6 @@ g = parser.add_mutually_exclusive_group(required=True)
 g.add_argument("--run-server", action="store_true")
 g.add_argument("--setup", action="store_true")
 args = parser.parse_args()
-
-def error_response(error_message):
-    return jsonify({"success": False, "error": error_message})
 
 def requires_auth(f):
     @wraps(f)

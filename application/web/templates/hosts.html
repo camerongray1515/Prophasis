@@ -6,9 +6,43 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
+    <div class="row padding-bottom-sm">
         <div class="col-md-3">
             <a href="/hosts/add/" class="btn btn-primary">Add Host</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body no-padding">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Host</th>
+                                <th class="width-40">Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for host in hosts %}
+                                <tr>
+                                    <td>{{ host.name }}</td>
+                                    <td>{{ host.host }}</td>
+                                    <td>{{ host.description }}</td>
+                                    <td>
+                                        <form class="auto-post" method="POST" action="/api/hosts/delete/" data-auto-post-confirmation="Are you sure you want to delete this host and all associated data?  This action cannnot be undone!" data-auto-post-remove-closest="tr">
+                                            <input type="hidden" name="host-id" value="{{ host.id }}">
+                                            <button class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
