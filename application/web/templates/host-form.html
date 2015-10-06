@@ -1,23 +1,37 @@
 {% extends "base.html" %}
 
+{% if host is not defined %}
+    {% set host = None %}
+{% endif %}
+
 {% block breadcrumbs %}
     <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
     <li><a href="/hosts/">Hosts</a></li>
-    <li><a href="/hosts/add/">Add Host</a></li>
+    {% if method == "add" %}
+        <li><a href="/hosts/add/">Add Host</a></li>
+    {% elif method == "edit" %}
+        <li><a href="/hosts/edit/{{ host.id }}/">Edit Host</a></li>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
     <div class="row">
         <div class="col-md-12">
             <div class="box">
-                <div class="box-header with-border"><h3 class="box-title">Add Host</h3></div>
+                <div class="box-header with-border"><h3 class="box-title">
+                    {% if method == "add" %}
+                        Add Host
+                    {% elif method == "edit" %}
+                        Edit Host
+                    {% endif %}
+                    </h3></div>
                 <div class="box-body">
-                    <form class="form-horizontal auto-post" method="POST" action="/api/hosts/add/" id="form-add-host">
+                    <form class="form-horizontal auto-post" method="POST" action="/api/hosts/{{ method }}/">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="col-md-4 control-label">Name</label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control" name="name">
+                                    <input type="text" class="form-control" name="name" value="{{ host.name }}">
                                 </div>
                             </div>
                         </div>
@@ -26,7 +40,7 @@
                             <div class="form-group">
                                 <label class="col-md-1 control-label">Host</label>
                                 <div class="col-md-11">
-                                    <input type="text" class="form-control" name="host" placeholder="Hostname or IP Address">
+                                    <input type="text" class="form-control" name="host" placeholder="Hostname or IP Address" value="{{ host.host }}">
                                 </div>
                             </div>
                         </div>
@@ -35,7 +49,7 @@
                             <div class="form-group">
                                 <label class="col-md-2 control-label">Description</label>
                                 <div class="col-md-10">
-                                    <input type="text" class="form-control" name="description">
+                                    <input type="text" class="form-control" name="description" value="{{ host.description }}">
                                 </div>
                             </div>
                         </div>
@@ -44,14 +58,19 @@
                             <div class="form-group">
                                 <label class="col-md-2 control-label">Auth Key</label>
                                 <div class="col-md-10">
-                                    <input type="text" class="form-control" name="auth-key">
+                                    <input type="text" class="form-control" name="auth-key" value="{{ host.auth_key }}">
                                     <p class="help-block">This is given to you when you install the agent</p>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-md-2 col-md-offset-2">
-                            <button class="btn btn-primary">Add Host</button>
+                            {% if method == "add" %}
+                                <button class="btn btn-primary">Add Host</button>
+                            {% elif method == "edit" %}
+                                <input type="hidden" name="host-id" value="{{ host.id }}">
+                                <button class="btn btn-primary">Save Host</button>
+                            {% endif %}
                         </div>
                     </form>
                 </div>

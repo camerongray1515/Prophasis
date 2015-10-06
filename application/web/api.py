@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from responses import error_response
 from models import create_all, session, Host
+from sqlalchemy import or_, and_
 
 api = Blueprint("api", __name__, url_prefix="/api")
 
@@ -38,3 +39,33 @@ def hosts_delete():
     session.commit()
 
     return jsonify(success=True, message="Host has been deleted successfully")
+
+@api.route("/hosts/edit/", methods=["POST"])
+def hosts_edit():
+    host_id = request.form.get("host-id")
+    name = request.form.get("name")
+    host = request.form.get("host")
+    description = request.form.get("description")
+    auth_key = request.form.get("auth-key")
+
+    if not (name and host and auth_key):
+        return error_response("Name, host and auth key are required")
+
+    hosts = Host.query.filter(and_(or_(Host.name == name, Host.host == host),
+        Host.id != host_id)).count()
+    if hosts:
+        return error_response("A host with that name or host already exists")
+
+    h = Host.query.get(host_id)
+    if not h:
+        return error_response("Host could not be found!")
+
+    h.id = host_id
+    h.name = name
+    h.host = host
+    h.description = description
+    h.auth_key = auth_key
+
+    session.commit()
+
+    return jsonify(success=True, message="Host has been saved successfully")

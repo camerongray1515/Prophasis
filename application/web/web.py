@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, abort
 from api import api
 from models import Host
 
@@ -22,8 +22,17 @@ def hosts():
 
 @web.route("/hosts/add/")
 def hosts_add():
-    return render_template("hosts-add.html", nav_section="hosts",
-        section="Hosts", title="Add Host")
+    return render_template("host-form.html", nav_section="hosts",
+        section="Hosts", title="Add Host", method="add")
+
+@web.route("/hosts/edit/<host_id>/")
+def hosts_edit(host_id):
+    host = Host.query.get(host_id)
+    if not host:
+        abort(404)
+
+    return render_template("host-form.html", nav_section="hosts",
+        section="Hosts", title="Edit Host", method="edit", host=host)
 
 @web.route("/host-groups/")
 def host_groups():
