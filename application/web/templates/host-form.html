@@ -64,13 +64,14 @@
                             </div>
                         </div>
 
-                        <div class="col-md-2 col-md-offset-2">
+                        <div class="col-md-10 col-md-offset-2">
                             {% if method == "add" %}
                                 <button class="btn btn-primary">Add Host</button>
                             {% elif method == "edit" %}
                                 <input type="hidden" name="host-id" value="{{ host.id }}">
                                 <button class="btn btn-primary">Save Host</button>
                             {% endif %}
+                            <a href="/hosts/" class="btn btn-default">Back...</a>
                         </div>
                     </form>
                 </div>
