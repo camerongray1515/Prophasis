@@ -39,5 +39,14 @@ def host_groups():
     return render_template("host-groups.html", nav_section="host-groups",
         section="Host Groups", title="Manage Host Groups")
 
+@web.route("/host-groups/add/")
+def host_groups_add():
+    hosts = Host.query.all()
+    host_groups = HostGroup.query.all()
+
+    return render_template("host-group-form.html", nav_section="host-groups",
+        section="Host Groups", title="Add Host Group", method="add",
+        hosts=hosts, host_groups=host_groups)
+
 if __name__ == "__main__":
     web.run(debug=True)

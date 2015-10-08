@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from responses import error_response
-from models import create_all, session, Host
+from models import create_all, session, Host, HostGroup, HostGroupAssignment
 from sqlalchemy import or_, and_
 
 api = Blueprint("api", __name__, url_prefix="/api")
@@ -69,3 +69,35 @@ def hosts_edit():
     session.commit()
 
     return jsonify(success=True, message="Host has been saved successfully")
+
+@api.route("/host-groups/add/", methods=["POST"])
+def host_groups_add():
+    name = request.form.get("name")
+    description = request.form.get("description")
+    hosts = request.form.getlist("hosts[]")
+    host_groups = request.form.getlist("host-groups[]")
+
+    if not name:
+        return error_response("You must supply a name for this group")
+
+    groups = HostGroup.query.filter(HostGroup.name == name).count()
+    if groups:
+        return error_response("A group with that name already exists")
+
+    host_group = HostGroup(name=name, description=description)
+    session.add(host_group)
+    session.commit()
+
+    for host in hosts:
+        a = HostGroupAssignment(host_group_id=host_group.id,
+            member_host_id=host)
+        session.add(a)
+
+    for group in host_groups:
+        a = HostGroupAssignment(host_group_id=host_group.id,
+            member_host_group_id=group)
+        session.add(a)
+
+    session.commit()
+
+    return jsonify(success=True, message="Host Group added successfully")

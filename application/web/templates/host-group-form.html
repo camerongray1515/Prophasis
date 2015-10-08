@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% if host_group is not defined %}
+    {% set host_group = None %}
+{% endif %}
+
+{% block breadcrumbs %}
+    <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
+    <li><a href="/hosts/">Hosts</a></li>
+    {% if method == "add" %}
+        <li><a href="/hosts/add/">Add Host</a></li>
+    {% elif method == "edit" %}
+        <li><a href="/hosts/edit/{{ host_group.id }}/">Edit Host</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border"><h3 class="box-title">
+                    {% if method == "add" %}
+                        Add Host Group
+                    {% elif method == "edit" %}
+                        Edit Host Group
+                    {% endif %}
+                    </h3></div>
+                <div class="box-body">
+                    <form class="form-horizontal auto-post" method="POST" action="/api/host-groups/{{ method }}/">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Name</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" name="name" value="{{ host_group.name }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Description</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" name="description" value="{{ host_group.description }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row col-md-offset-2 padding-bottom-md">
+                            <div class="col-md-6">
+                                <label>Member Hosts</label>
+                                <input type="text" class="form-control auto-filter" data-table-id="hosts-table" placeholder="Search">
+                                <div class="scroll-area">
+                                    <table class="table table-striped" id="hosts-table">
+                                        <tbody>
+                                            {% for host in hosts %}
+                                                <tr>
+                                                    <td><input type="checkbox" name="hosts[]" value="{{ host.id }}"></td>
+                                                    <td class="filter-text">{{ host.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Member Groups</label>
+                                <input type="text" class="form-control auto-filter" data-table-id="groups-table" placeholder="Search">
+                                <div class="scroll-area">
+                                    <table class="table table-striped" id="groups-table">
+                                        <tbody>
+                                            {% for group in host_groups %}
+                                                <tr>
+                                                    <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}"></td>
+                                                    <td class="filter-text">{{ group.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-10 col-md-offset-2">
+                                {% if method == "add" %}
+                                    <button class="btn btn-primary">Add Host Group</button>
+                                {% elif method == "edit" %}
+                                    <input type="hidden" name="host-group-id" value="{{ host_group.id }}">
+                                    <button class="btn btn-primary">Save Host Group</button>
+                                {% endif %}
+                                <a href="/host-groups/" class="btn btn-default">Back...</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

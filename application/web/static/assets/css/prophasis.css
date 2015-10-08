@@ -2,6 +2,15 @@
     padding-bottom: 10px;
 }
 
+.padding-bottom-md {
+    padding-bottom: 20px;
+}
+
 .inline {
     display: inline;
+}
+
+.scroll-area {
+    height: 250px;
+    overflow-y: auto;
 }

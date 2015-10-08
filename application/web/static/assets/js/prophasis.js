@@ -67,6 +67,24 @@ forms = {
     }
 }
 
+autoFilter = {
+    "filterTable": function() {
+        var filterText = $(this).val();
+        var tableSelector = "#" + $(this).attr("data-table-id");
+        $(tableSelector + " tr").hide();
+        $.each($(tableSelector).find("td.filter-text"), function(td) {
+            var text = $(this).text().toLowerCase();
+            if (text.indexOf(filterText) > -1) {
+                $(this).closest("tr").show();
+            }
+        });
+    },
+    "bindEventHandlers": function() {
+        $("input.auto-filter").keyup(autoFilter.filterTable);
+    }
+}
+
 $(document).ready(function() {
     forms.bindEventHandlers();
+    autoFilter.bindEventHandlers();
 });

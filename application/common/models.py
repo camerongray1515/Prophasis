@@ -47,10 +47,30 @@ class HostGroup(Base):
 
     group_assignments = relationship("HostGroupAssignment",
         cascade="all, delete, delete-orphan", backref="host_group",
-        foreign_keys="host_group_id")
+        foreign_keys="HostGroupAssignment.host_group_id")
+
+    group_membership = relationship("HostGroupAssignment",
+        cascade="all, delete, delete-orphan", backref="member_host_group",
+        foreign_keys="HostGroupAssignment.member_host_group_id")
 
     plugin_assignments = relationship("PluginAssignment",
         cascade="all, delete, delete-orphan", backref="host_group")
+
+    def get_hosts(self, visited_groups=None):
+        if visited_groups == None:
+            visited_groups = []
+        hosts = []
+        visited_groups.append(self.id)
+
+        for assignment in self.group_assignments:
+            if assignment.member_host_id:
+                hosts.append(assignment.host)
+            elif assignment.member_host_group_id:
+                if assignment.member_host_group_id not in visited_groups:
+                    hosts += assignment.member_host_group.get_hosts(
+                        visited_groups=visited_groups)
+
+        return hosts
 
     def __repr__(self):
         return "<HostGroup id: {0}, name: {1}>".format(self.id, self.name)
@@ -175,3 +195,7 @@ class ScheduleInterval(Base):
         
 def create_all():
     Base.metadata.create_all(engine)
+
+def test():
+    g = HostGroup.query.get(4)
+    print(g.get_hosts())
