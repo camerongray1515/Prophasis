@@ -11,4 +11,10 @@
             <a href="/host-groups/add/" class="btn btn-primary">Add Host Group</a>
         </div>
     </div>
+
+    <div class="well">
+        {% for host_group in host_groups %}
+            <p>{{host_group.name}}, {{host_group.member_hosts|count}}</p>
+        {% endfor %}
+    </div>
 {% endblock %}

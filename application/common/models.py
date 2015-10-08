@@ -56,7 +56,11 @@ class HostGroup(Base):
     plugin_assignments = relationship("PluginAssignment",
         cascade="all, delete, delete-orphan", backref="host_group")
 
-    def get_hosts(self, visited_groups=None):
+    @property
+    def member_hosts(self):
+        return self._get_hosts()
+
+    def _get_hosts(self, visited_groups=None):
         if visited_groups == None:
             visited_groups = []
         hosts = []
@@ -67,7 +71,7 @@ class HostGroup(Base):
                 hosts.append(assignment.host)
             elif assignment.member_host_group_id:
                 if assignment.member_host_group_id not in visited_groups:
-                    hosts += assignment.member_host_group.get_hosts(
+                    hosts += assignment.member_host_group._get_hosts(
                         visited_groups=visited_groups)
 
         return hosts

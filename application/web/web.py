@@ -36,8 +36,11 @@ def hosts_edit(host_id):
 
 @web.route("/host-groups/")
 def host_groups():
+    host_groups = HostGroup.query.all()
+
     return render_template("host-groups.html", nav_section="host-groups",
-        section="Host Groups", title="Manage Host Groups")
+        section="Host Groups", title="Manage Host Groups",
+        host_groups=host_groups)
 
 @web.route("/host-groups/add/")
 def host_groups_add():
