@@ -1,6 +1,6 @@
 from flask import Flask, render_template, abort
 from api import api
-from models import Host
+from models import Host, HostGroup
 
 web = Flask(__name__)
 web.register_blueprint(api)

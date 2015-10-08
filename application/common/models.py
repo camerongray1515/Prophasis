@@ -46,7 +46,8 @@ class HostGroup(Base):
     description = Column(Text)
 
     group_assignments = relationship("HostGroupAssignment",
-        cascade="all, delete, delete-orphan", backref="host_group")
+        cascade="all, delete, delete-orphan", backref="host_group",
+        foreign_keys="host_group_id")
 
     plugin_assignments = relationship("PluginAssignment",
         cascade="all, delete, delete-orphan", backref="host_group")
@@ -58,12 +59,15 @@ class HostGroupAssignment(Base):
     __tablename__ = "host_group_assignment"
 
     id = Column(Integer, primary_key=True)
-    host_id = Column(Integer, ForeignKey("hosts.id"))
+    member_host_id = Column(Integer, ForeignKey("hosts.id"))
+    member_host_group_id = Column(Integer, ForeignKey("host_groups.id"))
     host_group_id = Column(Integer, ForeignKey("host_groups.id"))
 
     def __repr__(self):
-        return "<HostGroupAssignment host_id: {0}, host_group_id: {1}>"\
-            .format(self.host_id, self.host_group_id)
+        return ("<HostGroupAssignment member_host_id: {0}, "
+            "member_host_group_id: {1}, host_group_id: {2}>".format(
+                self.member_host_id, self.member_host_group_id,
+                self.host_group_id))
 
 class CheckResult(Base):
     __tablename__ = "check_results"

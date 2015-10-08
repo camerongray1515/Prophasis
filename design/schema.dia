@@ -291,13 +291,13 @@
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O1">
       <dia:attribute name="obj_pos">
-        <dia:point val="3.61779,13.5999"/>
+        <dia:point val="4.51779,15.7999"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="3.56779,13.5499;11.4828,18.0499"/>
+        <dia:rectangle val="4.46779,15.7499;12.3828,20.2499"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="3.61779,13.5999"/>
+        <dia:point val="4.51779,15.7999"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="7.8150000000000004"/>
@@ -474,16 +474,16 @@
         <dia:point val="2.55997,8.07548"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="2.50997,8.02548;13.7825,12.5255"/>
+        <dia:rectangle val="2.50997,8.02548;14.66,13.3255"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="2.55997,8.07548"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="11.172499999999999"/>
+        <dia:real val="12.050000000000001"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="4.4000000000000004"/>
+        <dia:real val="5.2000000000000011"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#host_group_assignment#</dia:string>
@@ -598,7 +598,7 @@
         </dia:composite>
         <dia:composite type="umlattribute">
           <dia:attribute name="name">
-            <dia:string>#host_id#</dia:string>
+            <dia:string>#member_host_id#</dia:string>
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#INTEGER#</dia:string>
@@ -642,6 +642,29 @@
             <dia:boolean val="false"/>
           </dia:attribute>
         </dia:composite>
+        <dia:composite type="umlattribute">
+          <dia:attribute name="name">
+            <dia:string>#member_host_group_id#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#INTEGER#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="value">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+        </dia:composite>
       </dia:attribute>
       <dia:attribute name="operations"/>
       <dia:attribute name="template">
@@ -654,13 +677,13 @@
         <dia:point val="2.55997,11.5755"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="1.45997,11.5255;3.66779,15.5499"/>
+        <dia:rectangle val="1.45997,11.5255;4.56779,17.7499"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="2.55997,11.5755"/>
         <dia:point val="1.50997,11.5755"/>
-        <dia:point val="1.50997,15.4999"/>
-        <dia:point val="3.61779,15.4999"/>
+        <dia:point val="1.50997,17.6999"/>
+        <dia:point val="4.51779,17.6999"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>
@@ -1161,13 +1184,13 @@
         <dia:point val="20.8133,12.8834"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="11.3828,12.8334;20.8633,15.5499"/>
+        <dia:rectangle val="12.2828,12.8334;20.8633,17.7499"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="20.8133,12.8834"/>
-        <dia:point val="16.1231,12.8834"/>
-        <dia:point val="16.1231,15.4999"/>
-        <dia:point val="11.4328,15.4999"/>
+        <dia:point val="16.573,12.8834"/>
+        <dia:point val="16.573,17.6999"/>
+        <dia:point val="12.3328,17.6999"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="0"/>
@@ -2362,8 +2385,8 @@
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="13.4183,2.7"/>
-        <dia:point val="17.0319,2.7"/>
-        <dia:point val="17.0319,2.68005"/>
+        <dia:point val="17.032,2.7"/>
+        <dia:point val="17.032,2.68005"/>
         <dia:point val="20.6456,2.68005"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
@@ -2403,6 +2426,32 @@
       <dia:connections>
         <dia:connection handle="0" to="O10" connection="9"/>
         <dia:connection handle="1" to="O11" connection="9"/>
+      </dia:connections>
+    </dia:object>
+    <dia:object type="Standard - ZigZagLine" version="1" id="O22">
+      <dia:attribute name="obj_pos">
+        <dia:point val="4.51779,17.6999"/>
+      </dia:attribute>
+      <dia:attribute name="obj_bb">
+        <dia:rectangle val="1.45997,12.3255;4.56779,17.7499"/>
+      </dia:attribute>
+      <dia:attribute name="orth_points">
+        <dia:point val="4.51779,17.6999"/>
+        <dia:point val="1.50997,17.6999"/>
+        <dia:point val="1.50997,12.3755"/>
+        <dia:point val="2.55997,12.3755"/>
+      </dia:attribute>
+      <dia:attribute name="orth_orient">
+        <dia:enum val="0"/>
+        <dia:enum val="1"/>
+        <dia:enum val="0"/>
+      </dia:attribute>
+      <dia:attribute name="autorouting">
+        <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:connections>
+        <dia:connection handle="0" to="O1" connection="8"/>
+        <dia:connection handle="1" to="O2" connection="14"/>
       </dia:connections>
     </dia:object>
   </dia:layer>
