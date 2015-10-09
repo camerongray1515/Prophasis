@@ -143,3 +143,17 @@ def host_groups_edit():
 
     return jsonify(success=True,
         message="Host Group has been saved successfully")
+
+@api.route("/host-groups/delete/", methods=["POST"])
+def host_groups_delete():
+    host_group_id = request.form.get("host-group-id")
+
+    g = HostGroup.query.get(host_group_id)
+    if not g:
+        return error_response("Host Group could not be found!")
+
+    session.delete(g)
+    session.commit()
+
+    return jsonify(success=True,
+        message="Host Group has been deleted successfully")
