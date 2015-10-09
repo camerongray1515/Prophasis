@@ -6,11 +6,11 @@
 
 {% block breadcrumbs %}
     <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
-    <li><a href="/hosts/">Hosts</a></li>
+    <li><a href="/host-groups/">Host Groups</a></li>
     {% if method == "add" %}
-        <li><a href="/hosts/add/">Add Host</a></li>
+        <li><a href="/host-groups/add/">Add Host Group</a></li>
     {% elif method == "edit" %}
-        <li><a href="/hosts/edit/{{ host_group.id }}/">Edit Host</a></li>
+        <li><a href="/host-groups/edit/{{ host_group.id }}/">Edit Host Group</a></li>
     {% endif %}
 {% endblock %}
 

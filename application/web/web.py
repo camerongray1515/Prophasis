@@ -77,5 +77,15 @@ def host_groups_edit(host_group_id):
         member_host_group_ids=member_host_group_ids,
         member_host_ids=member_host_ids)
 
+@web.route("/plugins/")
+def plugins():
+    return render_template("plugins.html", nav_section="plugins",
+        section="Plugins", title="Manage Plugins")
+
+@web.route("/plugins/add/")
+def plugins_add():
+    return render_template("plugin-form.html", nav_section="plugins",
+        section="Plugins", title="Add Plugin", method="add")
+
 if __name__ == "__main__":
     web.run(debug=True)
