@@ -35,7 +35,9 @@
                                         title="{% for host in host_group.member_hosts %}{{ host.name }} ({{ host.host }})&#13;&#10;{% endfor %}"
                                         data-placement="left">{{ host_group.member_hosts|count }}</a>
                                     </td>
-                                    <td></td>
+                                    <td>
+                                        <a href="/host-groups/edit/{{ host_group.id }}/" class="btn btn-info">Edit</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>

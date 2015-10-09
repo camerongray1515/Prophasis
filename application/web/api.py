@@ -101,3 +101,45 @@ def host_groups_add():
     session.commit()
 
     return jsonify(success=True, message="Host Group added successfully")
+
+@api.route("/host-groups/edit/", methods=["POST"])
+def host_groups_edit():
+    host_group_id = request.form.get("host-group-id")
+    name = request.form.get("name")
+    description = request.form.get("description")
+    hosts = request.form.getlist("hosts[]")
+    host_groups = request.form.getlist("host-groups[]")
+
+    if not name:
+        return error_response("You must supply a name for this group")
+
+    groups = HostGroup.query.filter(and_(HostGroup.name == name,
+        HostGroup.id != host_group_id)).count()
+    if groups:
+        return error_response("A group with that name already exists")
+
+    g = HostGroup.query.get(host_group_id)
+    if not g:
+        return error_response("Host Group could not be found!")
+
+    g.name = name
+    g.description = description
+
+    # Remove all current assignments, they will be replaced with the new ones
+    HostGroupAssignment.query.filter(
+        HostGroupAssignment.host_group_id == host_group_id).delete()
+
+    for host in hosts:
+        a = HostGroupAssignment(host_group_id=host_group_id,
+            member_host_id=host)
+        session.add(a)
+
+    for group in host_groups:
+        a = HostGroupAssignment(host_group_id=host_group_id,
+            member_host_group_id=group)
+        session.add(a)
+
+    session.commit()
+
+    return jsonify(success=True,
+        message="Host Group has been saved successfully")

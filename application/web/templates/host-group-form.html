@@ -58,7 +58,7 @@
                                         <tbody>
                                             {% for host in hosts %}
                                                 <tr>
-                                                    <td><input type="checkbox" name="hosts[]" value="{{ host.id }}"></td>
+                                                    <td><input type="checkbox" name="hosts[]" value="{{ host.id }}" {% if host.id in member_host_ids %}checked{% endif %}></td>
                                                     <td class="filter-text">{{ host.name }}</td>
                                                 </tr>
                                             {% endfor %}
@@ -75,7 +75,7 @@
                                         <tbody>
                                             {% for group in host_groups %}
                                                 <tr>
-                                                    <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}"></td>
+                                                    <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}" {% if group.id in member_host_group_ids %}checked{% endif %}></td>
                                                     <td class="filter-text">{{ group.name }}</td>
                                                 </tr>
                                             {% endfor %}

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, abort
 from api import api
-from models import Host, HostGroup
+from models import Host, HostGroup, HostGroupAssignment
 
 web = Flask(__name__)
 web.register_blueprint(api)
@@ -50,6 +50,32 @@ def host_groups_add():
     return render_template("host-group-form.html", nav_section="host-groups",
         section="Host Groups", title="Add Host Group", method="add",
         hosts=hosts, host_groups=host_groups)
+
+@web.route("/host-groups/edit/<host_group_id>/")
+def host_groups_edit(host_group_id):
+    host_group = HostGroup.query.get(host_group_id)
+    if not host_group:
+        abort(404)
+
+    hosts = Host.query.all()
+    host_groups = HostGroup.query.all()
+
+    member_host_group_ids = []
+    member_host_ids = []
+    group_assignments = HostGroupAssignment.query.filter(
+        HostGroupAssignment.host_group_id == host_group_id)
+    for assignment in group_assignments:
+        if assignment.member_host_id:
+            member_host_ids.append(assignment.member_host_id)
+
+        if assignment.member_host_group_id:
+            member_host_group_ids.append(assignment.member_host_group_id)
+
+    return render_template("host-group-form.html", nav_section="host-groups",
+        section="Host Groups", title="Edit Host Group", method="edit",
+        host_group=host_group, hosts=hosts, host_groups=host_groups,
+        member_host_group_ids=member_host_group_ids,
+        member_host_ids=member_host_ids)
 
 if __name__ == "__main__":
     web.run(debug=True)
