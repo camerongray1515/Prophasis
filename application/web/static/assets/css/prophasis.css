@@ -14,3 +14,7 @@
     height: 250px;
     overflow-y: auto;
 }
+
+.tooltip-inner {
+    white-space: pre-wrap !important;
+}
