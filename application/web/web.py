@@ -1,6 +1,6 @@
 from flask import Flask, render_template, abort
 from api import api
-from models import Host, HostGroup, HostGroupAssignment
+from models import Host, HostGroup, HostGroupAssignment, Plugin
 
 web = Flask(__name__)
 web.register_blueprint(api)
@@ -79,8 +79,10 @@ def host_groups_edit(host_group_id):
 
 @web.route("/plugins/")
 def plugins():
+    plugins = Plugin.query.all()
+
     return render_template("plugins.html", nav_section="plugins",
-        section="Plugins", title="Manage Plugins")
+        section="Plugins", title="Manage Plugins", plugins=plugins)
 
 @web.route("/plugins/install/")
 def plugins_install():

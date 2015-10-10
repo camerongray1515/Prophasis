@@ -245,3 +245,24 @@ def plugins_install():
         return jsonify(success=True, result="plugin_updated")
     else:
         return jsonify(success=True, result="plugin_installed")
+
+@api.route("/plugins/delete/", methods=["POST"])
+def plugins_delete():
+    plugin_id = request.form.get("plugin-id")
+    
+    p = Plugin.query.get(plugin_id)
+    if not p:
+        return error_response("Plugin does not exist")
+
+    plugin_repo = get_config_value(config, "plugin_repo")
+    try:
+        os.remove(os.path.join(plugin_repo, p.archive_file))
+    except FileNotFoundError:
+        # We are deleting so we don't care if the file doesn't exist
+        pass
+
+    session.delete(p)
+    session.commit()
+
+    return jsonify(success=True,
+        message="Plugin has been deleted successfully")

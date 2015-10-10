@@ -11,4 +11,40 @@
             <a href="/plugins/install/" class="btn btn-primary">Install/Update Plugin</a>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body no-padding">
+                    <table class="table table-hover table-fixed">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th class="col-md-5">Description</th>
+                                <th>Version</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for plugin in plugins %}
+                                <tr>
+                                    <td>{{ plugin.id }}</td>
+                                    <td>{{ plugin.name }}</td>
+                                    <td>{{ plugin.description }}</td>
+                                    <td>{{ plugin.version }}</td>
+                                    <td>
+                                        <form class="auto-post inline" method="POST" action="/api/plugins/delete/" data-auto-post-confirmation="Are you sure you want to delete this plugin and all associated data?  This action cannnot be undone!" data-auto-post-remove-closest="tr">
+                                            <input type="hidden" name="plugin-id" value="{{ plugin.id }}">
+                                            <button class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
