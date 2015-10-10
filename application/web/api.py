@@ -1,10 +1,17 @@
+import uuid
+import os
+import tarfile
+import json
+import shutil
 from flask import Blueprint, jsonify, request
 from responses import error_response
-from models import create_all, session, Host, HostGroup, HostGroupAssignment
+from models import create_all, session, Host, HostGroup, HostGroupAssignment,\
+    Plugin
 from sqlalchemy import or_, and_
-
+from config import get_config, get_config_value
 api = Blueprint("api", __name__, url_prefix="/api")
 
+config = get_config()
 
 @api.route("/hosts/add/", methods=["POST"])
 def hosts_add():
@@ -157,3 +164,84 @@ def host_groups_delete():
 
     return jsonify(success=True,
         message="Host Group has been deleted successfully")
+
+@api.route("/plugins/install/", methods=["POST"])
+def plugins_install():
+    plugin_file = request.files.get("plugin")
+    if not plugin_file:
+        return error_response("File not specified")
+
+    allow_overwrite = request.args.get("allow-overwrite")
+
+    temp_dir_path = get_config_value(config, "temp_dir")
+    plugin_repo = get_config_value(config, "plugin_repo")
+    filename = str(uuid.uuid4())
+    try:
+        plugin_file.save(os.path.join(temp_dir_path,
+            filename + ".tar.gz"))
+    except Exception as e:
+        return error_response("Failed to create tempoary file: {0}".format(
+            str(e)))
+
+    try:
+        plugin_archive = tarfile.open(os.path.join(temp_dir_path,
+            filename + ".tar.gz"))
+        os.mkdir(os.path.join(temp_dir_path, filename))
+
+        plugin_archive.extractall(os.path.join(temp_dir_path, filename))
+    except Exception as e:
+        return error_response("Failed to extract plugin: {0}".format(
+            str(e)))
+
+    plugin_temp_path = os.path.join(temp_dir_path, filename)
+
+    try:
+        directory = os.listdir(plugin_temp_path)[0]
+        with open(os.path.join(plugin_temp_path, directory,
+            "manifest.json")) as f:
+            manifest = json.load(f)
+    except (KeyError, FileNotFoundError):
+        return error_response("Manifest could not be found within the "
+            "plugin archive")
+
+    try:
+        p = Plugin.query.get(manifest["id"])
+    except KeyError:
+        return error_response("ID could not be found in plugin manifest "
+            "file")
+
+    if not allow_overwrite and p:
+        return jsonify(success=True, result="plugin_exists")
+
+    oldfile = None
+    if p:
+        oldfile = p.archive_file
+    else:
+        p = Plugin()
+
+    try:
+        p.id = manifest["id"]
+        p.name = manifest["name"]
+        p.description = manifest["description"]
+        p.version = manifest["version"]
+        p.archive_file = filename + ".tar.gz"
+    except KeyError:
+        return error_response("Manifest file is missing some requied keys")
+
+    if oldfile:
+        try:
+            os.remove(os.path.join(plugin_repo, oldfile))
+        except FileNotFoundError:
+            # We don't care if the file doesn't exist as we are deleting it
+            pass
+    else:
+        session.add(p)
+
+    shutil.move(os.path.join(temp_dir_path, p.archive_file),
+        plugin_repo)
+    session.commit()
+
+    if oldfile:
+        return jsonify(success=True, result="plugin_updated")
+    else:
+        return jsonify(success=True, result="plugin_installed")

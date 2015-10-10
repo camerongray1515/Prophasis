@@ -82,10 +82,10 @@ def plugins():
     return render_template("plugins.html", nav_section="plugins",
         section="Plugins", title="Manage Plugins")
 
-@web.route("/plugins/add/")
-def plugins_add():
+@web.route("/plugins/install/")
+def plugins_install():
     return render_template("plugin-form.html", nav_section="plugins",
-        section="Plugins", title="Add Plugin", method="add")
+        section="Plugins", title="Install Plugin")
 
 if __name__ == "__main__":
     web.run(debug=True)

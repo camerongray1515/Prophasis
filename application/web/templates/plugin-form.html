@@ -1,36 +1,31 @@
 {% extends "base.html" %}
 
-{% if plugin is not defined %}
-    {% set plugin = None %}
-{% endif %}
-
 {% block breadcrumbs %}
     <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
     <li><a href="/plugins/">Plugins</a></li>
-    {% if method == "add" %}
-        <li><a href="/plugins/add/">Add Plugin</a></li>
-    {% elif method == "edit" %}
-        <li><a href="/plugins/edit/{{ plugin.id }}/">Edit Plugin</a></li>
-    {% endif %}
+    <li><a href="/plugins/install/">Install Plugin</a></li>
 {% endblock %}
 
 {% block content %}
     <div class="row">
         <div class="col-md-12">
             <div class="box">
-                <div class="box-header with-border"><h3 class="box-title">
-                    {% if method == "add" %}
-                        Add Plugin
-                    {% elif method == "edit" %}
-                        Edit Plugin
-                    {% endif %}
-                    </h3></div>
+                <div class="box-header with-border"><h3 class="box-title">Install Plugin</h3></div>
                 <div class="box-body">
-                    <form class="form-horizontal">
-                        
+                    <form class="form-horizontal" id="form-plugin-install" method="POST" action="/api/plugins/install/" enctype="multipart/form-data">
+                        <p>Select the plugin archive file below and press upload to install it.  If the plugin already exists you will be asked if you want to update it.</p>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <input type="file" name="plugin" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="submit" class="btn btn-primary form-control" value="Upload">
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    <script src="{{ url_for("static", filename="assets/js/plugin-install.js") }}"></script>
 {% endblock %}

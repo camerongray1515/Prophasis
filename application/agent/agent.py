@@ -105,7 +105,7 @@ def update_plugin():
             return error_response("Failed to extract plugin: {0}".format(
                 str(e)))
 
-        # Figure out the name of the directory containin the plugin, if there
+        # Figure out the name of the directory containing the plugin, if there
         # is more than one file/directory in the temp directory, raise an error
         # as the tar file is most likely not correctly formatted
         files = os.listdir(os.path.join(temp_dir_path, filename))
