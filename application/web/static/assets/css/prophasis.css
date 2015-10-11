@@ -18,3 +18,9 @@
 .tooltip-inner {
     white-space: pre-wrap !important;
 }
+
+.interval-unit-select-container {
+    width: 120px;
+    padding: 0;
+    border: none;
+}

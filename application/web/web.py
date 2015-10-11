@@ -89,5 +89,15 @@ def plugins_install():
     return render_template("plugin-form.html", nav_section="plugins",
         section="Plugins", title="Install Plugin")
 
+@web.route("/scheduling/")
+def scheduling():
+    return render_template("scheduling.html", nav_section="scheduling",
+        section="Scheduling", title="Manage Schedules")
+
+@web.route("/scheduling/add/")
+def scheduling_add():
+    return render_template("scheduling-form.html", nav_section="scheduling",
+        section="Scheduling", title="Add Schedule", method="add")
+
 if __name__ == "__main__":
     web.run(debug=True)

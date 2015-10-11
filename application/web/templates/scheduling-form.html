@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% if schedule is not defined %}
+    {% set schedule = None %}
+{% endif %}
+
+{% block breadcrumbs %}
+    <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
+    <li><a href="/scheduling/">Scheduling</a></li>
+    {% if method == "add" %}
+        <li><a href="/scheduling/add/">Add Scheduling</a></li>
+    {% elif method == "edit" %}
+        <li><a href="/scheduling/edit/{{ schedule.id }}/">Edit Scheduling</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border"><h3 class="box-title">
+                    {% if method == "add" %}
+                        Add Schedule
+                    {% elif method == "edit" %}
+                        Edit Schedule
+                    {% endif %}
+                    </h3></div>
+                <div class="box-body">
+                    <form class="form-horizontal auto-post" method="POST" action="/api/host-groups/{{ method }}/">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Name</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" name="name" value="{{ schedule.name }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script id="interval-template" type="text/x-handlebars-template">
+                            <tr>
+                                <td><label class="control-label">Starting from</label></td>
+                                <td>
+                                    <input type="text" name="interval-start[]" class="form-control interval-start">
+                                </td>
+                                <td><label class="control-label">execute every</label></td>
+                                <td>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control col-md-3" name="interval-value[]">
+                                        <div class="input-group-addon interval-unit-select-container">
+                                        <select class="form-control" name="interval-unit[]">
+                                            <option value="second">Seconds</option>
+                                            <option value="minutes">Minutes</option>
+                                            <option value="hour">Hours</option>
+                                            <option value="day">Days</option>
+                                            <option value="week">Weeks</option>
+                                        </select>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><button class="btn btn-danger remove-interval"><i class="fa fa-times"></i></button></td>
+                            </tr>
+                        </script>
+
+                        <div class="row col-md-offset-2">
+                            <div class="col-md-12">
+                                <table class="table table-striped" id="interval-table">
+                                    <tbody>
+                                    </tbody>                                   
+                                    <tfoot>
+                                        <tr>
+                                            <td></td>
+                                            <td><button class="btn btn-success" id="btn-add-interval">Add Interval</button></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row col-md-offset-2 padding-bottom-md">
+                            <div class="col-md-6">
+                                <label>Member Hosts</label>
+                                <input type="text" class="form-control auto-filter" data-table-id="hosts-table" placeholder="Search">
+                                <div class="scroll-area">
+                                    <table class="table table-striped" id="hosts-table">
+                                        <tbody>
+                                            {% for host in hosts %}
+                                                <tr>
+                                                    <td><input type="checkbox" name="hosts[]" value="{{ host.id }}" {% if host.id in member_host_ids %}checked{% endif %}></td>
+                                                    <td class="filter-text">{{ host.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Member Groups</label>
+                                <input type="text" class="form-control auto-filter" data-table-id="groups-table" placeholder="Search">
+                                <div class="scroll-area">
+                                    <table class="table table-striped" id="groups-table">
+                                        <tbody>
+                                            {% for group in schedules %}
+                                                <tr>
+                                                    <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}" {% if group.id in member_schedule_ids %}checked{% endif %}></td>
+                                                    <td class="filter-text">{{ group.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-10 col-md-offset-2">
+                                {% if method == "add" %}
+                                    <button class="btn btn-primary">Add Host Group</button>
+                                {% elif method == "edit" %}
+                                    <input type="hidden" name="host-group-id" value="{{ schedule.id }}">
+                                    <button class="btn btn-primary">Save Host Group</button>
+                                {% endif %}
+                                <a href="/host-groups/" class="btn btn-default">Back...</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for("static", filename="assets/js/scheduling-form.js") }}"></script>
+{% endblock %}
