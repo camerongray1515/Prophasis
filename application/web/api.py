@@ -266,3 +266,17 @@ def plugins_delete():
 
     return jsonify(success=True,
         message="Plugin has been deleted successfully")
+
+@api.route("/scheduling/add/", methods=["POST"])
+def scheduling_add():
+    name = request.form.get("name")
+    interval_starts = request.form.getlist("interval-start[]")
+    interval_values = request.form.getlist("interval-value[]")
+    interval_units = request.form.getlist("interval-unit[]")
+    hosts = request.form.getlist("hosts[]")
+    host_groups = request.form.getlist("host-groups[]")
+
+    if not name:
+        return error_response("You must supply a name for this schedule")
+
+    

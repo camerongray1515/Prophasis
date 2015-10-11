@@ -26,7 +26,7 @@
                     {% endif %}
                     </h3></div>
                 <div class="box-body">
-                    <form class="form-horizontal auto-post" method="POST" action="/api/host-groups/{{ method }}/">
+                    <form class="form-horizontal auto-post" method="POST" action="/api/scheduling/{{ method }}/">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -42,7 +42,8 @@
                             <tr>
                                 <td><label class="control-label">Starting from</label></td>
                                 <td>
-                                    <input type="text" name="interval-start[]" class="form-control interval-start">
+                                    <input type="text" name="interval-start[]" class="form-control interval-start" placeholder="YYYY-MM-DD hh:mm:ss">
+                                </div>
                                 </td>
                                 <td><label class="control-label">execute every</label></td>
                                 <td>
@@ -81,35 +82,51 @@
                         <div class="row col-md-offset-2 padding-bottom-md">
                             <div class="col-md-6">
                                 <label>Member Hosts</label>
-                                <input type="text" class="form-control auto-filter" data-table-id="hosts-table" placeholder="Search">
-                                <div class="scroll-area">
-                                    <table class="table table-striped" id="hosts-table">
-                                        <tbody>
-                                            {% for host in hosts %}
-                                                <tr>
-                                                    <td><input type="checkbox" name="hosts[]" value="{{ host.id }}" {% if host.id in member_host_ids %}checked{% endif %}></td>
-                                                    <td class="filter-text">{{ host.name }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                <div class="checkbox padding-bottom-sm">
+                                    <label>
+                                        <input type="checkbox" class="toggle-view" data-toggle-id="hosts-list">
+                                        All Hosts
+                                    </label>
+                                </div>
+                                <div id="hosts-list">
+                                    <input type="text" class="form-control auto-filter" data-table-id="hosts-table" placeholder="Search">
+                                    <div class="scroll-area">
+                                        <table class="table table-striped" id="hosts-table">
+                                            <tbody>
+                                                {% for host in hosts %}
+                                                    <tr>
+                                                        <td><input type="checkbox" name="hosts[]" value="{{ host.id }}" {% if host.id in member_host_ids %}checked{% endif %}></td>
+                                                        <td class="filter-text">{{ host.name }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <label>Member Groups</label>
+                                <div class="checkbox padding-bottom-sm">
+                                    <label>
+                                        <input type="checkbox" class="toggle-view" data-toggle-id="groups-list">
+                                        All Groups
+                                    </label>
+                                </div>
                                 <input type="text" class="form-control auto-filter" data-table-id="groups-table" placeholder="Search">
-                                <div class="scroll-area">
-                                    <table class="table table-striped" id="groups-table">
-                                        <tbody>
-                                            {% for group in schedules %}
-                                                <tr>
-                                                    <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}" {% if group.id in member_schedule_ids %}checked{% endif %}></td>
-                                                    <td class="filter-text">{{ group.name }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                <div id="hosts-list">
+                                    <div class="scroll-area">
+                                        <table class="table table-striped" id="groups-table">
+                                            <tbody>
+                                                {% for group in groups %}
+                                                    <tr>
+                                                        <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}" {% if group.id in member_schedule_ids %}checked{% endif %}></td>
+                                                        <td class="filter-text">{{ group.name }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -117,12 +134,12 @@
                         <div class="row">
                             <div class="col-md-10 col-md-offset-2">
                                 {% if method == "add" %}
-                                    <button class="btn btn-primary">Add Host Group</button>
+                                    <button class="btn btn-primary">Add Schedule</button>
                                 {% elif method == "edit" %}
-                                    <input type="hidden" name="host-group-id" value="{{ schedule.id }}">
-                                    <button class="btn btn-primary">Save Host Group</button>
+                                    <input type="hidden" name="schedule-id" value="{{ schedule.id }}">
+                                    <button class="btn btn-primary">Save Schedule</button>
                                 {% endif %}
-                                <a href="/host-groups/" class="btn btn-default">Back...</a>
+                                <a href="/scheduling/" class="btn btn-default">Back...</a>
                             </div>
                         </div>
                     </form>

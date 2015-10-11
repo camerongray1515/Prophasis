@@ -96,8 +96,12 @@ def scheduling():
 
 @web.route("/scheduling/add/")
 def scheduling_add():
+    hosts = Host.query.all()
+    groups = HostGroup.query.all()
+
     return render_template("scheduling-form.html", nav_section="scheduling",
-        section="Scheduling", title="Add Schedule", method="add")
+        section="Scheduling", title="Add Schedule", method="add", hosts=hosts,
+        groups=groups)
 
 if __name__ == "__main__":
     web.run(debug=True)
