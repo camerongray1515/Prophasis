@@ -25,13 +25,10 @@ class Host(Base):
     group_assignments = relationship("HostGroupAssignment",
         cascade="all, delete, delete-orphan", backref="host")
 
-    check_results = relationship("CheckResult",
+    check_assignments = relationship("CheckAssignment",
         cascade="all, delete, delete-orphan", backref="host")
 
-    plugin_assignments = relationship("PluginAssignment",
-        cascade="all, delete, delete-orphan", backref="host")
-
-    schedule_host_assignments = relationship("ScheduleHostAssignment",
+    check_results = relationship("PluginResult",
         cascade="all, delete, delete-orphan", backref="host")
 
     def __repr__(self):
@@ -45,6 +42,9 @@ class HostGroup(Base):
     name = Column(String)
     description = Column(Text)
 
+    check_assignments = relationship("CheckAssignment",
+        cascade="all, delete, delete-orphan", backref="host_group")
+
     group_assignments = relationship("HostGroupAssignment",
         cascade="all, delete, delete-orphan", backref="host_group",
         foreign_keys="HostGroupAssignment.host_group_id")
@@ -52,9 +52,6 @@ class HostGroup(Base):
     group_membership = relationship("HostGroupAssignment",
         cascade="all, delete, delete-orphan", backref="member_host_group",
         foreign_keys="HostGroupAssignment.member_host_group_id")
-
-    plugin_assignments = relationship("PluginAssignment",
-        cascade="all, delete, delete-orphan", backref="host_group")
 
     @property
     def member_hosts(self):
@@ -93,8 +90,8 @@ class HostGroupAssignment(Base):
                 self.member_host_id, self.member_host_group_id,
                 self.host_group_id))
 
-class CheckResult(Base):
-    __tablename__ = "check_results"
+class PluginResult(Base):
+    __tablename__ = "plugin_results"
 
     id = Column(Integer, primary_key=True)
     host_id = Column(Integer, ForeignKey("hosts.id"))
@@ -104,43 +101,8 @@ class CheckResult(Base):
     timestamp = Column(DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return ("<CheckResult host_id: {0}, plugin_id: {1}, timestamp: {2}"
+        return ("<PluginResult host_id: {0}, plugin_id: {1}, timestamp: {2}"
             ">".format(self.host_id, self.plugin_id, self.timestamp))
-
-class PluginAssignment(Base):
-    __tablename__ = "plugin_assignment"
-
-    id = Column(Integer, primary_key=True)
-    plugin_id = Column(String, ForeignKey("plugins.id"))
-    host_id = Column(Integer, ForeignKey("hosts.id"))
-    host_group_id = Column(Integer, ForeignKey("host_groups.id"))
-
-    def __repr__(self):
-        return ("<PluginAssignment plugin_id: {0}, host_id: {1}, "
-            "host_group_id: {2}>".format(self.plugin_id, self.host_id,
-                self.host_group_id))
-
-class SchedulePluginAssignment(Base):
-    __tablename__ = "schedule_plugin_assignments"
-
-    id = Column(Integer, primary_key=True)
-    plugin_id = Column(String, ForeignKey("plugins.id"))
-    schedule_id = Column(Integer, ForeignKey("schedules.id"))
-
-    def __repr__(self):
-        return ("<SchedulePluginAssignment plugin_id: {0}, schedule_id: "
-            "{1}>".format(self.plugin_id, self.schedule_id))
-
-class ScheduleHostAssignment(Base):
-    __tablename__ = "schedule_host_assignments"
-
-    id = Column(Integer, primary_key=True)
-    schedule_id = Column(Integer, ForeignKey("schedules.id"))
-    host_id = Column(Integer, ForeignKey("hosts.id"))
-
-    def __repr__(self):
-        return "<ScheduleHostAssignment schedule_id: {0}, host_id: {1}"\
-        .format(self.schedule_id, self.host_id)
 
 class Plugin(Base):
     __tablename__ = "plugins"
@@ -151,13 +113,10 @@ class Plugin(Base):
     version = Column(Float)
     archive_file = Column(String)
 
-    check_results = relationship("CheckResult",
+    check_results = relationship("PluginResult",
         cascade="all, delete, delete-orphan", backref="plugin")
 
-    plugin_assignments = relationship("PluginAssignment",
-        cascade="all, delete, delete-orphan", backref="plugin")
-
-    schedule_plugin_assignments = relationship("SchedulePluginAssignment",
+    check_plugins = relationship("CheckPlugin",
         cascade="all, delete, delete-orphan", backref="plugin")
 
     def __repr__(self):
@@ -175,11 +134,8 @@ class Schedule(Base):
     intervals = relationship("ScheduleInterval",
         cascade="all, delete, delete-orphan", backref="schedule")
 
-    host_assignments = relationship("ScheduleHostAssignment",
-        cascade="all, delete, delete-orphan", backref="schedule")
-
-    plugin_assignments = relationship("SchedulePluginAssignment",
-        cascade="all, delete, delete-orphan", backref="schedule")
+    schedule_checks = relationship("ScheduleCheck",
+        cascade="all, delete, delete-orphan", backref="schedules")
 
     def __repr__(self):
         return "<Schedule id: {0}, name: {1}>".format(self.id, self.name)
@@ -196,7 +152,60 @@ class ScheduleInterval(Base):
         return ("<ScheduleInterval schedule_id: {0}, start_timestamp: {1},"
             " interval_seconds: {2}>".format(self.schedule_id,
                 self.start_timestamp, self.interval_seconds))
-        
+
+class Check(Base):
+    __tablename__ = "checks"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+
+    check_assignments = relationship("CheckAssignment",
+        cascade="all, delete, delete-orphan", backref="check")
+
+    check_plugins = relationship("CheckPlugin",
+        cascade="all, delete, delete-orphan", backref="check")
+
+    schedule_checks = relationship("ScheduleCheck",
+        cascade="all, delete, delete-orphan", backref="check")
+
+    def __repr__(self):
+        return ("<Check id: {0}, name: {1}>".format(self.id, self.name))
+
+class CheckPlugin(Base):
+    __tablename__ = "check_plugins"
+
+    id = Column(Integer, primary_key=True)
+    check_id = Column(Integer, ForeignKey("checks.id"))
+    plugin_id = Column(Integer, ForeignKey("plugins.id"))
+
+    def __repr__(self):
+        return ("<CheckPlugin check_id: {0}, plugin_id: {1}>".format(
+            self.check_id, self.plugin_id))
+
+class CheckAssignment(Base):
+    __tablename__ = "check_assignments"
+
+    id = Column(Integer, primary_key=True)
+    check_id = Column(Integer, ForeignKey("checks.id"))
+    host_id = Column(Integer, ForeignKey("hosts.id"))
+    host_group_id = Column(Integer, ForeignKey("host_groups.id"))
+
+    def __repr__(self):
+        return ("<CheckAssignment check_id: {0}, host_id: {1}, "
+            "host_group_id: {2}>".format(self.check_id, self.host_id,
+            self.host_group_id))
+
+class ScheduleCheck(Base):
+    __tablename__ = "schedule_checks"
+
+    id = Column(Integer, primary_key=True)
+    check_id = Column(Integer, ForeignKey("checks.id"))
+    schedule_id = Column(Integer, ForeignKey("schedules.id"))
+
+    def __repr__(self):
+        return ("<ScheduleCheck check_id: {0}, schedule_id: {1}>".format(
+            self.check_id, self.schedule_id))
+
 def create_all():
     Base.metadata.create_all(engine)
 
