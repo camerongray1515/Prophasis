@@ -1,6 +1,6 @@
 from flask import Flask, render_template, abort
 from api import api
-from models import Host, HostGroup, HostGroupAssignment, Plugin
+from models import Host, HostGroup, HostGroupAssignment, Plugin, Check
 
 web = Flask(__name__)
 web.register_blueprint(api)
@@ -105,8 +105,10 @@ def scheduling_add():
 
 @web.route("/checks/")
 def checks():
+    checks = Check.query.all()
+
     return render_template("checks.html", nav_section="checks",
-        section="Checks", title="Manage Checks")
+        section="Checks", title="Manage Checks", checks=checks)
 
 @web.route("/checks/add/")
 def checks_add():
