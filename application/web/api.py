@@ -6,9 +6,11 @@ import shutil
 from flask import Blueprint, jsonify, request
 from responses import error_response
 from models import create_all, session, Host, HostGroup, HostGroupAssignment,\
-    Plugin, CheckPlugin, CheckAssignment, Check
+    Plugin, CheckPlugin, CheckAssignment, Check, Schedule, ScheduleInterval,\
+    ScheduleCheck
 from sqlalchemy import or_, and_
 from config import get_config, get_config_value
+from datetime import datetime
 api = Blueprint("api", __name__, url_prefix="/api")
 
 config = get_config()
@@ -93,7 +95,7 @@ def host_groups_add():
 
     host_group = HostGroup(name=name, description=description)
     session.add(host_group)
-    session.commit()
+    session.flush()
 
     for host in hosts:
         a = HostGroupAssignment(host_group_id=host_group.id,
@@ -270,14 +272,102 @@ def plugins_delete():
 @api.route("/scheduling/add/", methods=["POST"])
 def scheduling_add():
     name = request.form.get("name")
+    description = request.form.get("description")
     interval_starts = request.form.getlist("interval-start[]")
     interval_values = request.form.getlist("interval-value[]")
     interval_units = request.form.getlist("interval-unit[]")
-    hosts = request.form.getlist("hosts[]")
-    host_groups = request.form.getlist("host-groups[]")
+    checks = request.form.getlist("checks[]")
 
     if not name:
         return error_response("You must supply a name for this schedule")
+
+    s = Schedule(name=name, description=description)
+    session.add(s)
+    session.flush()
+
+    for check_id in checks:
+        sc = ScheduleCheck(check_id=check_id, schedule_id=s.id)
+        session.add(sc)
+
+    for interval in zip(interval_starts, interval_values, interval_units):
+        try:
+            start_timestamp = datetime.strptime(interval[0], "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            return error_response("Start timestamp for interval was not "
+                "understood")
+        si = ScheduleInterval(schedule_id=s.id,
+            start_timestamp=start_timestamp)
+        try:
+            si.set_interval(int(interval[1]), interval[2])
+        except ValueError:
+            return error_response("Interval must be an integer")
+        session.add(si)
+
+    session.commit()
+
+    return jsonify(success=True,
+        message="Schedule has been added successfully")
+
+@api.route("/scheduling/edit/", methods=["POST"])
+def scheduling_edit():
+    schedule_id = request.form.get("schedule-id")
+    name = request.form.get("name")
+    description = request.form.get("description")
+    interval_starts = request.form.getlist("interval-start[]")
+    interval_values = request.form.getlist("interval-value[]")
+    interval_units = request.form.getlist("interval-unit[]")
+    checks = request.form.getlist("checks[]")
+
+    if not name:
+        return error_response("You must supply a name for this schedule")
+
+    s = Schedule.query.get(schedule_id)
+    if not s:
+        abort(404)
+
+    s.name = name
+    s.description = description
+
+    ScheduleCheck.query.filter(ScheduleCheck.schedule_id == s.id).delete()
+    for check_id in checks:
+        sc = ScheduleCheck(check_id=check_id, schedule_id=s.id)
+        session.add(sc)
+
+    ScheduleInterval.query.filter(
+        ScheduleInterval.schedule_id == s.id).delete()
+    for interval in zip(interval_starts, interval_values, interval_units):
+        try:
+            start_timestamp = datetime.strptime(interval[0], "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            return error_response("Start timestamp for interval was not "
+                "understood")
+        si = ScheduleInterval(schedule_id=s.id,
+            start_timestamp=start_timestamp)
+        try:
+            si.set_interval(int(interval[1]), interval[2])
+        except ValueError:
+            return error_response("Interval must be an integer")
+        session.add(si)
+
+    session.commit()
+
+    return jsonify(success=True,
+        message="Schedule has been saved successfully")
+
+@api.route("/scheduling/delete/", methods=["POST"])
+def scheduling_delete():
+    schedule_id = request.form.get("schedule-id")
+
+    s = Schedule.query.get(schedule_id)
+    if not s:
+        return error_response("The schedule you are trying to delete does "
+            "not exist")
+
+    session.delete(s)
+    session.commit()
+
+    return jsonify(success=True, message="Schedule has been deleted "
+        "successfully!")
 
 @api.route("/checks/add/", methods=["POST"])
 def checks_add():
@@ -292,7 +382,7 @@ def checks_add():
 
     c = Check(name=name, description=description)
     session.add(c)
-    session.commit()
+    session.flush()
 
     for host_id in hosts:
         ca = CheckAssignment(host_id=host_id, check_id=c.id)
@@ -345,7 +435,7 @@ def checks_edit():
     c.name = name
     c.description = description
 
-    session.commit()
+    session.flush()
 
     CheckAssignment.query.filter(CheckAssignment.check_id == check_id).delete()
     CheckPlugin.query.filter(CheckPlugin.check_id == check_id).delete()

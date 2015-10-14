@@ -10,7 +10,7 @@
     {% if method == "add" %}
         <li><a href="/scheduling/add/">Add Scheduling</a></li>
     {% elif method == "edit" %}
-        <li><a href="/scheduling/edit/{{ schedule.id }}/">Edit Scheduling</a></li>
+        <li><a href="/scheduling/edit/{{ schedule.id }}/">Edit Schedule</a></li>
     {% endif %}
 {% endblock %}
 
@@ -38,30 +38,19 @@
                             </div>
                         </div>
 
-                        <script id="interval-template" type="text/x-handlebars-template">
-                            <tr>
-                                <td><label class="control-label">Starting from</label></td>
-                                <td>
-                                    <input type="text" name="interval-start[]" class="form-control interval-start" placeholder="YYYY-MM-DD hh:mm:ss">
-                                </div>
-                                </td>
-                                <td><label class="control-label">execute every</label></td>
-                                <td>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control col-md-3" name="interval-value[]">
-                                        <div class="input-group-addon interval-unit-select-container">
-                                        <select class="form-control" name="interval-unit[]">
-                                            <option value="second">Seconds</option>
-                                            <option value="minutes">Minutes</option>
-                                            <option value="hour">Hours</option>
-                                            <option value="day">Days</option>
-                                            <option value="week">Weeks</option>
-                                        </select>
-                                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Description</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" name="description" value="{{ schedule.description }}">
                                     </div>
-                                </td>
-                                <td><button class="btn btn-danger remove-interval"><i class="fa fa-times"></i></button></td>
-                            </tr>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script id="interval-template" type="text/x-handlebars-template">
+                            {% include "blocks/schedule-interval-row.html" %}
                         </script>
 
                         <div class="row col-md-offset-2">
@@ -70,6 +59,9 @@
                                     <tbody>
                                     </tbody>                                   
                                     <tfoot>
+                                        {% for interval in schedule_intervals %}
+                                            {% include "blocks/schedule-interval-row.html" %}
+                                        {% endfor %}
                                         <tr>
                                             <td></td>
                                             <td><button class="btn btn-success" id="btn-add-interval">Add Interval</button></td>
@@ -80,49 +72,17 @@
                         </div>
 
                         <div class="row col-md-offset-2 padding-bottom-md">
-                            <h1>TODO: Replace stuff below with checkbox list of Checks</h1>
-                            <div class="col-md-6">
-                                <label>Member Hosts</label>
-                                <div class="checkbox padding-bottom-sm">
-                                    <label>
-                                        <input type="checkbox" class="toggle-view" data-toggle-id="hosts-list">
-                                        All Hosts
-                                    </label>
-                                </div>
+                            <div class="col-md-12">
+                                <label>Execute the following checks</label>
                                 <div id="hosts-list">
-                                    <input type="text" class="form-control auto-filter" data-table-id="hosts-table" placeholder="Search">
+                                    <input type="text" class="form-control auto-filter" data-table-id="checks-table" placeholder="Search">
                                     <div class="scroll-area">
-                                        <table class="table table-striped" id="hosts-table">
+                                        <table class="table table-striped" id="checks-table">
                                             <tbody>
-                                                {% for host in hosts %}
+                                                {% for check in checks %}
                                                     <tr>
-                                                        <td><input type="checkbox" name="hosts[]" value="{{ host.id }}" {% if host.id in member_host_ids %}checked{% endif %}></td>
-                                                        <td class="filter-text">{{ host.name }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <label>Member Groups</label>
-                                <div class="checkbox padding-bottom-sm">
-                                    <label>
-                                        <input type="checkbox" class="toggle-view" data-toggle-id="groups-list">
-                                        All Groups
-                                    </label>
-                                </div>
-                                <input type="text" class="form-control auto-filter" data-table-id="groups-table" placeholder="Search">
-                                <div id="hosts-list">
-                                    <div class="scroll-area">
-                                        <table class="table table-striped" id="groups-table">
-                                            <tbody>
-                                                {% for group in groups %}
-                                                    <tr>
-                                                        <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}" {% if group.id in member_schedule_ids %}checked{% endif %}></td>
-                                                        <td class="filter-text">{{ group.name }}</td>
+                                                        <td><input type="checkbox" name="checks[]" value="{{ check.id }}" {% if check.id in member_check_ids %}checked{% endif %}></td>
+                                                        <td class="filter-text">{{ check.name }}</td>
                                                     </tr>
                                                 {% endfor %}
                                             </tbody>

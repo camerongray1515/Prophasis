@@ -1,7 +1,8 @@
 from flask import Flask, render_template, abort
 from api import api
 from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
-    CheckAssignment, CheckPlugin
+    CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval
+from datetime import datetime
 
 web = Flask(__name__)
 web.register_blueprint(api)
@@ -92,17 +93,44 @@ def plugins_install():
 
 @web.route("/scheduling/")
 def scheduling():
+    schedules = Schedule.query.all()
+
     return render_template("scheduling.html", nav_section="scheduling",
-        section="Scheduling", title="Manage Schedules")
+        section="Scheduling", title="Manage Schedules", schedules=schedules)
 
 @web.route("/scheduling/add/")
 def scheduling_add():
-    hosts = Host.query.all()
-    groups = HostGroup.query.all()
+    checks = Check.query.all()
+
+    iso_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     return render_template("scheduling-form.html", nav_section="scheduling",
-        section="Scheduling", title="Add Schedule", method="add", hosts=hosts,
-        groups=groups)
+        section="Scheduling", title="Add Schedule", method="add",
+        checks=checks, iso_datetime=iso_datetime)
+
+@web.route("/scheduling/edit/<schedule_id>/")
+def scheduling_edit(schedule_id):
+    schedule = Schedule.query.get(schedule_id)
+    if not schedule:
+        abort(404)
+
+    checks = Check.query.all()
+    schedule_checks = ScheduleCheck.query.filter(
+        ScheduleCheck.schedule_id == schedule_id)
+    schedule_intervals = ScheduleInterval.query.filter(
+        ScheduleInterval.schedule_id == schedule_id)
+
+    member_check_ids = []
+    for check in schedule_checks:
+        member_check_ids.append(check.check_id)
+
+    iso_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    return render_template("scheduling-form.html", nav_section="scheduling",
+        section="Scheduling", title="Edit Schedule", method="edit",
+        checks=checks, iso_datetime=iso_datetime, schedule=schedule,
+        schedule_intervals=schedule_intervals,
+        member_check_ids=member_check_ids)
 
 @web.route("/checks/")
 def checks():

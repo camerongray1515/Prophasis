@@ -128,8 +128,7 @@ class Schedule(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    all_hosts = Column(Boolean)
-    all_plugins = Column(Boolean)
+    description = Column(Text)
 
     intervals = relationship("ScheduleInterval",
         cascade="all, delete, delete-orphan", backref="schedule")
@@ -148,6 +147,52 @@ class ScheduleInterval(Base):
     start_timestamp = Column(DateTime)
     interval_seconds = Column(Integer)
 
+    def set_interval(self, value, unit):
+        if unit == "second":
+            self.interval_seconds = value
+        elif unit == "minute":
+            self.interval_seconds = value * 60
+        elif unit == "hour":
+            self.interval_seconds = value * 60 * 60
+        elif unit == "day":
+            self.interval_seconds = value * 60 * 60 * 24
+        elif unit == "week":
+            self.interval_seconds = value * 60 * 60 * 24 * 7
+        else:
+            raise ValueError("Unit is not recognised")
+
+    def _interval(self):
+        unit_dividers = {
+            "minute": 60,
+            "hour": 60 * 60,
+            "day": 60 * 60 * 24,
+            "week": 60 * 60 * 24 * 7
+        }
+
+        previous_unit_interval = ()
+        for unit in ["minute", "hour", "day", "week"]:
+            if self.interval_seconds % unit_dividers[unit] == 0:
+                divided_value = int(
+                    self.interval_seconds / unit_dividers[unit])
+                previous_unit_interval = (divided_value, unit)
+            else:
+                return previous_unit_interval
+
+        return (self.interval_seconds, "second")
+
+    @property
+    def interval_value(self):
+        return self._interval()[0]
+
+    @property
+    def interval_unit(self):
+        return self._interval()[1]
+
+    @property
+    def start_iso_datetime(self):
+        return self.start_timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    
+    
     def __repr__(self):
         return ("<ScheduleInterval schedule_id: {0}, start_timestamp: {1},"
             " interval_seconds: {2}>".format(self.schedule_id,
