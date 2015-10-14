@@ -1,6 +1,7 @@
 from flask import Flask, render_template, abort
 from api import api
-from models import Host, HostGroup, HostGroupAssignment, Plugin, Check
+from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
+    CheckAssignment, CheckPlugin
 
 web = Flask(__name__)
 web.register_blueprint(api)
@@ -119,6 +120,39 @@ def checks_add():
     return render_template("check-form.html", nav_section="checks",
         section="Checks", title="Add Check", hosts=hosts, method="add",
         host_groups=host_groups, plugins=plugins)
+
+@web.route("/checks/edit/<check_id>/")
+def checks_edit(check_id):
+    check = Check.query.get(check_id)
+    if not check:
+        abort(404)
+
+    assignments = CheckAssignment.query.filter(
+        CheckAssignment.check_id == check_id)
+    check_plugins = CheckPlugin.query.filter(CheckPlugin.check_id == check_id)
+
+    assigned_host_ids = []
+    assigned_host_group_ids = []
+    for assignment in assignments:
+        if assignment.host_id:
+            assigned_host_ids.append(assignment.host_id)
+        elif assignment.host_group_id:
+            assigned_host_group_ids.append(assignment.host_group_id)
+
+    assigned_plugin_ids = []
+    for check_plugin in check_plugins:
+        assigned_plugin_ids.append(check_plugin.plugin_id)
+
+    hosts = Host.query.all()
+    host_groups = HostGroup.query.all()
+    plugins = Plugin.query.all()
+
+    return render_template("check-form.html", nav_section="checks",
+        section="Checks", title="Edit Check", hosts=hosts, method="edit",
+        host_groups=host_groups, plugins=plugins, check=check,
+        assigned_host_ids=assigned_host_ids,
+        assigned_host_group_ids=assigned_host_group_ids,
+        assigned_plugin_ids=assigned_plugin_ids)
 
 if __name__ == "__main__":
     web.run(debug=True)

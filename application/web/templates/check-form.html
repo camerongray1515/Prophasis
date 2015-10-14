@@ -59,14 +59,14 @@
                                             {% for group in host_groups %}
                                                 <tr>
                                                     <td title="Host Group"><i class="fa fa-object-group"></i></td>
-                                                    <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}" {% if group.id in member_host_group_ids %}checked{% endif %}></td>
+                                                    <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}" {% if group.id in assigned_host_group_ids %}checked{% endif %}></td>
                                                     <td class="filter-text">{{ group.name }}</td>
                                                 </tr>
                                             {% endfor %}
                                             {% for host in hosts %}
                                                 <tr>
                                                     <td title="Host"><i class="fa fa-desktop"></i></td>
-                                                    <td><input type="checkbox" name="hosts[]" value="{{ host.id }}" {% if host.id in member_host_ids %}checked{% endif %}></td>
+                                                    <td><input type="checkbox" name="hosts[]" value="{{ host.id }}" {% if host.id in assigned_host_ids %}checked{% endif %}></td>
                                                     <td class="filter-text">{{ host.name }}</td>
                                                 </tr>
                                             {% endfor %}
@@ -83,7 +83,7 @@
                                         <tbody>
                                             {% for plugin in plugins %}
                                                 <tr>
-                                                    <td><input type="checkbox" name="plugins[]" value="{{ plugin.id }}" {% if plugin.id in member_plugin_ids %}checked{% endif %}></td>
+                                                    <td><input type="checkbox" name="plugins[]" value="{{ plugin.id }}" {% if plugin.id in assigned_plugin_ids %}checked{% endif %}></td>
                                                     <td class="filter-text">{{ plugin.name }}</td>
                                                 </tr>
                                             {% endfor %}
