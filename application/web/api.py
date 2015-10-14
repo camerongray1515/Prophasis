@@ -324,3 +324,43 @@ def checks_delete():
 
     return jsonify(success=True,
         message="Check has been deleted successfully!")
+
+@api.route("/checks/edit/", methods=["POST"])
+def checks_edit():
+    name = request.form.get("name")
+    description = request.form.get("description")
+    host_groups = request.form.getlist("host-groups[]")
+    hosts = request.form.getlist("hosts[]")
+    plugins = request.form.getlist("plugins[]")
+    check_id = request.form.get("check-id")
+
+    if not name:
+        return error_response("You must supply a name for this check")
+
+    c = Check.query.get(check_id)
+
+    if not c:
+        return error_response("Check could not be found!")
+
+    c.name = name
+    c.description = description
+
+    session.commit()
+
+    CheckAssignment.query.filter(CheckAssignment.check_id == check_id).delete()
+    CheckPlugin.query.filter(CheckPlugin.check_id == check_id).delete()
+    for host_id in hosts:
+        ca = CheckAssignment(host_id=host_id, check_id=c.id)
+        session.add(ca)
+
+    for host_group_id in host_groups:
+        ca = CheckAssignment(host_group_id=host_group_id, check_id=c.id)
+        session.add(ca)
+
+    for plugin_id in plugins:
+        cp = CheckPlugin(plugin_id=plugin_id, check_id=c.id)
+        session.add(cp)
+
+    session.commit()
+
+    return jsonify(success=True, message="Check has been saved successfully!")
