@@ -309,3 +309,18 @@ def checks_add():
     session.commit()
 
     return jsonify(success=True, message="Check has been added successfully!")
+
+@api.route("/checks/delete/", methods=["POST"])
+def checks_delete():
+    check_id = request.form.get("check-id")
+    check = Check.query.get(check_id)
+
+    if not check:
+        return error_response("The check you are trying to delete could not "
+            "be found")
+
+    session.delete(check)
+    session.commit()
+
+    return jsonify(success=True,
+        message="Check has been deleted successfully!")
