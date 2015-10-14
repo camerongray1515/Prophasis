@@ -103,5 +103,20 @@ def scheduling_add():
         section="Scheduling", title="Add Schedule", method="add", hosts=hosts,
         groups=groups)
 
+@web.route("/checks/")
+def checks():
+    return render_template("checks.html", nav_section="checks",
+        section="Checks", title="Manage Checks")
+
+@web.route("/checks/add/")
+def checks_add():
+    hosts = Host.query.all()
+    host_groups = HostGroup.query.all()
+    plugins = Plugin.query.all()
+
+    return render_template("check-form.html", nav_section="checks",
+        section="Checks", title="Add Check", hosts=hosts, method="add",
+        host_groups=host_groups, plugins=plugins)
+
 if __name__ == "__main__":
     web.run(debug=True)

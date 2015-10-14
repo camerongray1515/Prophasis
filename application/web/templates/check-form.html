@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% if check is not defined %}
+    {% set check = None %}
+{% endif %}
+
+{% block breadcrumbs %}
+    <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
+    <li><a href="/checks/">Checks</a></li>
+    {% if method == "add" %}
+        <li><a href="/checks/add/">Add Check</a></li>
+    {% elif method == "edit" %}
+        <li><a href="/checks/edit/{{ check.id }}/">Edit Check</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border"><h3 class="box-title">
+                    {% if method == "add" %}
+                        Add Check
+                    {% elif method == "edit" %}
+                        Edit Check
+                    {% endif %}
+                    </h3></div>
+                <div class="box-body">
+                    <form class="form-horizontal auto-post" method="POST" action="/api/checks/{{ method }}/">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Name</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" name="name" value="{{ check.name }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Description</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" name="description" value="{{ check.description }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row col-md-offset-2 padding-bottom-md">
+                            <div class="col-md-6">
+                                <label>Member Hosts/Groups</label>
+                                <input type="text" class="form-control auto-filter" data-table-id="hosts-groups-table" placeholder="Search">
+                                <div class="scroll-area">
+                                    <table class="table table-striped" id="hosts-groups-table">
+                                        <tbody>
+                                            {% for group in host_groups %}
+                                                <tr>
+                                                    <td title="Host Group"><i class="fa fa-object-group"></i></td>
+                                                    <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}" {% if group.id in member_host_group_ids %}checked{% endif %}></td>
+                                                    <td class="filter-text">{{ group.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            {% for host in hosts %}
+                                                <tr>
+                                                    <td title="Host"><i class="fa fa-desktop"></i></td>
+                                                    <td><input type="checkbox" name="hosts[]" value="{{ host.id }}" {% if host.id in member_host_ids %}checked{% endif %}></td>
+                                                    <td class="filter-text">{{ host.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label>Plugins</label>
+                                <input type="text" class="form-control auto-filter" data-table-id="plugins-table" placeholder="Search">
+                                <div class="scroll-area">
+                                    <table class="table table-striped" id="plugins-table">
+                                        <tbody>
+                                            {% for plugin in plugins %}
+                                                <tr>
+                                                    <td><input type="checkbox" name="plugins[]" value="{{ plugin.id }}" {% if plugin.id in member_plugin_ids %}checked{% endif %}></td>
+                                                    <td class="filter-text">{{ plugin.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-10 col-md-offset-2">
+                                {% if method == "add" %}
+                                    <button class="btn btn-primary">Add Check</button>
+                                {% elif method == "edit" %}
+                                    <input type="hidden" name="check-id" value="{{ check.id }}">
+                                    <button class="btn btn-primary">Save Check</button>
+                                {% endif %}
+                                <a href="/checks/" class="btn btn-default">Back...</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
