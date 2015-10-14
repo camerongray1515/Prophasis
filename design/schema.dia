@@ -1714,16 +1714,16 @@
         <dia:point val="18.575,13.5875"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="18.525,13.5375;24.13,17.2375"/>
+        <dia:rectangle val="18.525,13.5375;26.055,18.0375"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="18.575,13.5875"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="5.5049999999999999"/>
+        <dia:real val="7.4299999999999997"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="3.6000000000000001"/>
+        <dia:real val="4.4000000000000004"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#checks#</dia:string>
@@ -1842,6 +1842,29 @@
           </dia:attribute>
           <dia:attribute name="type">
             <dia:string>#STRING#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="value">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+        </dia:composite>
+        <dia:composite type="umlattribute">
+          <dia:attribute name="name">
+            <dia:string>#description#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#TEXT#</dia:string>
           </dia:attribute>
           <dia:attribute name="value">
             <dia:string>##</dia:string>
@@ -2457,15 +2480,15 @@
     </dia:object>
     <dia:object type="Standard - ZigZagLine" version="1" id="O18">
       <dia:attribute name="obj_pos">
-        <dia:point val="24.08,15.4875"/>
+        <dia:point val="26.005,15.4875"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="18.275,15.4375;25.18,25.161"/>
+        <dia:rectangle val="18.275,15.4375;27.105,25.161"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="24.08,15.4875"/>
-        <dia:point val="25.13,15.4875"/>
-        <dia:point val="25.13,20.2993"/>
+        <dia:point val="26.005,15.4875"/>
+        <dia:point val="27.055,15.4875"/>
+        <dia:point val="27.055,20.2993"/>
         <dia:point val="18.325,20.2993"/>
         <dia:point val="18.325,25.111"/>
         <dia:point val="19.375,25.111"/>
@@ -2487,15 +2510,15 @@
     </dia:object>
     <dia:object type="Standard - ZigZagLine" version="1" id="O19">
       <dia:attribute name="obj_pos">
-        <dia:point val="24.08,15.4875"/>
+        <dia:point val="26.005,15.4875"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="24.03,15.4375;37.025,17.111"/>
+        <dia:rectangle val="25.955,15.4375;37.025,17.111"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="24.08,15.4875"/>
-        <dia:point val="30.5275,15.4875"/>
-        <dia:point val="30.5275,17.061"/>
+        <dia:point val="26.005,15.4875"/>
+        <dia:point val="31.49,15.4875"/>
+        <dia:point val="31.49,17.061"/>
         <dia:point val="36.975,17.061"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
@@ -2539,14 +2562,14 @@
     </dia:object>
     <dia:object type="Standard - ZigZagLine" version="1" id="O21">
       <dia:attribute name="obj_pos">
-        <dia:point val="44.8405,16.561"/>
+        <dia:point val="44.79,17.861"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="44.7905,8.65;47.245,16.611"/>
+        <dia:rectangle val="44.74,8.65;47.245,17.911"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="44.8405,16.561"/>
-        <dia:point val="47.195,16.561"/>
+        <dia:point val="44.79,17.861"/>
+        <dia:point val="47.195,17.861"/>
         <dia:point val="47.195,8.7"/>
         <dia:point val="46.145,8.7"/>
       </dia:attribute>
@@ -2559,7 +2582,7 @@
         <dia:boolean val="true"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O16" connection="14"/>
+        <dia:connection handle="0" to="O16" connection="13"/>
         <dia:connection handle="1" to="O5" connection="9"/>
       </dia:connections>
     </dia:object>

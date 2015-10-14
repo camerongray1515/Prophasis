@@ -158,6 +158,7 @@ class Check(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    description = Column(Text)
 
     check_assignments = relationship("CheckAssignment",
         cascade="all, delete, delete-orphan", backref="check")

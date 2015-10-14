@@ -6,7 +6,7 @@ import shutil
 from flask import Blueprint, jsonify, request
 from responses import error_response
 from models import create_all, session, Host, HostGroup, HostGroupAssignment,\
-    Plugin
+    Plugin, CheckPlugin, CheckAssignment, Check
 from sqlalchemy import or_, and_
 from config import get_config, get_config_value
 api = Blueprint("api", __name__, url_prefix="/api")
@@ -279,4 +279,33 @@ def scheduling_add():
     if not name:
         return error_response("You must supply a name for this schedule")
 
-    
+@api.route("/checks/add/", methods=["POST"])
+def checks_add():
+    name = request.form.get("name")
+    description = request.form.get("description")
+    host_groups = request.form.getlist("host-groups[]")
+    hosts = request.form.getlist("hosts[]")
+    plugins = request.form.getlist("plugins[]")
+
+    if not name:
+        return error_response("You must supply a name for this check")
+
+    c = Check(name=name, description=description)
+    session.add(c)
+    session.commit()
+
+    for host_id in hosts:
+        ca = CheckAssignment(host_id=host_id, check_id=c.id)
+        session.add(ca)
+
+    for host_group_id in host_groups:
+        ca = CheckAssignment(host_group_id=host_group_id, check_id=c.id)
+        session.add(ca)
+
+    for plugin_id in plugins:
+        cp = CheckPlugin(plugin_id=plugin_id, check_id=c.id)
+        session.add(cp)
+
+    session.commit()
+
+    return jsonify(success=True, message="Check has been added successfully!")
