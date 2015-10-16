@@ -212,6 +212,24 @@ class Check(Base):
     name = Column(String)
     description = Column(Text)
 
+    def flatten(self):
+        """
+            Returns tuples of (host, plugin) for every entry in the check
+        """
+        flattened = []
+        for assignment in self.check_assignments:
+            hosts = []
+            if assignment.host:
+                hosts = [assignment.host]
+            else:
+                hosts = assignment.host_group.member_hosts
+
+            for host in hosts:
+                for check_plugin in self.check_plugins:
+                    flattened.append((host, check_plugin.plugin))
+
+        return flattened
+
     check_assignments = relationship("CheckAssignment",
         cascade="all, delete, delete-orphan", backref="check")
 

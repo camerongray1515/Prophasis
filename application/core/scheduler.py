@@ -7,7 +7,7 @@ from config import get_config, get_config_value
 config = get_config()
 scheduler_delay = get_config_value(config, "scheduler_delay")
 
-def scheduler_loop():
+def scheduler_loop(callback):
     while True:
         current_timestamp = datetime.now()
 
@@ -26,8 +26,7 @@ def scheduler_loop():
             ScheduleInterval.last_executed == None))
 
         for i in intervals:
-            print("Dispatching interval for schedule: {0} at {1}".format(
-                i.schedule.name, current_timestamp.utcnow()))
+            callback(i.schedule)
             (num_iterations, execute_next) = walk_execute_next(i.execute_next,
                 i.interval_seconds, current_timestamp)
             i.execute_next = execute_next
@@ -36,7 +35,6 @@ def scheduler_loop():
         session.commit()
 
         time.sleep(scheduler_delay)
-
 
 def walk_execute_next(execute_next, interval_seconds, current_timestamp):
     interval_delta = timedelta(0, interval_seconds)
