@@ -1,11 +1,22 @@
+import os
+import sys
+import json
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime,\
     Float, Boolean, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship
 from datetime import datetime
 
-# TODO: Move this into some sort of file
-connection_string = "sqlite:///db.sqlite"
+# Read the connection string from the config file
+config_file_path = os.path.join(sys.path[0], "config.json")
+
+try:
+    with open(config_file_path, "r") as c:
+        connection_string = json.load(c)["db_connection_string"]
+except (FileNotFoundError, ValueError, KeyError) as e:
+    raise SystemExit("Connection string could not be retrieved from the "
+        "config file, did you run setup? Error: {0}".format(str(e)))
+
 engine = create_engine(connection_string)
 Session = sessionmaker(bind=engine)
 session = scoped_session(Session)
