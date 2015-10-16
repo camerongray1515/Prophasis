@@ -146,6 +146,8 @@ class ScheduleInterval(Base):
     schedule_id = Column(Integer, ForeignKey("schedules.id"))
     start_timestamp = Column(DateTime)
     interval_seconds = Column(Integer)
+    execute_next = Column(DateTime)
+    last_executed = Column(DateTime)
 
     def set_interval(self, value, unit):
         if unit == "second":
