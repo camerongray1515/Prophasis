@@ -251,7 +251,7 @@ def plugins_install():
 @api.route("/plugins/delete/", methods=["POST"])
 def plugins_delete():
     plugin_id = request.form.get("plugin-id")
-    
+
     p = Plugin.query.get(plugin_id)
     if not p:
         return error_response("Plugin does not exist")

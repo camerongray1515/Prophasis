@@ -6,17 +6,11 @@ from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime,\
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship
 from datetime import datetime
+from config import get_config, get_config_value
 
-# Read the connection string from the config file
-config_file_path = os.path.join(sys.path[0], "config.json")
+config = get_config()
 
-try:
-    with open(config_file_path, "r") as c:
-        connection_string = json.load(c)["db_connection_string"]
-except (FileNotFoundError, ValueError, KeyError) as e:
-    raise SystemExit("Connection string could not be retrieved from the "
-        "config file, did you run setup? Error: {0}".format(str(e)))
-
+connection_string = get_config_value(config, "db_connection_string")
 engine = create_engine(connection_string)
 Session = sessionmaker(bind=engine)
 session = scoped_session(Session)
@@ -182,7 +176,7 @@ class ScheduleInterval(Base):
             "week": 60 * 60 * 24 * 7
         }
 
-        previous_unit_interval = ()
+        previous_unit_interval = (self.interval_seconds, "second")
         for unit in ["minute", "hour", "day", "week"]:
             if self.interval_seconds % unit_dividers[unit] == 0:
                 divided_value = int(
@@ -204,8 +198,8 @@ class ScheduleInterval(Base):
     @property
     def start_iso_datetime(self):
         return self.start_timestamp.strftime("%Y-%m-%d %H:%M:%S")
-    
-    
+
+
     def __repr__(self):
         return ("<ScheduleInterval schedule_id: {0}, start_timestamp: {1},"
             " interval_seconds: {2}>".format(self.schedule_id,

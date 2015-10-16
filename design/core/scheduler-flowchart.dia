@@ -312,7 +312,7 @@ process#</dia:string>
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
-            <dia:string>#Is start_timestamp &lt;
+            <dia:string>#Is execute_next &lt;
 current_timestamp#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
@@ -1009,12 +1009,12 @@ on all schedules that were run#</dia:string>
         <dia:point val="20,33.975"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="2.2,2.1;20.05,34.025"/>
+        <dia:rectangle val="13.05,2.1;20.05,34.025"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="20,33.975"/>
-        <dia:point val="2.25,33.975"/>
-        <dia:point val="2.25,2.15"/>
+        <dia:point val="13.1,33.975"/>
+        <dia:point val="13.1,2.15"/>
         <dia:point val="18.2925,2.15"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
