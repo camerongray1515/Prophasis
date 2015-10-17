@@ -1,4 +1,5 @@
 {
   "db_connection_string": "sqlite:///../web/db.sqlite",
-  "scheduler_delay": 0.1
+  "scheduler_delay": 0.1,
+  "max_lateness": 10
 }
