@@ -9,7 +9,7 @@ Request: GET /check-plugin-version/
 
 Response:
     update-required: Whether the agent wants and updated copy of the plugin or
-        not 
+        not
     success: Whether the plugin was updated successfully
     message (optional): An error message if success is false
 ===============================================================================
@@ -18,7 +18,7 @@ Response:
 Request: POST /update-plugin/
     Args:
         plugin-id: The unique identifier of the plugin from its manifest file
-        plugin-payload: Gzipped and TARed copy of the plugin's source to be
+        plugin: Gzipped and TARed copy of the plugin's source to be
             placed on disk on the agent
 Response:
     success: Whether the plugin was updated successfully
