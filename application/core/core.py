@@ -5,7 +5,7 @@ def schedule_callback(schedule):
     for schedule_check in schedule.schedule_checks:
         for host, plugin in schedule_check.check.flatten():
             qsize = dispatch_job(host, plugin)
-            print("{0} items in queue".format(qsize))
+            # print("{0} items in queue".format(qsize))
 
 if __name__ == "__main__":
     print("Core starting up...")
