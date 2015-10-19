@@ -77,6 +77,11 @@ def get_plugin_data():
 
     return jsonify({"success": True, "value": value, "message": message})
 
+@agent.route("/ping/")
+@requires_auth
+def ping():
+    return jsonify({"success": True, "message": "pong"})
+
 @agent.route("/update-plugin/", methods=["POST"])
 @requires_auth
 def update_plugin():
@@ -114,7 +119,7 @@ def update_plugin():
             return error_response("Plugin archive appears to be malformed")
 
         try:
-            with open(os.path.join(temp_dir_path, filename, files[0], 
+            with open(os.path.join(temp_dir_path, filename, files[0],
                 "manifest.json"), "r") as f:
                 manifest = json.load(f)
                 plugin_id = manifest["id"]
@@ -129,7 +134,7 @@ def update_plugin():
             rmtree(os.path.join(plugin_repo, directory))
         os.rename(os.path.join(temp_dir_path, filename, files[0]),
             os.path.join(plugin_repo, files[0]))
-        
+
         return jsonify({"success": True})
     finally:
         try:
@@ -163,4 +168,3 @@ if __name__ == "__main__":
         IOLoop.instance().start()
     elif args.setup:
         setup_wizard()
-

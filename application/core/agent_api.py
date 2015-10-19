@@ -52,6 +52,6 @@ class Agent():
 
 if __name__ == "__main__":
     a = Agent("localhost", auth_key="a9b8fdd73d03bd7b54f31adb8bb2424e52fff"
-        "09feb37a98defdf6d1f3bf4f2db", verify_certs=False)
+        "09feb37a98defdf6d1f3bf4f2db", verify_certs=True)
     with open("../../plugins/test_plugin.tar.gz", "rb") as f:
         print(a.update_plugin("me.camerongray.proj.test_plugin", f))
