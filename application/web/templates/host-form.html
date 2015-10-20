@@ -65,6 +65,17 @@
                         </div>
 
                         <div class="col-md-10 col-md-offset-2">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="check-certificate" {% if host.check_certificate or not host %}checked{% endif %}>
+                                        Verify Agent's SSL Certificate
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-10 col-md-offset-2">
                             {% if method == "add" %}
                                 <button class="btn btn-primary">Add Host</button>
                             {% elif method == "edit" %}

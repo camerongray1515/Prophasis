@@ -3,6 +3,8 @@ import os
 import tarfile
 import json
 import shutil
+import requests
+from requests.exceptions import Timeout, ConnectionError
 from flask import Blueprint, jsonify, request
 from responses import error_response
 from models import create_all, session, Host, HostGroup, HostGroupAssignment,\
@@ -21,6 +23,7 @@ def hosts_add():
     host = request.form.get("host")
     description = request.form.get("description")
     auth_key = request.form.get("auth-key")
+    check_certificate = bool(request.form.get("check-certificate"))
 
     if not (name and host and auth_key):
         return error_response("Name, host and auth key are required")
@@ -29,8 +32,12 @@ def hosts_add():
     if hosts:
         return error_response("A host with that name or host already exists")
 
+    success, message  = test_agent_connection(host, auth_key, check_certificate)
+    if not success:
+        return error_response(message)
+
     h = Host(name=name, host=host, description=description,
-        auth_key=auth_key)
+        auth_key=auth_key, check_certificate=check_certificate)
     session.add(h)
     session.commit()
 
@@ -56,6 +63,7 @@ def hosts_edit():
     host = request.form.get("host")
     description = request.form.get("description")
     auth_key = request.form.get("auth-key")
+    check_certificate = bool(request.form.get("check-certificate"))
 
     if not (name and host and auth_key):
         return error_response("Name, host and auth key are required")
@@ -69,15 +77,37 @@ def hosts_edit():
     if not h:
         return error_response("Host could not be found!")
 
+    success, message  = test_agent_connection(host, auth_key, check_certificate)
+    if not success:
+        return error_response(message)
+
     h.id = host_id
     h.name = name
     h.host = host
     h.description = description
     h.auth_key = auth_key
+    h.check_certificate = check_certificate
 
     session.commit()
 
     return jsonify(success=True, message="Host has been saved successfully")
+
+def test_agent_connection(host, auth_key, check_certificate):
+    request_url = "https://core:{0}@{1}:4048/ping/".format(auth_key, host)
+    try:
+        r = requests.get(request_url, verify=check_certificate)
+    except (ConnectionError, Timeout) as e:
+        if "CERTIFICATE_VERIFY_FAILED" in str(e):
+            return (False, "Cerfiticate verification failed")
+        else:
+            return (False, "Could not establish connection with agent")
+
+    if r.status_code == 200:
+        return (True, "Connection Successful")
+    elif r.status_code == 401:
+        return (False, "Authentication key incorrect")
+    else:
+        return (False, "Connection failed due to unknown error")
 
 @api.route("/host-groups/add/", methods=["POST"])
 def host_groups_add():

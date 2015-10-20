@@ -26,6 +26,7 @@ class Host(Base):
     host = Column(String)
     description = Column(Text)
     auth_key = Column(String)
+    check_certificate = Column(Boolean, default=True)
 
     group_assignments = relationship("HostGroupAssignment",
         cascade="all, delete, delete-orphan", backref="host")
