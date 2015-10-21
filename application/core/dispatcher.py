@@ -1,17 +1,32 @@
+import os
 from multiprocessing import Process, Queue
-import time
-from datetime import datetime
+from agent_api import Agent, CommandUnsuccessfulError
+from config import get_config, get_config_value
 
 host_queues = {}
+config = get_config()
 
 def runner(queue, host):
     while not queue.empty():
         plugin = queue.get()
-        # This is where the request will be made to the agent
-        print("{0}: Executing {1} on {2}".format(datetime.utcnow(), plugin.name, host.name))
-        time.sleep(1)
-        print("{0}: Completed {1} on {2}".format(datetime.utcnow(), plugin.name, host.name))
-    # print("Killing runner for {0}".format(host.name))
+        perform_check(host, plugin)
+
+def perform_check(host, plugin):
+    a = Agent(host.host, host.auth_key, verify_certs=host.check_certificate)
+    try:
+        update_required = a.check_plugin_verison(plugin.id, plugin.version)
+        if update_required:
+            plugin_file = os.path.join(get_config_value(config, "plugin_repo"),
+                plugin.archive_file)
+            with open(plugin_file, "rb") as f:
+                a.update_plugin(plugin.id, f)
+        (value, message) = a.get_plugin_data(plugin.id)
+
+        print(value)
+        print(message)
+    except (CommandUnsuccessfulError) as e:
+        # TODO: Change this to log the error somewhere in a database
+        print("Command unsuccessful: {0}".format(str(e)))
 
 def dispatch_job(host, plugin):
     if host.id not in host_queues:
