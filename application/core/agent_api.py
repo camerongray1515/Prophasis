@@ -1,6 +1,5 @@
 import requests
 import json
-from requests.exceptions import ConnectionError, Timeout
 from functools import wraps
 
 # We may want to have some hosts not check the CA of certificates so this
@@ -16,16 +15,18 @@ class RequestError(Exception):
 class CommandUnsuccessfulError(Exception):
     pass
 
-def catch_request_errors(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        try:
-            return f(*args, **kwargs)
-        except (ConnectionError, Timeout) as e:
-            raise CommandUnsuccessfulError(str(e))
-    return decorated
-
 class Agent():
+    """
+        Methods can raise the following exceptions which should be handled
+
+        CommandUnsuccessfulError - The command was executed but failed
+        AuthenticationError - Authentication key was most likely incorrect
+        RequestError - The server returned an error code
+        requests.exceptions.ConnectionError - Could not connect to remote
+            machine e.g. the connection was refused
+        requests.exceptions.Timeout - The connection to the remote host timed
+            out
+    """
     def __init__(self, host, auth_key, port=4048, use_ssl=True,
         verify_certs=True):
         protocol = "https" if use_ssl else "http"
@@ -40,7 +41,6 @@ class Agent():
             else:
                 raise RequestError
 
-    @catch_request_errors
     def check_plugin_verison(self, plugin_id, plugin_version):
         payload = {"plugin-id": plugin_id, "plugin-version": plugin_version}
         r = requests.get(self.url + "/check-plugin-version/", params=payload,
@@ -54,7 +54,6 @@ class Agent():
 
         return result["update-required"]
 
-    @catch_request_errors
     def get_plugin_data(self, plugin_id):
         payload = {"plugin-id": plugin_id}
         r = requests.get(self.url + "/get-plugin-data/", params=payload,
@@ -68,7 +67,6 @@ class Agent():
 
         return (result["value"], result["message"])
 
-    @catch_request_errors
     def update_plugin(self, plugin_id, plugin_payload):
         data = {"plugin-id": plugin_id}
         files = {"plugin": plugin_payload}

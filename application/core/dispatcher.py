@@ -1,7 +1,11 @@
 import os
 from multiprocessing import Process, Queue
-from agent_api import Agent, CommandUnsuccessfulError
+from agent_api import Agent, CommandUnsuccessfulError, AuthenticationError, \
+    RequestError
+from requests.exceptions import ConnectionError, Timeout
 from config import get_config, get_config_value
+from models import PluginResult, session
+from datetime import datetime
 
 host_queues = {}
 config = get_config()
@@ -13,6 +17,8 @@ def runner(queue, host):
 
 def perform_check(host, plugin):
     a = Agent(host.host, host.auth_key, verify_certs=host.check_certificate)
+    error = None
+    result_type = "plugin"
     try:
         update_required = a.check_plugin_verison(plugin.id, plugin.version)
         if update_required:
@@ -21,12 +27,30 @@ def perform_check(host, plugin):
             with open(plugin_file, "rb") as f:
                 a.update_plugin(plugin.id, f)
         (value, message) = a.get_plugin_data(plugin.id)
+    except CommandUnsuccessfulError as e:
+        error = str(e)
+        result_type = "command_unsuccessful"
+    except AuthenticationError as e:
+        error = str(e)
+        result_type = "authentication_error"
+    except RequestError as e:
+        error = str(e)
+        result_type = "request_error"
+    except ConnectionError as e:
+        error = str(e)
+        result_type = "connection_error"
+    except Timeout as e:
+        error = str(e)
+        result_type = "connection_timeout"
 
-        print(value)
-        print(message)
-    except (CommandUnsuccessfulError) as e:
-        # TODO: Change this to log the error somewhere in a database
-        print("Command unsuccessful: {0}".format(str(e)))
+    if error:
+        message = error
+        value = None
+
+    pr = PluginResult(host_id=host.id, plugin_id=plugin.id, value=value,
+        message=message, result_type=result_type, timestamp=datetime.now())
+    session.add(pr)
+    session.commit()
 
 def dispatch_job(host, plugin):
     if host.id not in host_queues:

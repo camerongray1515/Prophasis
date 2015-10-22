@@ -104,6 +104,7 @@ class PluginResult(Base):
     plugin_id = Column(String, ForeignKey("plugins.id"))
     value = Column(String)
     message = Column(String)
+    result_type = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
     def __repr__(self):
