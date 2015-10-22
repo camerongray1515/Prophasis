@@ -21,7 +21,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th class="col-md-5">Description</th>
+                                <th class="col-md-4">Description</th>
                                 <th>Version</th>
                                 <th>Actions</th>
                             </tr>
@@ -34,6 +34,7 @@
                                     <td>{{ plugin.description }}</td>
                                     <td>{{ plugin.version }}</td>
                                     <td>
+                                        <a href="/plugins/thresholds/{{ plugin.id }}/" class="btn btn-info">Set Thresholds</a>
                                         <form class="auto-post inline" method="POST" action="/api/plugins/delete/" data-auto-post-confirmation="Are you sure you want to delete this plugin and all associated data?  This action cannnot be undone!" data-auto-post-remove-closest="tr">
                                             <input type="hidden" name="plugin-id" value="{{ plugin.id }}">
                                             <button class="btn btn-danger">Delete</button>

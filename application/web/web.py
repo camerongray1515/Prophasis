@@ -91,6 +91,15 @@ def plugins_install():
     return render_template("plugin-form.html", nav_section="plugins",
         section="Plugins", title="Install Plugin")
 
+@web.route("/plugins/thresholds/<plugin_id>/")
+def plugins_thresholds(plugin_id):
+    p = Plugin.query.get(plugin_id)
+    if not p:
+        abort(404)
+
+    return render_template("plugin-thresholds.html", nav_section="plugins",
+        section="Plugins", title="Set Thresholds", plugin=p)
+
 @web.route("/scheduling/")
 def scheduling():
     schedules = Schedule.query.all()

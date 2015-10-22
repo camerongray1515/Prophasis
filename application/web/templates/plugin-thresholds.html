@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block breadcrumbs %}
+    <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
+    <li><a href="/plugins/">Plugins</a></li>
+    <li><a href="/plugins/{{ plugin.id }}/thresholds/">Set Thresholds</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border"><h3 class="box-title">Default Thresholds</h3></div>
+                <div class="box-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
