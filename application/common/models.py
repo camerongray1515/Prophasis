@@ -126,9 +126,30 @@ class Plugin(Base):
     check_plugins = relationship("CheckPlugin",
         cascade="all, delete, delete-orphan", backref="plugin")
 
+    plugin_thresholds = relationship("PluginThreshold",
+        cascade="all, delete, delete-orphan", backref="plugin")
+
     def __repr__(self):
         return "<Plugin id: {0}, version: {1}>".format(self.id,
             self.version)
+
+class PluginThreshold(Base):
+    __tablename__ = "plugin_thresholds"
+
+    id = Column(Integer, primary_key=True)
+    plugin_id = Column(Integer, ForeignKey("plugins.id"))
+    check_id = Column(Integer, ForeignKey("checks.id"))
+    default = Column(Boolean)
+    message_match = Column(String)
+    message_match_regex = Column(Boolean) # Is "message_match" a regex?
+    value_threshold = Column(Float)
+    value_n_historical = Column(Integer) # How many previous values to aggregate
+    value_aggregation = Column(String) # e.g. average, maximum, minimum
+    value_expr = Column(String) # e.g. ==, >, <=
+
+    def __repr__(self):
+        return ("<PluginThreshold plugin_id: {0}, check_id: {1}, default: {2}>"
+            "".format(self.plugin_id, self.check_id, self.default))
 
 class Schedule(Base):
     __tablename__ = "schedules"
@@ -239,6 +260,9 @@ class Check(Base):
         cascade="all, delete, delete-orphan", backref="check")
 
     schedule_checks = relationship("ScheduleCheck",
+        cascade="all, delete, delete-orphan", backref="check")
+
+    plugin_thresholds = relationship("PluginThreshold",
         cascade="all, delete, delete-orphan", backref="check")
 
     def __repr__(self):
