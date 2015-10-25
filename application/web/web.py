@@ -97,8 +97,10 @@ def plugins_thresholds(plugin_id):
     if not p:
         abort(404)
 
+    checks = Check.query.all()
+
     return render_template("plugin-thresholds.html", nav_section="plugins",
-        section="Plugins", title="Set Thresholds", plugin=p)
+        section="Plugins", title="Set Thresholds", plugin=p, checks=checks)
 
 @web.route("/scheduling/")
 def scheduling():

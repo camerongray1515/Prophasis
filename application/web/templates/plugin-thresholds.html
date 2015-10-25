@@ -7,14 +7,78 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="box">
-                <div class="box-header with-border"><h3 class="box-title">Default Thresholds</h3></div>
-                <div class="box-body">
+    <link rel="stylesheet" href="{{ url_for("static", filename="plugins/codemirror/lib/codemirror.css") }}" media="screen" title="no title" charset="utf-8">
 
+    <form id="threshold-form" class="form-horizontal" action="/api/plugins/thresholds/save/" method="post">
+        {% for type in ["default", "template"] %}
+            {% if type == "template" %}
+                <script id="threshold-template" type="text/x-handlebars-template">
+            {% endif %}
+            <div class="row threshold-row" id="threshold-{% if type == "default" %}0{% else %}{% raw %}{{ threshold_index }}{% endraw %}{% endif %}">
+                <div class="col-md-12">
+                    <div class="box container">
+                        <div class="box-header with-border">
+                            {% if type == "default" %}
+                                <h3 class="box-title">Default Thresholds</h3>
+                            {% else %}
+                                <h3 class="box-title col-md-1 control-label">Check:</h3>
+                                <div class="col-md-5">
+                                    <select class="form-control" name="check[]">
+                                        <option value="-1">Select a check...</option>
+                                        {% for check in checks %}
+                                            <option value="{{ check.id }}">{{ check.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <button type="button" class="btn btn-danger pull-right remove-custom"><i class="fa fa-times"></i></button>
+                            {% endif %}
+                        </div>
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">Variable</label>
+                                <div class="col-md-2">
+                                    <select class="form-control" name="variable">
+                                        <option value="value" selected>Value</option>
+                                        <option value="message">Message</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Number of historical values</label>
+                                <div class="col-md-2">
+                                    <input type="number" name="n-historical" value="1" min="1" class="form-control">
+                                </div>
+                                <p class="help-block">How many previously collected values should be aggregated</p>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label class="control-label">Classification Code</label>
+                                <textarea class="codemirror"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if type == "template" %}
+                </script>
+            {% endif %}
+        {% endfor %}
+
+        <div class="row button-container">
+            <div class="col-md-12">
+                <div class="box container">
+                    <div class="box-body">
+                        <button type="submit" class="btn btn-primary">Save Thresholds</button>
+                        <button type="button" id="btn-add-threshold" class="btn btn-success">Add Custom Threshold</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
+
+    <script src="{{ url_for("static", filename="plugins/codemirror/lib/codemirror.js") }}" charset="utf-8"></script>
+    <script src="{{ url_for("static", filename="plugins/codemirror/mode/lua/lua.js") }}" charset="utf-8"></script>
+    <script src="{{ url_for("static", filename="assets/js/thresholds.js") }}" charset="utf-8"></script>
 {% endblock %}

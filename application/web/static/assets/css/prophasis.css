@@ -24,3 +24,7 @@
     padding: 0;
     border: none;
 }
+
+.CodeMirror {
+    border: 1px solid #dddddd;
+}
