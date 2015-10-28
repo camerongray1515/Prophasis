@@ -4,6 +4,7 @@ var thresholds = {
     "bindEventHandlers": function() {
         $("#btn-add-threshold").click(thresholds.addThreshold);
         $("#threshold-form").on("click", ".remove-custom", thresholds.removeThreshold);
+        $("#threshold-form").submit(thresholds.submitForm);
     },
     "createLastEditor": function() {
         var editor = CodeMirror.fromTextArea($(".codemirror:last").get(0), {
@@ -15,7 +16,7 @@ var thresholds = {
         thresholds.highestThresholdIndex++;
     },
     "addThreshold": function() {
-        html = ui.renderTemplate("threshold-template", {
+        var html = ui.renderTemplate("threshold-template", {
             "threshold_index": thresholds.highestThresholdIndex
         });
 
@@ -23,9 +24,27 @@ var thresholds = {
         thresholds.createLastEditor();
     },
     "removeThreshold": function() {
-        thresholdId = $(this).closest(".threshold-row").attr("id");
+        var thresholdId = $(this).closest(".threshold-row").attr("id");
         delete thresholds.editors[thresholdId];
         $(this).closest(".threshold-row").remove();
+    },
+    "submitForm": function(e) {
+        e.preventDefault();
+
+        for (row_id in thresholds.editors) {
+            var value = thresholds.editors[row_id].getValue();
+            $("#" + row_id).find(".codemirror").val(value);
+        };
+        var formData = $("#threshold-form").serialize();
+
+        $.post("/api/save_plugin_thresholds/", formData, function(data) {
+            var alertType = "danger";
+            if (data.success) {
+                alertType = "success";
+            }
+
+            ui.showAlert(alertType, data.message);
+        });
     }
 }
 
