@@ -142,6 +142,7 @@ class PluginThreshold(Base):
     default = Column(Boolean)
     n_historical = Column(Integer) # How many previous values to fetch
     classification_code = Column(Text)
+    variable = Column(String)
 
     def __repr__(self):
         return ("<PluginThreshold plugin_id: {0}, check_id: {1}, default: {2}>"

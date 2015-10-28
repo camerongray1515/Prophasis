@@ -520,7 +520,8 @@ def plugins_thresholds_save():
         pt = PluginThreshold(
             plugin_id=plugin_id,
             n_historical=n_historical,
-            classification_code=classification_code
+            classification_code=classification_code,
+            variable=variable
         )
         if check_id != "default":
             pt.check_id = check_id
