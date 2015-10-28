@@ -7,15 +7,25 @@ var thresholds = {
         $("#threshold-form").submit(thresholds.submitForm);
     },
     "createLastEditor": function() {
-        var editor = CodeMirror.fromTextArea($(".codemirror:last").get(0), {
+        thresholds.createEditor("threshold-" + thresholds.highestThresholdIndex)
+    },
+    "createEditor": function(row_id) {
+        console.log(row_id);
+        var editor = CodeMirror.fromTextArea($("#"+row_id).find(".codemirror").get(0), {
             "lineNumbers": true,
             "mode": "lua",
             "smartIndent": false
         })
-        thresholds.editors["threshold-" + thresholds.highestThresholdIndex] = editor;
-        thresholds.highestThresholdIndex++;
+        thresholds.editors[row_id] = editor;
+    },
+    "createAllEditors": function() {
+        $(".threshold-row").each(function() {
+            var row_id = $(this).attr("id");
+            thresholds.createEditor(row_id);
+        });
     },
     "addThreshold": function() {
+        thresholds.highestThresholdIndex++;
         var html = ui.renderTemplate("threshold-template", {
             "threshold_index": thresholds.highestThresholdIndex
         });
@@ -50,5 +60,5 @@ var thresholds = {
 
 $(document).ready(function() {
     thresholds.bindEventHandlers();
-    thresholds.createLastEditor();
+    thresholds.createAllEditors();
 });

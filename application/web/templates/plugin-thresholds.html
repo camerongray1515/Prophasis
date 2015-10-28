@@ -10,15 +10,15 @@
     <link rel="stylesheet" href="{{ url_for("static", filename="plugins/codemirror/lib/codemirror.css") }}" media="screen" title="no title" charset="utf-8">
 
     <form id="threshold-form" class="form-horizontal" action="/api/plugins/thresholds/save/" method="post">
-        {% for type in ["default", "template"] %}
-            {% if type == "template" %}
+        {% for threshold in thresholds %}
+            {% if threshold == "template" %}
                 <script id="threshold-template" type="text/x-handlebars-template">
             {% endif %}
-            <div class="row threshold-row" id="threshold-{% if type == "default" %}0{% else %}{% raw %}{{ threshold_index }}{% endraw %}{% endif %}">
+            <div class="row threshold-row" id="threshold-{% if threshold == "template" %}{% raw %}{{ threshold_index }}{% endraw %}{% else %}{{ threshold.id }}{% endif %}">
                 <div class="col-md-12">
                     <div class="box container">
                         <div class="box-header with-border">
-                            {% if type == "default" %}
+                            {% if threshold.default %}
                                 <h3 class="box-title">Default Thresholds</h3>
                                 <input type="hidden" name="check[]" value="default">
                             {% else %}
@@ -27,7 +27,7 @@
                                     <select class="form-control" name="check[]">
                                         <option value="-1">Select a check...</option>
                                         {% for check in checks %}
-                                            <option value="{{ check.id }}">{{ check.name }}</option>
+                                            <option value="{{ check.id }}" {% if threshold.check_id == check.id %}selected{% endif %}>{{ check.name }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -39,8 +39,8 @@
                                 <label class="col-md-3 control-label">Variable</label>
                                 <div class="col-md-2">
                                     <select class="form-control" name="variable[]">
-                                        <option value="value" selected>Value</option>
-                                        <option value="message">Message</option>
+                                        <option value="value" {% if threshold.variable == "value" %}selected{% endif %}>Value</option>
+                                        <option value="message" {% if threshold.variable == "message" %}selected{% endif %}>Message</option>
                                     </select>
                                 </div>
                             </div>
@@ -48,7 +48,7 @@
                             <div class="form-group">
                                 <label class="control-label col-md-3">Number of historical values</label>
                                 <div class="col-md-2">
-                                    <input type="number" name="n-historical[]" value="1" min="1" class="form-control">
+                                    <input type="number" name="n-historical[]" min="1" class="form-control" value="{% if threshold.n_historical %}{{ threshold.n_historical }}{% else %}1{% endif %}">
                                 </div>
                                 <p class="help-block">How many previously collected values should be aggregated</p>
                             </div>
@@ -56,13 +56,13 @@
 
                             <div class="form-group">
                                 <label class="control-label">Classification Code</label>
-                                <textarea class="codemirror" name="classification-code[]"></textarea>
+                                <textarea class="codemirror" name="classification-code[]">{{ threshold.classification_code }}</textarea>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            {% if type == "template" %}
+            {% if threshold == "template" %}
                 </script>
             {% endif %}
         {% endfor %}
@@ -83,4 +83,7 @@
     <script src="{{ url_for("static", filename="plugins/codemirror/lib/codemirror.js") }}" charset="utf-8"></script>
     <script src="{{ url_for("static", filename="plugins/codemirror/mode/lua/lua.js") }}" charset="utf-8"></script>
     <script src="{{ url_for("static", filename="assets/js/thresholds.js") }}" charset="utf-8"></script>
+    <script type="text/javascript">
+        thresholds.highestThresholdIndex = {{ max_threshold_id }}
+    </script>
 {% endblock %}

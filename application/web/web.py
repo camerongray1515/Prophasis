@@ -1,7 +1,8 @@
 from flask import Flask, render_template, abort
 from api import api
 from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
-    CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval
+    CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval,\
+    PluginThreshold
 from datetime import datetime
 
 web = Flask(__name__)
@@ -98,9 +99,25 @@ def plugins_thresholds(plugin_id):
         abort(404)
 
     checks = Check.query.all()
+    thresholds = PluginThreshold.query.filter(
+        PluginThreshold.plugin_id==plugin_id).order_by(
+            PluginThreshold.default.desc()).all()
+
+    # If there is not a default threshold, insert a blank one
+    if len(thresholds) == 0 or not thresholds[0].default:
+        thresholds.insert(0, PluginThreshold(id=0, default=True,
+            classification_code=""))
+
+    max_threshold_id = 0
+    for threshold in thresholds:
+        if threshold.id > max_threshold_id:
+            max_threshold_id = threshold.id
+
+    thresholds.append("template")
 
     return render_template("plugin-thresholds.html", nav_section="plugins",
-        section="Plugins", title="Set Thresholds", plugin=p, checks=checks)
+        section="Plugins", title="Set Thresholds", plugin=p, checks=checks,
+        thresholds=thresholds, max_threshold_id=max_threshold_id)
 
 @web.route("/scheduling/")
 def scheduling():
