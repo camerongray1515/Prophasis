@@ -37,7 +37,7 @@ var thresholds = {
         };
         var formData = $("#threshold-form").serialize();
 
-        $.post("/api/save_plugin_thresholds/", formData, function(data) {
+        $.post("/api/plugins/thresholds/save/", formData, function(data) {
             var alertType = "danger";
             if (data.success) {
                 alertType = "success";
