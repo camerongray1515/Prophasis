@@ -140,12 +140,8 @@ class PluginThreshold(Base):
     plugin_id = Column(Integer, ForeignKey("plugins.id"))
     check_id = Column(Integer, ForeignKey("checks.id"))
     default = Column(Boolean)
-    n_historical = Column(Integer) # How many previous values to aggregate
-    aggregation = Column(String) # e.g. average, maximum, minimum, all, any
-    message_match = Column(String)
-    message_match_regex = Column(Boolean) # Is "message_match" a regex?
-    value_threshold = Column(Float)
-    value_expr = Column(String) # e.g. ==, >, <=
+    n_historical = Column(Integer) # How many previous values to fetch
+    classification_code = Column(Text)
 
     def __repr__(self):
         return ("<PluginThreshold plugin_id: {0}, check_id: {1}, default: {2}>"
