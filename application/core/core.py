@@ -4,7 +4,7 @@ from dispatcher import dispatch_job
 def schedule_callback(schedule):
     for schedule_check in schedule.schedule_checks:
         for host, plugin in schedule_check.check.flatten():
-            qsize = dispatch_job(host, plugin)
+            qsize = dispatch_job(host, plugin, schedule_check.check_id)
             # print("{0} items in queue".format(qsize))
 
 if __name__ == "__main__":

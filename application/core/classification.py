@@ -1,6 +1,7 @@
 import lupa
 import json
 import numbers
+from models import PluginThreshold, PluginResult
 
 example_function = """
 if arrayContains(values, "fail") then
@@ -27,7 +28,59 @@ def execute_classifier(code, values):
         full_code += "\n".join(f.readlines())
     full_code += "\n{}".format(code)
 
-    print(lua.execute(full_code))
+    return lua.execute(full_code)
+
+def classify(latest_result, check_id):
+    # Try and get a check specific threshold, if there isn't one, get default
+    threshold = PluginThreshold.query.filter(
+        PluginThreshold.plugin_id == latest_result.plugin_id,
+        PluginThreshold.check_id == check_id,
+        PluginThreshold.default == False
+    ).all()
+
+    if not threshold:
+        threshold = PluginThreshold.query.filter(
+            PluginThreshold.plugin_id == latest_result.plugin_id,
+            PluginThreshold.default == True
+        ).all()
+
+    try:
+        threshold = threshold[0]
+    except KeyError:
+        # TODO: Log error here
+        return "unknown"
+
+    # Get n-1 historical values and then append the latest onto this list
+    historical_values = PluginResult.query.filter(
+        PluginResult.plugin_id == latest_result.plugin_id,
+        PluginResult.host_id == latest_result.host_id).order_by(
+            PluginResult.id.desc()
+        ).limit(threshold.n_historical-1).all()
+
+    historical_values_list = []
+    for value in historical_values:
+        if threshold.variable == "value":
+            historical_values_list.append(value.value)
+        else:
+            historical_values_list.append(value.message)
+    if threshold.variable == "value":
+        historical_values_list.append(latest_result.value)
+    else:
+        historical_values_list.append(latest_result.message)
+
+    try:
+        classification = execute_classifier(threshold.classification_code,
+            historical_values_list)
+    except lupa._lupa.LuaSyntaxError as e:
+        # TODO: Log error here
+        print(str(e))
+        classification = "unknown"
+
+    if classification not in ["major", "minor", "critical", "ok", "unknown"]:
+        # TODO: Log error here
+        classification = "unknown"
+
+    return classification
 
 def list_to_lua_array(input_list):
     lua_array = "{"

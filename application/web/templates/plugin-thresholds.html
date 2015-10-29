@@ -56,7 +56,7 @@
 
                             <div class="form-group">
                                 <label class="control-label">Classification Code</label>
-                                <textarea class="codemirror" name="classification-code[]">{{ threshold.classification_code }}</textarea>
+                                <textarea class="codemirror" name="classification-code[]">{% if threshold.classification_code %}{{ threshold.classification_code }}{% else %}-- Variable "values" is an array of n historical values of the variable and length specified above{% endif %}</textarea>
                             </div>
                         </div>
                     </div>

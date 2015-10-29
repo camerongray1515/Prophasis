@@ -102,10 +102,11 @@ class PluginResult(Base):
     id = Column(Integer, primary_key=True)
     host_id = Column(Integer, ForeignKey("hosts.id"))
     plugin_id = Column(String, ForeignKey("plugins.id"))
-    value = Column(String)
+    value = Column(Float)
     message = Column(String)
     result_type = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow)
+    health_status = Column(String)
 
     def __repr__(self):
         return ("<PluginResult host_id: {0}, plugin_id: {1}, timestamp: {2}"
