@@ -3,14 +3,6 @@ import json
 import numbers
 from models import PluginThreshold, PluginResult
 
-example_function = """
-if arrayContains(values, "fail") then
-    return "critical"
-else
-    return "ok"
-end
-"""
-
 def execute_classifier(code, values):
     lua = lupa.LuaRuntime()
     # Create a sandbox to prevent code from accessing dangerous functions
