@@ -66,36 +66,51 @@
                     <section class="sidebar">
                         <!-- sidebar menu: : style can be found in sidebar.less -->
                         <ul class="sidebar-menu">
-                            <li class="header">SETTINGS</li>
-                            <li class="{% if nav_section == "users" %}active{% endif %}">
-                                <a href="/users/">
-                                    <i class="fa fa-users"></i> <span>Users</span>
-                                </a>
-                            </li>
-                            <li class="treeview {% if nav_section == "hosts" or nav_section == "host-groups" %}active{% endif %}">
-                                <a href="#">
-                                    <i class="fa fa-server"></i> <span>Hosts &amp; Groups</span> <i class="fa fa-angle-left pull-right"></i>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li {% if nav_section == "hosts" %}class="active"{% endif %}><a href="/hosts/"><i class="fa fa-desktop"></i> Hosts</a></li>
-                                    <li {% if nav_section == "host-groups" %}class="active"{% endif %}><a href="/host-groups/"><i class="fa fa-object-group"></i> Host Groups</a></li>
-                                </ul>
-                            </li>
-                            <li class="{% if nav_section == "plugins" %}active{% endif %}">
-                                <a href="/plugins/">
-                                    <i class="fa fa-plug"></i> <span>Plugins</span>
-                                </a>
-                            </li>
-                            <li class="{% if nav_section == "checks" %}active{% endif %}">
-                                <a href="/checks/">
-                                    <i class="fa fa-search"></i> <span>Checks</span>
-                                </a>
-                            </li>
-                            <li class="{% if nav_section == "scheduling" %}active{% endif %}">
-                                <a href="/scheduling/">
-                                    <i class="fa fa-clock-o"></i> <span>Scheduling</span>
-                                </a>
-                            </li>
+                            {% if not_logged_in %}
+                                <li class="header">Log In</li>
+                                <li class="{% if nav_section == "login" %}active{% endif %}">
+                                    <a href="/login/">
+                                        <i class="fa fa-sign-in"></i> <span>Log In</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="header">SETTINGS</li>
+                                <li class="treeview {% if nav_section == "hosts" or nav_section == "host-groups" %}active{% endif %}">
+                                    <a href="#">
+                                        <i class="fa fa-server"></i> <span>Hosts &amp; Groups</span> <i class="fa fa-angle-left pull-right"></i>
+                                    </a>
+                                    <ul class="treeview-menu">
+                                        <li {% if nav_section == "hosts" %}class="active"{% endif %}><a href="/hosts/"><i class="fa fa-desktop"></i> Hosts</a></li>
+                                        <li {% if nav_section == "host-groups" %}class="active"{% endif %}><a href="/host-groups/"><i class="fa fa-object-group"></i> Host Groups</a></li>
+                                    </ul>
+                                </li>
+                                <li class="{% if nav_section == "plugins" %}active{% endif %}">
+                                    <a href="/plugins/">
+                                        <i class="fa fa-plug"></i> <span>Plugins</span>
+                                    </a>
+                                </li>
+                                <li class="{% if nav_section == "checks" %}active{% endif %}">
+                                    <a href="/checks/">
+                                        <i class="fa fa-search"></i> <span>Checks</span>
+                                    </a>
+                                </li>
+                                <li class="{% if nav_section == "scheduling" %}active{% endif %}">
+                                    <a href="/scheduling/">
+                                        <i class="fa fa-clock-o"></i> <span>Scheduling</span>
+                                    </a>
+                                </li>
+                                <li class="{% if nav_section == "users" %}active{% endif %}">
+                                    <a href="/users/">
+                                        <i class="fa fa-users"></i> <span>Users</span>
+                                    </a>
+                                </li>
+                                <li class="header">SESSION</li>
+                                <li>
+                                    <a href="/logout/">
+                                        <i class="fa fa-sign-out"></i> <span>Log Out</span>
+                                    </a>
+                                </li>
+                            {% endif %}
                     </section>
                     <!-- /.sidebar -->
                 </aside>

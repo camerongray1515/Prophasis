@@ -1,4 +1,6 @@
+import os
 from flask import Flask, render_template, abort
+from flask.ext.login import LoginManager, login_required, logout_user
 from api import api
 from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
     CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval,\
@@ -7,16 +9,43 @@ from datetime import datetime
 
 web = Flask(__name__)
 web.register_blueprint(api)
+# TODO: Store in config file or something?
+web.secret_key = b'\x0bi\xcb\r\x8f\x8f\x06:\x8f\x0b\x0cw\x7f\x8dJ\x0fd\xdbH'\
+    b'\x86\x0egNq\xd0n\xa9\xa7\xdd\xb2\xbf\xa9\x13\x1f\xce\x8f\x9a=\xbc.\xcaV'\
+    b'\x85zC\xf1\x86Z[e'
+
+login_manager = LoginManager()
+login_manager.init_app(web)
+login_manager.login_view = "login"
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+@web.route("/login/")
+def login():
+    return render_template("login.html", nav_section="login", section="Log In",
+        title="", not_logged_in=True)
+
+@web.route("/logout/")
+@login_required
+def logout():
+    logout_user()
+    return render_template("logout.html", nav_section="logout",
+        section="Log Out", title="", not_logged_in=True)
 
 @web.route("/example/")
+@login_required
 def example():
     return render_template("example.html")
 
 @web.route("/")
+@login_required
 def home():
     return render_template("home.html", nav_section="home", section="Home")
 
 @web.route("/hosts/")
+@login_required
 def hosts():
     hosts = Host.query.all()
 
@@ -24,11 +53,13 @@ def hosts():
         title="Manage Hosts", hosts=hosts)
 
 @web.route("/hosts/add/")
+@login_required
 def hosts_add():
     return render_template("host-form.html", nav_section="hosts",
         section="Hosts", title="Add Host", method="add")
 
 @web.route("/hosts/edit/<host_id>/")
+@login_required
 def hosts_edit(host_id):
     host = Host.query.get(host_id)
     if not host:
@@ -38,6 +69,7 @@ def hosts_edit(host_id):
         section="Hosts", title="Edit Host", method="edit", host=host)
 
 @web.route("/host-groups/")
+@login_required
 def host_groups():
     host_groups = HostGroup.query.all()
 
@@ -46,6 +78,7 @@ def host_groups():
         host_groups=host_groups)
 
 @web.route("/host-groups/add/")
+@login_required
 def host_groups_add():
     hosts = Host.query.all()
     host_groups = HostGroup.query.all()
@@ -55,6 +88,7 @@ def host_groups_add():
         hosts=hosts, host_groups=host_groups)
 
 @web.route("/host-groups/edit/<host_group_id>/")
+@login_required
 def host_groups_edit(host_group_id):
     host_group = HostGroup.query.get(host_group_id)
     if not host_group:
@@ -81,6 +115,7 @@ def host_groups_edit(host_group_id):
         member_host_ids=member_host_ids)
 
 @web.route("/plugins/")
+@login_required
 def plugins():
     plugins = Plugin.query.all()
 
@@ -88,11 +123,13 @@ def plugins():
         section="Plugins", title="Manage Plugins", plugins=plugins)
 
 @web.route("/plugins/install/")
+@login_required
 def plugins_install():
     return render_template("plugin-form.html", nav_section="plugins",
         section="Plugins", title="Install Plugin")
 
 @web.route("/plugins/thresholds/<plugin_id>/")
+@login_required
 def plugins_thresholds(plugin_id):
     p = Plugin.query.get(plugin_id)
     if not p:
@@ -120,6 +157,7 @@ def plugins_thresholds(plugin_id):
         thresholds=thresholds, max_threshold_id=max_threshold_id)
 
 @web.route("/scheduling/")
+@login_required
 def scheduling():
     schedules = Schedule.query.all()
 
@@ -127,6 +165,7 @@ def scheduling():
         section="Scheduling", title="Manage Schedules", schedules=schedules)
 
 @web.route("/scheduling/add/")
+@login_required
 def scheduling_add():
     checks = Check.query.all()
 
@@ -137,6 +176,7 @@ def scheduling_add():
         checks=checks, iso_datetime=iso_datetime)
 
 @web.route("/scheduling/edit/<schedule_id>/")
+@login_required
 def scheduling_edit(schedule_id):
     schedule = Schedule.query.get(schedule_id)
     if not schedule:
@@ -161,6 +201,7 @@ def scheduling_edit(schedule_id):
         member_check_ids=member_check_ids)
 
 @web.route("/checks/")
+@login_required
 def checks():
     checks = Check.query.all()
 
@@ -168,6 +209,7 @@ def checks():
         section="Checks", title="Manage Checks", checks=checks)
 
 @web.route("/checks/add/")
+@login_required
 def checks_add():
     hosts = Host.query.all()
     host_groups = HostGroup.query.all()
@@ -178,6 +220,7 @@ def checks_add():
         host_groups=host_groups, plugins=plugins)
 
 @web.route("/checks/edit/<check_id>/")
+@login_required
 def checks_edit(check_id):
     check = Check.query.get(check_id)
     if not check:
@@ -211,6 +254,7 @@ def checks_edit(check_id):
         assigned_plugin_ids=assigned_plugin_ids)
 
 @web.route("/users/")
+@login_required
 def users():
     users = User.query.all()
 
@@ -218,11 +262,13 @@ def users():
         title="Manage Users", users=users)
 
 @web.route("/users/add/")
+@login_required
 def users_add():
     return render_template("user-form.html", nav_section="users",
         section="Users", title="Add User", method="add")
 
 @web.route("/users/edit/<user_id>/")
+@login_required
 def users_edit(user_id):
     user = User.query.get(user_id)
     if not user:

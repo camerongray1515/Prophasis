@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="col-md-8 col-md-offset-2">
+        <div class="box container">
+            <div class="box-header with-border">
+                <h3 class="box-title">Log Out</h3>
+            </div>
+
+            <div class="box-body">
+                <p>You have been logged out successfully!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for("static", filename="assets/js/login.js") }}" charset="utf-8"></script>
+{% endblock %}

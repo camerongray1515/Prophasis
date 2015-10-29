@@ -310,6 +310,19 @@ class User(Base):
     password_hash = Column(String)
     email = Column(String)
 
+    # Methods requred by flask-login
+    def get_id(self):
+        return str(self.id)
+
+    def is_anonymous(self):
+        return False
+
+    def is_active(self):
+        return True
+
+    def is_authenticated(self):
+        return True
+
     def __repr__(self):
         return "<User id: {}, username: {}>".format(self.id, self.username)
 

@@ -7,6 +7,7 @@ import requests
 import bcrypt
 from requests.exceptions import Timeout, ConnectionError
 from flask import Blueprint, jsonify, request
+from flask.ext.login import login_required, login_user
 from responses import error_response
 from models import create_all, session, Host, HostGroup, HostGroupAssignment,\
     Plugin, CheckPlugin, CheckAssignment, Check, Schedule, ScheduleInterval,\
@@ -18,7 +19,26 @@ api = Blueprint("api", __name__, url_prefix="/api")
 
 config = get_config()
 
+@api.route("/login/", methods=["POST"])
+def login():
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    error_message = "Username or password incorrect"
+
+    users = User.query.filter(User.username == username).all()
+    if not users:
+        return error_response(error_message)
+
+    password_hash = users[0].password_hash
+    if bcrypt.hashpw(password.encode("utf-8"), password_hash) == password_hash:
+        login_user(users[0])
+        return jsonify(success=True, message="Login Successful!")
+    else:
+        return error_response(error_message)
+
 @api.route("/hosts/add/", methods=["POST"])
+@login_required
 def hosts_add():
     name = request.form.get("name")
     host = request.form.get("host")
@@ -45,6 +65,7 @@ def hosts_add():
     return jsonify(success=True, message="Host added successfully")
 
 @api.route("/hosts/delete/", methods=["POST"])
+@login_required
 def hosts_delete():
     host_id = request.form.get("host-id")
 
@@ -58,6 +79,7 @@ def hosts_delete():
     return jsonify(success=True, message="Host has been deleted successfully")
 
 @api.route("/hosts/edit/", methods=["POST"])
+@login_required
 def hosts_edit():
     host_id = request.form.get("host-id")
     name = request.form.get("name")
@@ -111,6 +133,7 @@ def test_agent_connection(host, auth_key, check_certificate):
         return (False, "Connection failed due to unknown error")
 
 @api.route("/host-groups/add/", methods=["POST"])
+@login_required
 def host_groups_add():
     name = request.form.get("name")
     description = request.form.get("description")
@@ -143,6 +166,7 @@ def host_groups_add():
     return jsonify(success=True, message="Host Group added successfully")
 
 @api.route("/host-groups/edit/", methods=["POST"])
+@login_required
 def host_groups_edit():
     host_group_id = request.form.get("host-group-id")
     name = request.form.get("name")
@@ -185,6 +209,7 @@ def host_groups_edit():
         message="Host Group has been saved successfully")
 
 @api.route("/host-groups/delete/", methods=["POST"])
+@login_required
 def host_groups_delete():
     host_group_id = request.form.get("host-group-id")
 
@@ -199,6 +224,7 @@ def host_groups_delete():
         message="Host Group has been deleted successfully")
 
 @api.route("/plugins/install/", methods=["POST"])
+@login_required
 def plugins_install():
     plugin_file = request.files.get("plugin")
     if not plugin_file:
@@ -304,6 +330,7 @@ def plugins_install():
         return jsonify(success=True, result="plugin_installed")
 
 @api.route("/plugins/delete/", methods=["POST"])
+@login_required
 def plugins_delete():
     plugin_id = request.form.get("plugin-id")
 
@@ -325,6 +352,7 @@ def plugins_delete():
         message="Plugin has been deleted successfully")
 
 @api.route("/scheduling/add/", methods=["POST"])
+@login_required
 def scheduling_add():
     name = request.form.get("name")
     description = request.form.get("description")
@@ -364,6 +392,7 @@ def scheduling_add():
         message="Schedule has been added successfully")
 
 @api.route("/scheduling/edit/", methods=["POST"])
+@login_required
 def scheduling_edit():
     schedule_id = request.form.get("schedule-id")
     name = request.form.get("name")
@@ -410,6 +439,7 @@ def scheduling_edit():
         message="Schedule has been saved successfully")
 
 @api.route("/scheduling/delete/", methods=["POST"])
+@login_required
 def scheduling_delete():
     schedule_id = request.form.get("schedule-id")
 
@@ -425,6 +455,7 @@ def scheduling_delete():
         "successfully!")
 
 @api.route("/checks/add/", methods=["POST"])
+@login_required
 def checks_add():
     name = request.form.get("name")
     description = request.form.get("description")
@@ -456,6 +487,7 @@ def checks_add():
     return jsonify(success=True, message="Check has been added successfully!")
 
 @api.route("/checks/delete/", methods=["POST"])
+@login_required
 def checks_delete():
     check_id = request.form.get("check-id")
     check = Check.query.get(check_id)
@@ -471,6 +503,7 @@ def checks_delete():
         message="Check has been deleted successfully!")
 
 @api.route("/checks/edit/", methods=["POST"])
+@login_required
 def checks_edit():
     name = request.form.get("name")
     description = request.form.get("description")
@@ -511,6 +544,7 @@ def checks_edit():
     return jsonify(success=True, message="Check has been saved successfully!")
 
 @api.route("/plugins/thresholds/save/", methods=["POST"])
+@login_required
 def plugins_thresholds_save():
     plugin_id = request.form.get("plugin-id")
     thresholds = list(zip(
@@ -556,6 +590,7 @@ def plugins_thresholds_save():
         "successfully!")
 
 @api.route("/users/add/", methods=["POST"])
+@login_required
 def users_add():
     username = request.form.get("username")
     email = request.form.get("email")
@@ -584,6 +619,7 @@ def users_add():
     return jsonify(success=True, message="User has been added successfully!")
 
 @api.route("/users/delete/", methods=["POST"])
+@login_required
 def users_delete():
     user_id = request.form.get("user-id")
 
@@ -598,6 +634,7 @@ def users_delete():
     return jsonify(success=True, message="User has been deleted successfully!")
 
 @api.route("/users/edit/", methods=["POST"])
+@login_required
 def users_edit():
     username = request.form.get("username")
     email = request.form.get("email")
