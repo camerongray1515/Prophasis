@@ -1,0 +1,8 @@
+{
+    "name": "CPU Load Percentage",
+    "id": "me.camerongray.proj.cpu_load_percentage",
+    "version": 1.0,
+    "description": "Returns a number representing the percentage utilisation of all CPUs adjusted for the number of CPUs in the system",
+    "default_n_historical": 5,
+    "default_classifier": "default_classifier.lua"
+}

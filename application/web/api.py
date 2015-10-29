@@ -268,6 +268,30 @@ def plugins_install():
             pass
     else:
         session.add(p)
+        session.flush()
+
+    # If there is a default classifier in the manifest file, add it
+    # Only do this if this is a new installation, i.e. don't overwrite existing
+    # classifiers
+    if not oldfile and "default_classifier" in manifest \
+        and "default_n_historical" in manifest:
+        try:
+            default_n_historical = int(manifest["default_n_historical"])
+        except ValueError:
+            return error_response("Value for default_n_historical in manifest "
+                "must be an integer")
+
+        try:
+            with open(os.path.join(plugin_temp_path, directory,
+                manifest["default_classifier"]), "r") as f:
+                classification_code = f.read()
+        except FileNotFoundError:
+            return error_response("Default classifier file could not be found")
+
+        pt = PluginThreshold(plugin_id=p.id, default=True,
+            n_historical=manifest["default_n_historical"],
+            classification_code=classification_code)
+        session.add(pt)
 
     shutil.move(os.path.join(temp_dir_path, p.archive_file),
         plugin_repo)
