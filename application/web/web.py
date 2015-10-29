@@ -211,4 +211,4 @@ def checks_edit(check_id):
         assigned_plugin_ids=assigned_plugin_ids)
 
 if __name__ == "__main__":
-    web.run(host="0.0.0.0", debug=True)
+    web.run(debug=True)
