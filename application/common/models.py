@@ -300,6 +300,19 @@ class ScheduleCheck(Base):
         return ("<ScheduleCheck check_id: {0}, schedule_id: {1}>".format(
             self.check_id, self.schedule_id))
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String)
+    first_name = Column(String)
+    last_name = Column(String)
+    password_hash = Column(String)
+    email = Column(String)
+
+    def __repr__(self):
+        return "<User id: {}, username: {}>".format(self.id, self.username)
+
 def create_all():
     Base.metadata.create_all(engine)
 

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% if user is not defined %}
+    {% set user = None %}
+{% endif %}
+
+{% block breadcrumbs %}
+    <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
+    <li><a href="/users/">Users</a></li>
+    {% if method == "add" %}
+        <li><a href="/users/add/">Add User</a></li>
+    {% elif method == "edit" %}
+        <li><a href="/users/edit/{{ user.id }}/">Edit User</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border"><h3 class="box-title">
+                    {% if method == "add" %}
+                        Add User
+                    {% elif method == "edit" %}
+                        Edit User
+                    {% endif %}
+                    </h3></div>
+                <div class="box-body">
+                    <form class="form-horizontal auto-post" method="POST" action="/api/users/{{ method }}/">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Username</label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="username" value="{{ user.username }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Email</label>
+                                    <div class="col-md-8">
+                                        <input type="email" class="form-control" name="email" value="{{ user.email }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">First Name</label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="first-name" value="{{ user.first_name }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Last Name</label>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" name="last-name" value="{{ user.last_name }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Password</label>
+                                    <div class="col-md-8">
+                                        <input type="password" class="form-control" name="password" placeholder="Leave blank to keep unchanged">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Confirm Password</label>
+                                    <div class="col-md-8">
+                                        <input type="password" class="form-control" name="confirm-password" placeholder="Leave blank to keep unchanged">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-md-10 col-md-offset-2">
+                            {% if method == "add" %}
+                                <button class="btn btn-primary">Add User</button>
+                            {% elif method == "edit" %}
+                                <input type="hidden" name="user-id" value="{{ user.id }}">
+                                <button class="btn btn-primary">Save User</button>
+                            {% endif %}
+                            <a href="/users/" class="btn btn-default">Back...</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

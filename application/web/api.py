@@ -4,12 +4,13 @@ import tarfile
 import json
 import shutil
 import requests
+import bcrypt
 from requests.exceptions import Timeout, ConnectionError
 from flask import Blueprint, jsonify, request
 from responses import error_response
 from models import create_all, session, Host, HostGroup, HostGroupAssignment,\
     Plugin, CheckPlugin, CheckAssignment, Check, Schedule, ScheduleInterval,\
-    ScheduleCheck, PluginThreshold
+    ScheduleCheck, PluginThreshold, User
 from sqlalchemy import or_, and_
 from config import get_config, get_config_value
 from datetime import datetime
@@ -553,3 +554,84 @@ def plugins_thresholds_save():
 
     return jsonify(success=True, message="Thresholds have been saved "
         "successfully!")
+
+@api.route("/users/add/", methods=["POST"])
+def users_add():
+    username = request.form.get("username")
+    email = request.form.get("email")
+    first_name = request.form.get("first-name")
+    last_name = request.form.get("last-name")
+    password = request.form.get("password")
+    confirm_password = request.form.get("confirm-password")
+
+    if not (username.strip() and email.strip() and first_name.strip() and \
+        last_name.strip() and password.strip() and confirm_password.strip()):
+        return error_response("All fields are required")
+
+    if password != confirm_password:
+        return error_response("Passwords do not match")
+
+    if User.query.filter(User.username==username).count():
+        return error_response("A user with that username already exists")
+
+    password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+
+    u = User(username=username, first_name=first_name, last_name=last_name,
+        password_hash=password_hash, email=email)
+    session.add(u)
+    session.commit()
+
+    return jsonify(success=True, message="User has been added successfully!")
+
+@api.route("/users/delete/", methods=["POST"])
+def users_delete():
+    user_id = request.form.get("user-id")
+
+    u = User.query.get(user_id)
+    if not u:
+        return error_response(
+            "The user you are trying to delete does not exist")
+
+    session.delete(u)
+    session.commit()
+
+    return jsonify(success=True, message="User has been deleted successfully!")
+
+@api.route("/users/edit/", methods=["POST"])
+def users_edit():
+    username = request.form.get("username")
+    email = request.form.get("email")
+    first_name = request.form.get("first-name")
+    last_name = request.form.get("last-name")
+    password = request.form.get("password")
+    confirm_password = request.form.get("confirm-password")
+    user_id = request.form.get("user-id")
+
+    if not (username.strip() and email.strip() and first_name.strip() and \
+        last_name.strip()):
+        return error_response("Username, email, first name and last name "
+            "are required")
+
+    if password != confirm_password:
+        return error_response("Passwords do not match")
+
+    if User.query.filter(User.username==username).filter(
+        User.id != user_id).count():
+        return error_response("A user with that username already exists")
+
+    u = User.query.get(user_id)
+    if not u:
+        return error_response("User could not be found!")
+
+    u.username = username
+    u.email = email
+    u.first_name = first_name
+    u.last_name = last_name
+
+    if password:
+        u.password_hash = bcrypt.hashpw(password.encode("utf-8"),
+            bcrypt.gensalt())
+
+    session.commit()
+
+    return jsonify(success=True, message="User has been saved successfully!")

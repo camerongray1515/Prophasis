@@ -2,7 +2,7 @@ from flask import Flask, render_template, abort
 from api import api
 from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
     CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval,\
-    PluginThreshold
+    PluginThreshold, User
 from datetime import datetime
 
 web = Flask(__name__)
@@ -209,6 +209,27 @@ def checks_edit(check_id):
         assigned_host_ids=assigned_host_ids,
         assigned_host_group_ids=assigned_host_group_ids,
         assigned_plugin_ids=assigned_plugin_ids)
+
+@web.route("/users/")
+def users():
+    users = User.query.all()
+
+    return render_template("users.html", nav_section="users", section="Users",
+        title="Manage Users", users=users)
+
+@web.route("/users/add/")
+def users_add():
+    return render_template("user-form.html", nav_section="users",
+        section="Users", title="Add User", method="add")
+
+@web.route("/users/edit/<user_id>/")
+def users_edit(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        abort(404)
+
+    return render_template("user-form.html", nav_section="users",
+        section="Users", title="Edit User", method="edit", user=user)
 
 if __name__ == "__main__":
     web.run(debug=True)
