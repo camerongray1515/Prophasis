@@ -36,16 +36,6 @@
                         </div>
                         <div class="box-body">
                             <div class="form-group">
-                                <label class="col-md-3 control-label">Variable</label>
-                                <div class="col-md-2">
-                                    <select class="form-control" name="variable[]">
-                                        <option value="value" {% if threshold.variable == "value" %}selected{% endif %}>Value</option>
-                                        <option value="message" {% if threshold.variable == "message" %}selected{% endif %}>Message</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
                                 <label class="control-label col-md-3">Number of historical values</label>
                                 <div class="col-md-2">
                                     <input type="number" name="n-historical[]" min="1" class="form-control" value="{% if threshold.n_historical %}{{ threshold.n_historical }}{% else %}1{% endif %}">
@@ -56,7 +46,12 @@
 
                             <div class="form-group">
                                 <label class="control-label">Classification Code</label>
-                                <textarea class="codemirror" name="classification-code[]">{% if threshold.classification_code %}{{ threshold.classification_code }}{% else %}-- Variable "values" is an array of n historical values of the variable and length specified above{% endif %}</textarea>
+                                <textarea class="codemirror" name="classification-code[]">{% if threshold.classification_code %}{{ threshold.classification_code }}{% else %}-- The following arrays are provided which contain data collected by the plugin
+-- values: Array of "values" returned by the plugin
+-- messages: Array of "messages" returned by the plugin
+-- result_types: Array with "plugin" for a successful check or the following error values:
+--    "command_unsuccessful", "authentication_error", "request_error", "connection_error", "connection_timeout"
+{% endif %}</textarea>
                             </div>
                         </div>
                     </div>

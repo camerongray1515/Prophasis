@@ -491,13 +491,12 @@ def plugins_thresholds_save():
     thresholds = list(zip(
         request.form.getlist("check[]"),
         request.form.getlist("n-historical[]"),
-        request.form.getlist("variable[]"),
         request.form.getlist("classification-code[]")
     ))
 
     used_check_ids = []
     for threshold in thresholds:
-        check_id, n_historical, variable, classification_code = threshold
+        check_id, n_historical, classification_code = threshold
         if check_id == "-1":
             return error_response("You must specify a check for all thresholds")
         if not n_historical or int(n_historical) < 1:
@@ -505,9 +504,6 @@ def plugins_thresholds_save():
                 "than 0 and must be specified")
         if not classification_code.strip():
             return error_response("You must supply classification code")
-        if variable not in ["value", "message"]:
-            return error_response("Variable must either be 'value' or 'message'"
-                )
         if check_id in used_check_ids:
             return error_response("You cannot have multiple thresholds related "
                 "to the same check")
@@ -516,12 +512,11 @@ def plugins_thresholds_save():
     PluginThreshold.query.filter(PluginThreshold.plugin_id==plugin_id).delete()
 
     for threshold in thresholds:
-        check_id, n_historical, variable, classification_code = threshold
+        check_id, n_historical, classification_code = threshold
         pt = PluginThreshold(
             plugin_id=plugin_id,
             n_historical=n_historical,
-            classification_code=classification_code,
-            variable=variable
+            classification_code=classification_code
         )
         if check_id != "default":
             pt.check_id = check_id

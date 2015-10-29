@@ -3,7 +3,7 @@ import json
 import numbers
 from models import PluginThreshold, PluginResult
 
-def execute_classifier(code, values):
+def execute_classifier(code, values, messages, result_types):
     lua = lupa.LuaRuntime()
     # Create a sandbox to prevent code from accessing dangerous functions
     sandbox = lua.eval("{}")
@@ -16,6 +16,8 @@ def execute_classifier(code, values):
 
     # Build up the code by including library functions and the data array itself
     full_code = "values={}\n".format(list_to_lua_array(values))
+    full_code += "messages={}\n".format(list_to_lua_array(messages))
+    full_code += "result_types={}\n".format(list_to_lua_array(result_types))
     with open("classifier_functions.lua", "r") as f:
         full_code += "\n".join(f.readlines())
     full_code += "\n{}".format(code)
@@ -49,21 +51,21 @@ def classify(latest_result, check_id):
             PluginResult.id.desc()
         ).limit(threshold.n_historical-1).all()
 
-    historical_values_list = []
+    values_list = []
+    messages_list = []
+    result_types_list = []
     for value in historical_values:
-        if threshold.variable == "value":
-            historical_values_list.append(value.value)
-        else:
-            historical_values_list.append(value.message)
-    if threshold.variable == "value":
-        historical_values_list.append(latest_result.value)
-    else:
-        historical_values_list.append(latest_result.message)
+        values_list.append(value.value)
+        messages_list.append(value.message)
+        result_types_list.append(value.result_type)
+    values_list.append(latest_result.value)
+    messages_list.append(latest_result.message)
+    result_types_list.append(latest_result.result_type)
 
     try:
         classification = execute_classifier(threshold.classification_code,
-            historical_values_list)
-    except lupa._lupa.LuaSyntaxError as e:
+            values_list, messages_list, result_types_list)
+    except (lupa._lupa.LuaSyntaxError, lupa._lupa.LuaError) as e:
         # TODO: Log error here
         print(str(e))
         classification = "unknown"
@@ -77,10 +79,12 @@ def classify(latest_result, check_id):
 def list_to_lua_array(input_list):
     lua_array = "{"
     for entry in input_list:
-        if isinstance(entry, numbers.Number):
+        if entry == None:
+            lua_array += "nil,"
+        elif isinstance(entry, numbers.Number):
             lua_array += "{},".format(entry)
         else:
-            lua_array += "\"{}\",".format(entry)
+            lua_array += "\"{}\",".format(entry.replace("\"", "\\\""))
     lua_array = "{}}}".format(lua_array[:-1]) # Remove last comma
     return lua_array
 
