@@ -37,6 +37,27 @@ class Host(Base):
     check_results = relationship("PluginResult",
         cascade="all, delete, delete-orphan", backref="host")
 
+    @property
+    def assigned_plugins(self):
+        plugins = []
+        all_check_assignments = self.check_assignments
+        for assignment in self.group_assignments:
+            all_check_assignments += assignment.host_group.check_assignments
+
+        for check_assignment in all_check_assignments:
+            for check_plugin in check_assignment.check.check_plugins:
+                plugins.append(check_plugin.plugin)
+
+        # Deduplicate to be safe
+        found_plugin_ids = []
+        deduplicated_plugins = []
+        for plugin in plugins:
+            if plugin.id not in found_plugin_ids:
+                found_plugin_ids.append(plugin.id)
+                deduplicated_plugins.append(plugin)
+
+        return deduplicated_plugins
+
     def __repr__(self):
         return "<Host id: {0}, name: {1}, host: {2}>".format(self.id,
             self.name, self.host)

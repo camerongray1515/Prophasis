@@ -2,6 +2,7 @@ import os
 from flask import Flask, render_template, abort
 from flask.ext.login import LoginManager, login_required, logout_user
 from api import api
+from reports import reports
 from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
     CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval,\
     PluginThreshold, User
@@ -9,6 +10,7 @@ from datetime import datetime
 
 web = Flask(__name__)
 web.register_blueprint(api)
+web.register_blueprint(reports)
 # TODO: Store in config file or something?
 web.secret_key = b'\x0bi\xcb\r\x8f\x8f\x06:\x8f\x0b\x0cw\x7f\x8dJ\x0fd\xdbH'\
     b'\x86\x0egNq\xd0n\xa9\xa7\xdd\xb2\xbf\xa9\x13\x1f\xce\x8f\x9a=\xbc.\xcaV'\

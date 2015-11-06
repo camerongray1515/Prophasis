@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body no-padding">
+                    <table class="table table-hover table-fixed">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Health Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for host in hosts %}
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body no-padding">
+                    <div class="health-container">
+                        {% for host in ordered_hosts %}
+                            <a href="/reports/hosts/{{ host.id }}" class="host-health btn btn-{{ host.css_class }}">
+                                <strong>{{ host.name }}</strong>
+                                <br>
+                                {{ host.display }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style media="screen">
+        .host-health {
+            width: 200px;
+            height: 55px;
+            border: 1px grey;
+            margin: 5px;
+        }
+        .health-container {
+            padding: 5px;
+            text-align: center;
+        }
+    </style>
+{% endblock %}
