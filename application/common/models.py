@@ -37,6 +37,7 @@ class Host(Base):
     check_results = relationship("PluginResult",
         cascade="all, delete, delete-orphan", backref="host")
 
+    # TODO: Figure out recursion for groups within groups
     @property
     def assigned_plugins(self):
         plugins = []
@@ -57,6 +58,28 @@ class Host(Base):
                 deduplicated_plugins.append(plugin)
 
         return deduplicated_plugins
+
+    @property
+    def member_of(self):
+        groups = []
+        for assignment in self.group_assignments:
+            if assignment.host_group and assignment.host_group not in groups:
+                groups.append(assignment.host_group)
+                groups += Host._traverse_groups(assignment.host_group.id,
+                    groups)
+        return groups
+
+    def _traverse_groups(group_id, visited_groups=None):
+        groups = []
+        assignments = HostGroupAssignment.query.filter(
+            HostGroupAssignment.member_host_group_id == group_id)
+        for assignment in assignments:
+            if assignment.host_group not in visited_groups:
+                groups.append(assignment.host_group)
+                groups += Host._traverse_groups(assignment.host_group_id,
+                    groups+visited_groups)
+
+        return groups
 
     def __repr__(self):
         return "<Host id: {0}, name: {1}, host: {2}>".format(self.id,
@@ -349,6 +372,9 @@ class User(Base):
 
 def create_all():
     Base.metadata.create_all(engine)
+
+def drop_all():
+    Base.metadata.drop_all(engine)
 
 def test():
     g = HostGroup.query.get(4)
