@@ -146,6 +146,7 @@ class PluginResult(Base):
     id = Column(Integer, primary_key=True)
     host_id = Column(Integer, ForeignKey("hosts.id"))
     plugin_id = Column(String, ForeignKey("plugins.id"))
+    check_id = Column(Integer, ForeignKey("checks.id"))
     value = Column(Float)
     message = Column(String)
     result_type = Column(String)
@@ -156,6 +157,20 @@ class PluginResult(Base):
         return ("<PluginResult host_id: {0}, plugin_id: {1}, timestamp: {2}"
             ">".format(self.host_id, self.plugin_id, self.timestamp))
 
+    def to_dict(self):
+        data = {
+            "id": self.id,
+            "host_id": self.host_id,
+            "plugin_id": self.plugin_id,
+            "check_id": self.check_id,
+            "value": self.value,
+            "message": self.message,
+            "result_type": self.result_type,
+            "timestamp": self.timestamp,
+            "health_status": self.health_status
+        }
+        return data
+
 class Plugin(Base):
     __tablename__ = "plugins"
 
@@ -164,6 +179,8 @@ class Plugin(Base):
     description = Column(Text)
     version = Column(Float)
     archive_file = Column(String)
+    view = Column(String)
+    view_source = Column(Text)
 
     check_results = relationship("PluginResult",
         cascade="all, delete, delete-orphan", backref="plugin")
@@ -304,6 +321,9 @@ class Check(Base):
         cascade="all, delete, delete-orphan", backref="check")
 
     plugin_thresholds = relationship("PluginThreshold",
+        cascade="all, delete, delete-orphan", backref="check")
+
+    plugin_results = relationship("PluginResult",
         cascade="all, delete, delete-orphan", backref="check")
 
     def __repr__(self):

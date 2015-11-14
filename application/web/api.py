@@ -283,6 +283,9 @@ def plugins_install():
         p.name = manifest["name"]
         p.description = manifest["description"]
         p.version = manifest["version"]
+        p.view = manifest["view"]
+        if (p.view == "custom"):
+            p.view_source = manifest["view_source"]
         p.archive_file = filename + ".tar.gz"
     except KeyError:
         return error_response("Manifest file is missing some requied keys")

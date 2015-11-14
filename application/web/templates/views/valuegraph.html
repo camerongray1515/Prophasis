@@ -1,0 +1,14 @@
+<ul>
+    {% for result in results %}
+        <li>{{ result.value }}</li>
+    {% endfor %}
+</ul>
+
+<script type="text/javascript">
+    (function() {
+        var results = {{ results|tojson }};
+        for (var i = 0; i < results.length; i++) {
+            console.log(results[i].health_status);
+        }
+    })();
+</script>

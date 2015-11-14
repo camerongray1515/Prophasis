@@ -48,8 +48,9 @@ def perform_check(host, plugin, check_id):
         message = error
         value = None
 
-    pr = PluginResult(host_id=host.id, plugin_id=plugin.id, value=value,
-        message=message, result_type=result_type, timestamp=datetime.now())
+    pr = PluginResult(host_id=host.id, plugin_id=plugin.id, check_id=check_id,
+        value=value, message=message, result_type=result_type,
+        timestamp=datetime.now())
 
     pr.health_status = classify(pr, check_id)
 
