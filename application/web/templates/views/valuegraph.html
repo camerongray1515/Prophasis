@@ -1,14 +1,37 @@
-<ul>
-    {% for result in results %}
-        <li>{{ result.value }}</li>
-    {% endfor %}
-</ul>
+<canvas id="{{ identifier }}" style="width: 100%; height: 200px;"></canvas>
 
 <script type="text/javascript">
-    (function() {
+    $(document).ready(function() {
         var results = {{ results|tojson }};
+        var values = [];
+        var labels = [];
+
         for (var i = 0; i < results.length; i++) {
-            console.log(results[i].health_status);
+            values.push(results[i]["value"])
+            labels.push("")
         }
-    })();
+
+        var data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Value",
+                    fillColor: "rgba(151,187,205,0.2)",
+                    strokeColor: "rgba(151,187,205,1)",
+                    pointColor: "rgba(151,187,205,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(151,187,205,1)",
+                    data: values
+                }
+            ]
+        };
+
+        var ctx = $("#{{ identifier }}").get(0).getContext("2d");
+        new Chart(ctx).Line(data, {
+            bezierCurve: false,
+            pointDot: false,
+            showTooltips: false
+        });
+    });
 </script>

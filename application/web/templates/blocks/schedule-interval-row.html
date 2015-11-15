@@ -13,13 +13,13 @@
         <div class="input-group">
             <input type="text" class="form-control col-md-3" name="interval-value[]" value="{{ interval.interval_value }}">
             <div class="input-group-addon interval-unit-select-container">
-            <select class="form-control" name="interval-unit[]">
-                <option value="second" {% if interval.interval_unit == "second" %}selected{% endif %}>Seconds</option>
-                <option value="minute" {% if interval.interval_unit == "minute" %}selected{% endif %}>Minutes</option>
-                <option value="hour" {% if interval.interval_unit == "hour" %}selected{% endif %}>Hours</option>
-                <option value="day" {% if interval.interval_unit == "day" %}selected{% endif %}>Days</option>
-                <option value="week" {% if interval.interval_unit == "week" %}selected{% endif %}>Weeks</option>
-            </select>
+                <select class="form-control" name="interval-unit[]">
+                    <option value="second" {% if interval.interval_unit == "second" %}selected{% endif %}>Seconds</option>
+                    <option value="minute" {% if interval.interval_unit == "minute" %}selected{% endif %}>Minutes</option>
+                    <option value="hour" {% if interval.interval_unit == "hour" %}selected{% endif %}>Hours</option>
+                    <option value="day" {% if interval.interval_unit == "day" %}selected{% endif %}>Days</option>
+                    <option value="week" {% if interval.interval_unit == "week" %}selected{% endif %}>Weeks</option>
+                </select>
             </div>
         </div>
     </td>

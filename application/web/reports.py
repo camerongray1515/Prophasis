@@ -1,21 +1,59 @@
 import report_logic
-from flask import Blueprint, request, render_template
+import uuid
+import datetime
+from flask import Blueprint, request, render_template, session
 from flask.ext.login import login_required
 from models import PluginResult
 
 reports = Blueprint("reports", __name__, url_prefix="/reports")
 
 @reports.route("/hosts/")
+@login_required
 def hosts():
     ordered_hosts = report_logic.get_all_hosts()
 
     return render_template("host-health.html", nav_section="reports/hosts",
-        section="Hosts", ordered_hosts=ordered_hosts)
+        section="Hosts", title="Host Health", ordered_hosts=ordered_hosts)
 
-@reports.route("/hosts/<host_id>/")
+@reports.route("/hosts/<host_id>/", methods=["GET", "POST"])
+@login_required
 def hosts_host_id(host_id):
+    if request.form.get("end-timestamp"):
+        end_timestamp = request.form.get("end-timestamp")
+    else:
+        end_timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+
+    unit_dividers = {
+        "minute": 60,
+        "hour": 60 * 60,
+        "day": 60 * 60 * 24,
+        "week": 60 * 60 * 24 * 7
+    }
+
+    if request.form.get("historical-unit"):
+        unit = request.form.get("historical-unit")
+        value = request.form.get("historical-unit-value")
+        session["seconds_historical"] = int(value) * unit_dividers[unit]
+
+    if "seconds_historical" not in session:
+        session["seconds_historical"] = 60*60 # Last hour of data
+
+    unit_divider_ordering = ["minute", "hour", "day", "week"]
+
+    historical_unit_value = session["seconds_historical"]
+    historical_unit = "second"
+    for unit in unit_divider_ordering:
+        if session["seconds_historical"] % unit_dividers[unit] == 0:
+            historical_unit = unit
+            historical_unit_value = int(session["seconds_historical"] / \
+                unit_dividers[unit])
+
+    end_time = datetime.datetime.strptime(end_timestamp, "%Y-%m-%dT%H:%M:%S")
+    start_time = end_time - datetime.timedelta(0, session["seconds_historical"])
     check_plugin_views = {}
-    results = PluginResult.query.filter(PluginResult.host_id == host_id)
+    results = PluginResult.query.filter(PluginResult.host_id == host_id).filter(
+        PluginResult.timestamp >= start_time).filter(
+            PluginResult.timestamp <= end_time)
     # Separate results by check and plugin
     for result in results:
         check_name = result.check.name
@@ -36,14 +74,19 @@ def hosts_host_id(host_id):
             view_name = entry["plugin"].view
             if view_name != "custom":
                 rendered_view = render_template("views/{}.html".format(
-                    view_name), results=entry["results"])
+                    view_name), results=entry["results"],
+                        identifier=uuid.uuid4())
 
                 if check_name not in rendered_views:
                     rendered_views[check_name] = []
 
                 rendered_views[check_name].append({
-                    "plugin_name": plugin_name,
+                    "name": plugin_name,
                     "rendered_view": rendered_view
                 });
 
-    return render_template("host-views.html", views=rendered_views)
+    return render_template("host-views.html", nav_section="reports/hosts",
+        section="Hosts", title="Host Information", views=rendered_views,
+        end_timestamp=end_timestamp,
+        historical_unit_value=historical_unit_value,
+        historical_unit=historical_unit)
