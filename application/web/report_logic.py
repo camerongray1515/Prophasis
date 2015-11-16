@@ -47,7 +47,8 @@ def get_all_hosts():
         highest_severity = 0
         for plugin in host.assigned_plugins:
             results = PluginResult.query.filter(
-                PluginResult.plugin_id == plugin.id).order_by(
+                PluginResult.plugin_id == plugin.id).filter(
+                    PluginResult.host_id == host.id).order_by(
                 PluginResult.id.desc()).all()
             if results:
                 result = results[0]
