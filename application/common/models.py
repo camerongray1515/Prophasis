@@ -11,9 +11,13 @@ from config import get_config, get_config_value
 config = get_config()
 
 connection_string = get_config_value(config, "db_connection_string")
-engine = create_engine(connection_string)
-Session = sessionmaker(bind=engine)
-session = scoped_session(Session)
+def initialise():
+    global engine, Session, session
+    engine = create_engine(connection_string)
+    Session = sessionmaker(bind=engine)
+    session = scoped_session(Session)
+
+initialise()
 
 Base = declarative_base()
 Base.query = session.query_property()
@@ -199,7 +203,7 @@ class PluginThreshold(Base):
     __tablename__ = "plugin_thresholds"
 
     id = Column(Integer, primary_key=True)
-    plugin_id = Column(Integer, ForeignKey("plugins.id"))
+    plugin_id = Column(String, ForeignKey("plugins.id"))
     check_id = Column(Integer, ForeignKey("checks.id"))
     default = Column(Boolean)
     n_historical = Column(Integer) # How many previous values to fetch
@@ -334,7 +338,7 @@ class CheckPlugin(Base):
 
     id = Column(Integer, primary_key=True)
     check_id = Column(Integer, ForeignKey("checks.id"))
-    plugin_id = Column(Integer, ForeignKey("plugins.id"))
+    plugin_id = Column(String, ForeignKey("plugins.id"))
 
     def __repr__(self):
         return ("<CheckPlugin check_id: {0}, plugin_id: {1}>".format(

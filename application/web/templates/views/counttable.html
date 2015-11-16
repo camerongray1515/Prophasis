@@ -1,0 +1,32 @@
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Message</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody id="{{ identifier }}tbody">
+
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    (function() {
+        var data = {{ results|tojson }};
+
+        var counts = {};
+        for (var i = 0; i < data.length; i++) {
+            var message = data[i]["message"];
+            if (counts[message] == undefined) {
+                 counts[message] = 1;
+            } else {
+                counts[message]++;
+            }
+        }
+
+        for (var message in counts) {
+            var row = "<tr><td>" + message + "</td><td>" + counts[message] + "</td></tr>";
+            $("#{{ identifier }}tbody").append(row);
+        }
+    })();
+</script>

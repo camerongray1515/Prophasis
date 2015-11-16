@@ -1,5 +1,6 @@
 import os
-from multiprocessing import Process, Queue
+import multiprocessing
+# from multiprocessing import Process, Queue
 from agent_api import Agent, CommandUnsuccessfulError, AuthenticationError, \
     RequestError
 from requests.exceptions import ConnectionError, Timeout
@@ -10,6 +11,10 @@ from classification import classify
 
 host_queues = {}
 config = get_config()
+
+ctx = multiprocessing.get_context("spawn")
+Process = ctx.Process
+Queue = ctx.Queue
 
 def runner(queue, host):
     while not queue.empty():

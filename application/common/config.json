@@ -1,5 +1,5 @@
 {
-  "db_connection_string": "sqlite:///../web/db.sqlite",
+  "db_connection_string": "postgresql://proj:proj@localhost:5432/proj",
   "scheduler_delay": 0.1,
   "dispatch_width": 50
 }

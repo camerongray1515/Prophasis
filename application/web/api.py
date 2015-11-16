@@ -30,7 +30,7 @@ def login():
     if not users:
         return error_response(error_message)
 
-    password_hash = users[0].password_hash
+    password_hash = users[0].password_hash.encode("utf-8")
     if bcrypt.hashpw(password.encode("utf-8"), password_hash) == password_hash:
         login_user(users[0])
         return jsonify(success=True, message="Login Successful!")
@@ -615,7 +615,7 @@ def users_add():
     password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
     u = User(username=username, first_name=first_name, last_name=last_name,
-        password_hash=password_hash, email=email)
+        password_hash=password_hash.decode("utf-8"), email=email)
     session.add(u)
     session.commit()
 
@@ -670,7 +670,7 @@ def users_edit():
 
     if password:
         u.password_hash = bcrypt.hashpw(password.encode("utf-8"),
-            bcrypt.gensalt())
+            bcrypt.gensalt()).decode("utf-8")
 
     session.commit()
 
