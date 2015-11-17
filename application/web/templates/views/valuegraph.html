@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        var results = {{ results|tojson }};
+        var results = {{ results_json|safe }};
         var values = [];
         var labels = [];
 

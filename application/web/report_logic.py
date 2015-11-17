@@ -49,7 +49,7 @@ def get_all_hosts():
             results = PluginResult.query.filter(
                 PluginResult.plugin_id == plugin.id).filter(
                     PluginResult.host_id == host.id).order_by(
-                PluginResult.id.desc()).all()
+                        PluginResult.id.desc()).all()
             if results:
                 result = results[0]
                 if severities[result.health_status]["priority"] >\

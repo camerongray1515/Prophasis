@@ -285,7 +285,12 @@ def plugins_install():
         p.version = manifest["version"]
         p.view = manifest["view"]
         if (p.view == "custom"):
-            p.view_source = manifest["view_source"]
+            try:
+                with open(os.path.join(plugin_temp_path, directory,
+                    manifest["view_source"])) as f:
+                    p.view_source = f.read()
+            except FileNotFoundError:
+                return error_response("View source file could not be found")
         p.archive_file = filename + ".tar.gz"
     except KeyError:
         return error_response("Manifest file is missing some requied keys")

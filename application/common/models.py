@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship
 from datetime import datetime
 from config import get_config, get_config_value
+from copy import deepcopy
 
 config = get_config()
 
@@ -45,7 +46,8 @@ class Host(Base):
     @property
     def assigned_plugins(self):
         plugins = []
-        all_check_assignments = self.check_assignments
+        all_check_assignments = []
+        all_check_assignments += self.check_assignments
         for assignment in self.group_assignments:
             all_check_assignments += assignment.host_group.check_assignments
 
@@ -170,7 +172,7 @@ class PluginResult(Base):
             "value": self.value,
             "message": self.message,
             "result_type": self.result_type,
-            "timestamp": self.timestamp,
+            "timestamp": self.timestamp.timestamp(),
             "health_status": self.health_status
         }
         return data

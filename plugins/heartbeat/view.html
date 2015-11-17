@@ -1,0 +1,19 @@
+<div class="text-center">
+    <h3>This host has responded to heartbeats <span id="{{ identifier}}-percentage"></span>% of the time</h3>
+</div>
+
+<script type="text/javascript">
+    (function() {
+        var data = {{ results_json|safe }};
+        var okResponses = 0;
+
+        for (var i = 0; i < data.length; i++) {
+            if (data[i]["message"] == "ok") {
+                okResponses++;
+            }
+        }
+
+        var percentage = Math.round((okResponses / data.length)*100);
+        $("#{{ identifier }}-percentage").text(percentage);
+    })();
+</script>

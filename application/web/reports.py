@@ -1,9 +1,11 @@
 import report_logic
 import uuid
 import datetime
+import json
 from flask import Blueprint, request, render_template, session
 from flask.ext.login import login_required
 from models import PluginResult
+from jinja2 import Template
 
 reports = Blueprint("reports", __name__, url_prefix="/reports")
 
@@ -72,18 +74,25 @@ def hosts_host_id(host_id):
         for plugin_name in check_plugin_views[check_name].keys():
             entry = check_plugin_views[check_name][plugin_name]
             view_name = entry["plugin"].view
-            if view_name != "custom":
+
+            if view_name == "custom":
+                template = Template(entry["plugin"].view_source)
+                rendered_view = template.render(results=entry["results"],
+                    identifier=uuid.uuid4(),
+                    results_json=json.dumps(entry["results"]))
+            else:
                 rendered_view = render_template("views/{}.html".format(
                     view_name), results=entry["results"],
-                        identifier=uuid.uuid4())
+                        identifier=uuid.uuid4(),
+                        results_json=json.dumps(entry["results"]))
 
-                if check_name not in rendered_views:
-                    rendered_views[check_name] = []
+            if check_name not in rendered_views:
+                rendered_views[check_name] = []
 
-                rendered_views[check_name].append({
-                    "name": plugin_name,
-                    "rendered_view": rendered_view
-                });
+            rendered_views[check_name].append({
+                "name": plugin_name,
+                "rendered_view": rendered_view
+            });
 
     return render_template("host-views.html", nav_section="reports/hosts",
         section="Hosts", title="Host Information", views=rendered_views,

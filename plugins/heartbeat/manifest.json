@@ -1,9 +1,10 @@
 {
     "name": "Heartbeat",
     "id": "me.camerongray.proj.heartbeat",
-    "version": 1.1,
+    "version": 1.0,
     "description": "Always returns the message \"ok\"",
     "default_n_historical": 5,
     "default_classifier": "default_classifier.lua",
-    "view": "counttable"
+    "view": "custom",
+    "view_source": "view.html"
 }
