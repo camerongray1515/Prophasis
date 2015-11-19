@@ -17,11 +17,11 @@ def hosts():
     return render_template("host-health.html", nav_section="reports/hosts",
         section="Hosts", title="Host Health", ordered_hosts=ordered_hosts)
 
-@reports.route("/hosts/<host_id>/", methods=["GET", "POST"])
+@reports.route("/hosts/<host_id>/", methods=["GET"])
 @login_required
 def hosts_host_id(host_id):
-    if request.form.get("end-timestamp"):
-        end_timestamp = request.form.get("end-timestamp")
+    if request.args.get("end-timestamp"):
+        end_timestamp = request.args.get("end-timestamp")
     else:
         end_timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
@@ -32,9 +32,9 @@ def hosts_host_id(host_id):
         "week": 60 * 60 * 24 * 7
     }
 
-    if request.form.get("historical-unit"):
-        unit = request.form.get("historical-unit")
-        value = request.form.get("historical-unit-value")
+    if request.args.get("historical-unit"):
+        unit = request.args.get("historical-unit")
+        value = request.args.get("historical-unit-value")
         session["seconds_historical"] = int(value) * unit_dividers[unit]
 
     if "seconds_historical" not in session:
