@@ -1,14 +1,35 @@
-<canvas id="{{ identifier }}" style="width: 100%; height: 200px;"></canvas>
+<canvas id="{{ identifier }}" style="width: 100%; height: 400px;"></canvas>
 
 <script type="text/javascript">
     $(document).ready(function() {
+        var numLabels = 20;
+
         var results = {{ results_json|safe }};
         var values = [];
         var labels = [];
 
+        var startTimestamp = null;
+        if (results.length > 0) {
+            startTimestamp = results[0]["timestamp"];
+        }
+        var printTimestampEvery = Math.round(results.length / numLabels);
         for (var i = 0; i < results.length; i++) {
-            values.push(results[i]["value"])
-            labels.push("")
+            var value = results[i]["value"];
+
+            if (value == null) {
+                value = 0;
+            }
+            previousValue = value;
+
+            values.push(value);
+            if (i % printTimestampEvery == 0) {
+                var d = new Date(results[i]["timestamp"]*1000);
+                var dateString = d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+                dateString += " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+                labels.push(dateString);
+            } else {
+                labels.push("");
+            }
         }
 
         var data = {
@@ -35,7 +56,9 @@
             scaleStepWidth: 10,
             scaleSteps: 10,
             scaleStartValue: 0,
-            scaleOverride: true
+            scaleOverride: true,
+            animation: false,
+            scaleShowVerticalLines: false
         });
     });
 </script>

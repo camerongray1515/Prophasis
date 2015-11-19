@@ -55,7 +55,7 @@ def hosts_host_id(host_id):
     check_plugin_views = {}
     results = PluginResult.query.filter(PluginResult.host_id == host_id).filter(
         PluginResult.timestamp >= start_time).filter(
-            PluginResult.timestamp <= end_time)
+            PluginResult.timestamp <= end_time).order_by(PluginResult.timestamp)
     # Separate results by check and plugin
     for result in results:
         check_name = result.check.name
