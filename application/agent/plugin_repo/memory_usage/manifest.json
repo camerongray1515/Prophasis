@@ -1,0 +1,9 @@
+{
+    "name": "Memory Usage Percentage",
+    "id": "me.camerongray.proj.memory_usage_percentage",
+    "version": 1.0,
+    "description": "Returns the percentage of used memory of the system",
+    "default_n_historical": 5,
+    "default_classifier": "default_classifier.lua",
+    "view": "valuegraph"
+}
