@@ -1,8 +1,8 @@
-{"ssl_key": "/home/camerong/Uni/honours_project/application/agent/keys/server.key",
-"plugin_repo": "/home/camerong/Uni/honours_project/application/agent/plugin_repo",
+{"auth_key_hash": "21cbc6f737cf67aead1f13cb8847ff7c73a70471631c61767c2e5ab8856d6496|4182e6b97ae7ad8b0b28b9ad7bd9a1327c16d0b1387c0a01e5cbdc4beb2de81c",
+"ssl_key": "/home/camerong/Uni/honours_project/application/agent/keys/server.key",
 "ssl_crt": "/home/camerong/Uni/honours_project/application/agent/keys/server.crt",
-"port": "4048",
-"temp_dir": "/tmp/proj",
+"plugin_repo": "/home/camerong/Uni/honours_project/application/agent/plugin_repo",
+"temp_dir": "/tmp",
 "use_ssl": true,
-"auth_key": "a9b8fdd73d03bd7b54f31adb8bb2424e52fff09feb37a98defdf6d1f3bf4f2db",
-"auth_key_hash": "$2b$12$01wxKwM1DsD5KAW6i.l2V.JrhUJwxoxSDZVuSFjBioSlhnfP2P0dK"}
+"auth_key": "1d364a9339fb547f915b2fbd7addfc3e976941f65bac87d01927f966f59a5b13",
+"port": "4048"}

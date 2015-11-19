@@ -1,7 +1,8 @@
 import json
 import os
-import bcrypt
-
+import random
+import string
+import hashlib
 from binascii import hexlify
 
 config_file_path = os.path.join(os.path.dirname(
@@ -119,9 +120,10 @@ def setup_wizard():
             "agent.  If you lose this key you will need to run setup "
             "again to generate a new one.")
 
-    config["auth_key_hash"] = bcrypt.hashpw(
-            authentication_key.encode("ascii"), bcrypt.gensalt()).decode(
-                "ascii")
+    salt = generate_authentication_key()
+    salted_key = salt + authentication_key
+    config["auth_key_hash"] = salt + "|" + hashlib.sha256(
+        salted_key.encode("ascii")).hexdigest()
 
     with open(config_file_path, "w") as f:
         json.dump(config, f, separators=(",\n", ": "))

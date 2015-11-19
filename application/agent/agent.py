@@ -1,9 +1,9 @@
 import argparse
-import bcrypt
 import os
 import uuid
 import tarfile
 import json
+import hashlib
 from flask import Flask, jsonify, request, Response
 from plugin_handling import get_plugin_metadata, get_data_from_plugin
 from exceptions import PluginExecutionError
@@ -26,15 +26,14 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         auth = request.authorization
-        correct_key_hash = get_config_value(config, "auth_key_hash").encode(
-            "ascii")
-
+        salt, correct_hash = get_config_value(config, "auth_key_hash").split(
+            "|")
         auth_valid = False
 
-        if auth and correct_key_hash:
-            key_correct = bcrypt.hashpw(auth.password.encode("ascii"),
-                correct_key_hash) == correct_key_hash
-
+        if auth and correct_hash:
+            to_hash = (salt + auth.password).encode("ascii")
+            key_correct = hashlib.sha256(to_hash).hexdigest() == correct_hash
+            
             if auth.username == "core" and key_correct:
                 auth_valid = True
 
