@@ -1,6 +1,7 @@
 import lupa
 import json
 import numbers
+import os
 from models import PluginThreshold, PluginResult
 
 def execute_classifier(code, values, messages, result_types):
@@ -18,7 +19,8 @@ def execute_classifier(code, values, messages, result_types):
     full_code = "values={}\n".format(list_to_lua_array(values))
     full_code += "messages={}\n".format(list_to_lua_array(messages))
     full_code += "result_types={}\n".format(list_to_lua_array(result_types))
-    with open("classifier_functions.lua", "r") as f:
+    with open(os.path.join(os.path.dirname(__file__),
+        "classifier_functions.lua"), "r") as f:
         full_code += "\n".join(f.readlines())
     full_code += "\n{}".format(code)
 
