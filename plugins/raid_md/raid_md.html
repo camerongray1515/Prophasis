@@ -1,0 +1,12 @@
+{% if results|length > 0 %}
+    {% if results[-1]["value"] == 0 %}
+        <div class="alert alert-success"><p><strong>Ok:</strong> All MD devices are operating correctly.</p></div>
+    {% else %}
+        <div class="alert alert-danger">
+            <p><strong>Critical:</strong> {{ results[-1]["value"] }} disks have failed.</p>
+            <p>The following devices are degraded: <strong>{{ results[-1]["message"] }}</strong></p>
+        </div>
+    {% endif %}
+{% else %}
+    <div class="alert alert-info"><p><strong>No Data</strong> No data for this check/plugin has been collected yet</p></div>
+{% endif %}

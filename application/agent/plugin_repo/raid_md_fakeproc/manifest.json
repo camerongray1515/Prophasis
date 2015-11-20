@@ -1,0 +1,9 @@
+{
+    "name": "Linux MD RAID Status",
+    "id": "me.camerongray.proj.raid_md",
+    "version": 1.0,
+    "description": "Checks for failed disks in Linux MD RAID arrays",
+    "default_n_historical": 1,
+    "default_classifier": "default_classifier.lua",
+    "view": "raid_md"
+}
