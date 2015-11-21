@@ -42,6 +42,12 @@ class Host(Base):
     check_results = relationship("PluginResult",
         cascade="all, delete, delete-orphan", backref="host")
 
+    service_dependencies = relationship("ServiceDependency",
+        cascade="all, delete, delete-orphan", backref="host")
+
+    redundancy_group_components = relationship("RedundancyGroupComponent",
+        cascade="all, delete, delete-orphan", backref="host")
+
     # TODO: Figure out recursion for groups within groups
     @property
     def assigned_plugins(self):
@@ -108,6 +114,12 @@ class HostGroup(Base):
     group_membership = relationship("HostGroupAssignment",
         cascade="all, delete, delete-orphan", backref="member_host_group",
         foreign_keys="HostGroupAssignment.member_host_group_id")
+
+    service_dependencies = relationship("ServiceDependency",
+        cascade="all, delete, delete-orphan", backref="host_group")
+
+    redundancy_group_components = relationship("RedundancyGroupComponent",
+        cascade="all, delete, delete-orphan", backref="host_group")
 
     @property
     def member_hosts(self):
@@ -395,6 +407,56 @@ class User(Base):
 
     def __repr__(self):
         return "<User id: {}, username: {}>".format(self.id, self.username)
+
+class Service(Base):
+    __tablename__ = "services"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    description = Column(Text)
+
+    service_dependencies = relationship("ServiceDependency",
+        cascade="all, delete, delete-orphan", backref="service")
+
+    def __repr__(self):
+        return "<Service id: {}, name: {}>".format(self.id, self.name)
+
+class ServiceDependency(Base):
+    __tablename__ = "service_dependencies"
+
+    id = Column(Integer, primary_key=True)
+    service_id = Column(Integer, ForeignKey("services.id"))
+    host_id = Column(Integer, ForeignKey("hosts.id"))
+    host_group_id = Column(Integer, ForeignKey("host_groups.id"))
+    redundancy_group_id = Column(Integer, ForeignKey("redundancy_groups.id"))
+
+    def __repr__(self):
+        return "<ServiceDependency id: {}>".format(self.id)
+
+class RedundancyGroup(Base):
+    __tablename__ = "redundancy_groups"
+
+    id = Column(Integer, primary_key=True)
+
+    service_dependencies = relationship("ServiceDependency",
+        cascade="all, delete, delete-orphan", backref="redundancy_group")
+
+    redundancy_group_components = relationship("RedundancyGroupComponent",
+        cascade="all, delete, delete-orphan", backref="redundancy_group")
+
+    def __repr__(self):
+        return "<RedundancyGroup id: {}>".format(self.id)
+
+class RedundancyGroupComponent(Base):
+    __tablename__ = "redundancy_group_components"
+
+    id = Column(Integer, primary_key=True)
+    host_id = Column(Integer, ForeignKey("hosts.id"))
+    host_group_id = Column(Integer, ForeignKey("host_groups.id"))
+    redundancy_group_id = Column(Integer, ForeignKey("redundancy_groups.id"))
+
+    def __repr__(self):
+        return "<RedundancyGroupComponent id: {}>".format(self.id)
 
 def create_all():
     Base.metadata.create_all(engine)
