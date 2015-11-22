@@ -46,12 +46,11 @@ def get_all_hosts():
         health = "no_data"
         highest_severity = 0
         for plugin in host.assigned_plugins:
-            results = PluginResult.query.filter(
+            result = PluginResult.query.filter(
                 PluginResult.plugin_id == plugin.id).filter(
                     PluginResult.host_id == host.id).order_by(
-                        PluginResult.id.desc()).all()
-            if results:
-                result = results[0]
+                        PluginResult.timestamp.desc()).first()
+            if result:
                 if severities[result.health_status]["priority"] >\
                     highest_severity:
                     health = result.health_status
