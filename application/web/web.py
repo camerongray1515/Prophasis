@@ -5,7 +5,7 @@ from api import api
 from reports import reports
 from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
     CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval,\
-    PluginThreshold, User
+    PluginThreshold, User, Service
 from datetime import datetime
 
 web = Flask(__name__)
@@ -278,6 +278,20 @@ def users_edit(user_id):
 
     return render_template("user-form.html", nav_section="users",
         section="Users", title="Edit User", method="edit", user=user)
+
+@web.route("/services/")
+@login_required
+def services():
+    services = Service.query.all()
+
+    return render_template("services.html", nav_section="services",
+        section="Services", title="Manage Services", services=services)
+
+@web.route("/services/add/")
+@login_required
+def services_add():
+    return render_template("service-form.html", nav_section="services",
+        section="Services", title="Add Service", method="add")
 
 if __name__ == "__main__":
     web.run(host="0.0.0.0", debug=True)

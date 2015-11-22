@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% if service is not defined %}
+    {% set service = None %}
+{% endif %}
+
+{% block breadcrumbs %}
+    <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
+    <li><a href="/services/">Services</a></li>
+    {% if method == "add" %}
+        <li><a href="/services/add/">Add Service</a></li>
+    {% elif method == "edit" %}
+        <li><a href="/services/edit/{{ service.id }}/">Edit Service</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border"><h3 class="box-title">
+                    {% if method == "add" %}
+                        Add Service
+                    {% elif method == "edit" %}
+                        Edit Service
+                    {% endif %}
+                    </h3></div>
+                <div class="box-body">
+                    <form class="form-horizontal" action="index.html" method="post">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Name</label>
+                            <div class="col-md-10">
+                                <input type="text" name="name" class="form-control" value="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">Description</label>
+                            <div class="col-md-10">
+                                <input type="text" name="description" class="form-control" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-10 col-md-offset-2">
+                            <button type="button" class="btn btn-primary">Add Dependency</button>
+                            <button type="button" class="btn btn-success">Add Redundancy Group</button>
+                        </div>
+
+                        <div id="dependency-container">
+                            <div class="col-md-4">
+                                <div class="service-dependency">
+                                    <div class="dependency-heading">
+                                        <p>Dependency</p>
+                                    </div>
+                                    <button type="button" class="btn btn-danger dependency-remove">X</button>
+                                    <div class="dependency-body">
+                                        <p><i class="fa fa-desktop"></i> Webserver 1</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="service-dependency">
+                                    <div class="dependency-heading">
+                                        <p>Redundancy Group</p>
+                                    </div>
+                                    <button type="button" class="btn btn-danger dependency-remove">X</button>
+                                    <div class="dependency-body">
+                                        <p><button class="btn btn-link btn-dependency-remove-item" title="Remove Item">X</button><i class="fa fa-desktop"></i> Webserver 1</p>
+                                        <p><button class="btn btn-link btn-dependency-remove-item" title="Remove Item">X</button><i class="fa fa-desktop"></i> Webserver 2</p>
+                                        <p><button class="btn btn-link btn-dependency-remove-item" title="Remove Item">X</button><i class="fa fa-object-group"></i> Database Servers</p>
+
+                                        <button type="button" class="btn btn-default">Add Item</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

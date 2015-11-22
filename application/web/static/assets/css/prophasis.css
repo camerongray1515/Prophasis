@@ -28,3 +28,46 @@
 .CodeMirror {
     border: 1px solid #dddddd;
 }
+
+.service-dependency {
+    border: 1px solid #dddddd;
+    padding: 10px;
+    margin: 10px;
+    min-height: 100px;
+    position: relative;
+}
+
+.service-dependency > .dependency-heading {
+    border-bottom: 1px solid #dddddd;
+    border-right: 1px solid #dddddd;
+    position: absolute;
+    padding: 5px;
+    padding-bottom: 0px;
+    font-weight: bold;
+    top: 0;
+    left: 0;
+}
+
+.service-dependency > .dependency-body > p {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.service-dependency > .dependency-body {
+    margin-top: 40px;
+    padding-left: 10px;
+    white-space: nowrap;
+}
+
+.service-dependency > .dependency-remove {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-weight: bold;
+    border-radius: 0;
+}
+
+.service-dependency > .dependency-body .btn-dependency-remove-item {
+    color: red;
+    font-weight: bold;
+}
