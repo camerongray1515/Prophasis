@@ -71,3 +71,7 @@
     color: red;
     font-weight: bold;
 }
+
+#host-selection-modal td {
+    vertical-align: middle;
+}

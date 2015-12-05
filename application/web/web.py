@@ -290,8 +290,12 @@ def services():
 @web.route("/services/add/")
 @login_required
 def services_add():
+    hosts = Host.query.all()
+    host_groups = HostGroup.query.all()
+
     return render_template("service-form.html", nav_section="services",
-        section="Services", title="Add Service", method="add")
+        section="Services", title="Add Service", method="add", hosts=hosts,
+        host_groups=host_groups)
 
 if __name__ == "__main__":
     web.run(host="0.0.0.0", debug=True)
