@@ -7,6 +7,7 @@ from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
     CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval,\
     PluginThreshold, User, Service
 from datetime import datetime
+from jinja2 import Markup
 
 web = Flask(__name__)
 web.register_blueprint(api)
@@ -15,6 +16,12 @@ web.register_blueprint(reports)
 web.secret_key = b'\x0bi\xcb\r\x8f\x8f\x06:\x8f\x0b\x0cw\x7f\x8dJ\x0fd\xdbH'\
     b'\x86\x0egNq\xd0n\xa9\xa7\xdd\xb2\xbf\xa9\x13\x1f\xce\x8f\x9a=\xbc.\xcaV'\
     b'\x85zC\xf1\x86Z[e'
+
+# Allows us to include blocks in templates without Jinja parsing them, this is
+# useful when we want to pass the template unmodified to the frontend so
+# handlebars.js can handle it instead.
+web.jinja_env.globals['include_raw'] = lambda f:\
+    Markup(web.jinja_loader.get_source(web.jinja_env, f)[0])
 
 login_manager = LoginManager()
 login_manager.init_app(web)

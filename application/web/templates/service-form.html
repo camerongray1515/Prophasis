@@ -44,35 +44,19 @@
                             <button type="button" class="btn btn-success" id="add-redundancy-group">Add Redundancy Group</button>
                         </div>
 
-                        <div id="dependency-container">
-                            <div class="col-md-4">
-                                <div class="service-dependency">
-                                    <div class="dependency-heading">
-                                        <p>Dependency</p>
-                                    </div>
-                                    <button type="button" class="btn btn-danger dependency-remove">X</button>
-                                    <div class="dependency-body">
-                                        <p><i class="fa fa-desktop"></i> Webserver 1</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <script id="template-dependency" type="text/x-handlebars-template">
+                            {{ include_raw("blocks/service-dependency.html") }}
+                        </script>
 
-                            <div class="col-md-4">
-                                <div class="service-dependency">
-                                    <div class="dependency-heading">
-                                        <p>Redundancy Group</p>
-                                    </div>
-                                    <button type="button" class="btn btn-danger dependency-remove">X</button>
-                                    <div class="dependency-body">
-                                        <p><button class="btn btn-link btn-dependency-remove-item" title="Remove Item">X</button><i class="fa fa-desktop"></i> Webserver 1</p>
-                                        <p><button class="btn btn-link btn-dependency-remove-item" title="Remove Item">X</button><i class="fa fa-desktop"></i> Webserver 2</p>
-                                        <p><button class="btn btn-link btn-dependency-remove-item" title="Remove Item">X</button><i class="fa fa-object-group"></i> Database Servers</p>
+                        <script id="template-redundancy-group" type="text/x-handlebars-template">
+                            {{ include_raw("blocks/service-redundancy-group.html") }}
+                        </script>
 
-                                        <button type="button" class="btn btn-default add-item">Add Item</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <script id="template-redundancy-group-item" type="text/x-handlebars-template">
+                            {{ include_raw("blocks/service-redundancy-group-item.html") }}
+                        </script>
+
+                        <div id="dependency-container"></div>
                     </form>
                 </div>
             </div>
@@ -96,14 +80,14 @@
                                 <tr>
                                     <td title="Host Group"><i class="fa fa-object-group"></i></td>
                                     <td class="filter-text">{{ group.name }}</td>
-                                    <td><button class="btn btn-primary select-item" data-item-id="{{ group.id }}">Select</button></td>
+                                    <td><button class="btn btn-primary select-item" data-item-id="{{ group.id }}" data-item-type="group" data-item-name="{{ group.name }}">Select</button></td>
                                 </tr>
                             {% endfor %}
                             {% for host in hosts %}
                                 <tr>
                                     <td title="Host"><i class="fa fa-desktop"></i></td>
                                     <td class="filter-text">{{ host.name }}</td>
-                                    <td><button class="btn btn-primary select-item" data-item-id="{{ host.id }}">Select</button></td>
+                                    <td><button class="btn btn-primary select-item" data-item-id="{{ host.id }}" data-item-type="host" data-item-name="{{ host.name }}">Select</button></td>
                                 </tr>
                             {% endfor %}
                         </tbody>

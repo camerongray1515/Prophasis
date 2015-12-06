@@ -29,7 +29,7 @@
     border: 1px solid #dddddd;
 }
 
-.service-dependency {
+.service-dependency-inner {
     border: 1px solid #dddddd;
     padding: 10px;
     margin: 10px;
@@ -37,7 +37,7 @@
     position: relative;
 }
 
-.service-dependency > .dependency-heading {
+.service-dependency-inner > .dependency-heading {
     border-bottom: 1px solid #dddddd;
     border-right: 1px solid #dddddd;
     position: absolute;
@@ -48,18 +48,18 @@
     left: 0;
 }
 
-.service-dependency > .dependency-body > p {
+.service-dependency-inner > .dependency-body > p {
     text-overflow: ellipsis;
     overflow: hidden;
 }
 
-.service-dependency > .dependency-body {
+.service-dependency-inner > .dependency-body {
     margin-top: 40px;
     padding-left: 10px;
     white-space: nowrap;
 }
 
-.service-dependency > .dependency-remove {
+.service-dependency-inner > .dependency-remove {
     position: absolute;
     top: 0;
     right: 0;
@@ -67,7 +67,7 @@
     border-radius: 0;
 }
 
-.service-dependency > .dependency-body .btn-dependency-remove-item {
+.service-dependency-inner > .dependency-body .btn-dependency-remove-item {
     color: red;
     font-weight: bold;
 }
