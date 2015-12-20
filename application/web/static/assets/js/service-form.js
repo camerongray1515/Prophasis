@@ -71,6 +71,31 @@ serviceForm = {
     removeRedundancyGroupItem: function() {
         $(this).closest(".redundancy-group-item").remove();
     },
+    serialise: function() {
+        var dependencies = [];
+        var redundancyGroups = [];
+
+        $(".service-dependency").each(function() {
+            var dependencyType = $(this).data("dependency-type");
+            if (dependencyType == "dependency") {
+                dependencies.push({
+                    "id": $(this).find(".dependency-item").data("item-id"),
+                    "type": $(this).find(".dependency-item").data("item-type")
+                });
+            } else if (dependencyType == "redundancy-group") {
+                var redundancyGroup = {"items": []};
+                $(this).find(".redundancy-group-item").each(function() {
+                    redundancyGroup["items"].push({
+                        "id": $(this).data("item-id"),
+                        "type": $(this).data("item-type")
+                    });
+                });
+                redundancyGroups.push(redundancyGroup);
+            }
+        });
+
+        return {"dependencies": dependencies, "redundancyGroups": redundancyGroups};
+    },
     bindEventHandlers: function() {
         $("#add-dependency").click(serviceForm.addDependencyClicked);
         $("#add-redundancy-group").click(serviceForm.addRedundancyGroup);
