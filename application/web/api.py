@@ -11,8 +11,10 @@ from flask.ext.login import login_required, login_user
 from responses import error_response
 from models import create_all, session, Host, HostGroup, HostGroupAssignment,\
     Plugin, CheckPlugin, CheckAssignment, Check, Schedule, ScheduleInterval,\
-    ScheduleCheck, PluginThreshold, User
+    ScheduleCheck, PluginThreshold, User, ServiceDependency, Service,\
+    RedundancyGroup, RedundancyGroupComponent
 from sqlalchemy import or_, and_
+from sqlalchemy.exc import SQLAlchemyError
 from config import get_config, get_config_value
 from datetime import datetime
 api = Blueprint("api", __name__, url_prefix="/api")
@@ -680,3 +682,54 @@ def users_edit():
     session.commit()
 
     return jsonify(success=True, message="User has been saved successfully!")
+
+@api.route("/services/add/", methods=["POST"])
+@login_required
+def services_add():
+    name = request.form.get("name")
+    description = request.form.get("description")
+    try:
+        dependencies = json.loads(request.form.get("dependencies"))
+    except ValueError:
+        return error_response("Could not understand format of request sent")
+
+    if not name.strip():
+        return error_response("You must specify a name")
+
+    try:
+        service = Service(name=name, description=description)
+        session.add(service)
+        session.flush()
+
+        for dependency in dependencies["dependencies"]:
+            if dependency["type"] == "host":
+                sd = ServiceDependency(service_id=service.id,
+                    host_id=dependency["id"])
+            else:
+                sd = ServiceDependency(service_id=service.id,
+                    host_group_id=dependency["id"])
+            session.add(sd)
+
+        for redundancy_group in dependencies["redundancyGroups"]:
+            rg = RedundancyGroup()
+            session.add(rg)
+            session.flush()
+            sd = ServiceDependency(service_id=service.id,
+                redundancy_group_id=rg.id)
+            session.add(sd)
+            for item in redundancy_group["items"]:
+                if item["type"] == "host":
+                    rgc = RedundancyGroupComponent(redundancy_group_id=rg.id,
+                        host_id=item["id"])
+                else:
+                    rgc = RedundancyGroupComponent(redundancy_group_id=rg.id,
+                        host_group_id=item["id"])
+                session.add(rgc)
+
+        session.commit()
+    except SQLAlchemyError:
+        session.rollback()
+        return error_response("The data sent to the server could not be "
+            "understood.  Please refresh the page and try again.")
+
+    return jsonify(success=True, message="Service has been added successfully")

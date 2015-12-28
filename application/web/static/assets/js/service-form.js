@@ -24,6 +24,7 @@ serviceForm = {
         } else {
             var html = ui.renderTemplate("template-dependency", item);
             $("#dependency-container").append(html);
+            $("#dependency-container").trigger("dependency-update");
         }
     },
     addItemClicked: function() {
@@ -49,10 +50,12 @@ serviceForm = {
             var html = ui.renderTemplate("template-redundancy-group-item", item);
             $(serviceForm.actionGroup).find(".dependency-item-container").append(html);
         }
+        $("#dependency-container").trigger("dependency-update");
     },
     addRedundancyGroup: function() {
         var html = ui.renderTemplate("template-redundancy-group", {});
         $("#dependency-container").append(html);
+        $("#dependency-container").trigger("dependency-update");
     },
     itemSelection: function() {
         $("#host-selection-modal").modal("hide");
@@ -67,9 +70,11 @@ serviceForm = {
     },
     removeDependency: function() {
         $(this).closest(".service-dependency").remove();
+        $("#dependency-container").trigger("dependency-update");
     },
     removeRedundancyGroupItem: function() {
         $(this).closest(".redundancy-group-item").remove();
+        $("#dependency-container").trigger("dependency-update");
     },
     serialise: function() {
         var dependencies = [];
@@ -96,6 +101,9 @@ serviceForm = {
 
         return {"dependencies": dependencies, "redundancyGroups": redundancyGroups};
     },
+    updateDependencyFormInput() {
+        $("#input-dependencies").val(JSON.stringify(serviceForm.serialise()));
+    },
     bindEventHandlers: function() {
         $("#add-dependency").click(serviceForm.addDependencyClicked);
         $("#add-redundancy-group").click(serviceForm.addRedundancyGroup);
@@ -103,9 +111,11 @@ serviceForm = {
         $("#dependency-container").on("click", ".add-item", serviceForm.addItemClicked);
         $("#dependency-container").on("click", ".btn-dependency-remove-item", serviceForm.removeRedundancyGroupItem);
         $("#dependency-container").on("click", ".dependency-remove", serviceForm.removeDependency);
+        $("#dependency-container").on("dependency-update", serviceForm.updateDependencyFormInput);
     }
 }
 
 $(document).ready(function() {
     serviceForm.bindEventHandlers();
+    serviceForm.updateDependencyFormInput();
 });
