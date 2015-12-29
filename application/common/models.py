@@ -418,6 +418,9 @@ class Service(Base):
     service_dependencies = relationship("ServiceDependency",
         cascade="all, delete, delete-orphan", backref="service")
 
+    redundancy_groups = relationship("RedundancyGroup",
+        cascade="all, delete, delete-orphan", backref="service")
+
     def __repr__(self):
         return "<Service id: {}, name: {}>".format(self.id, self.name)
 
@@ -437,6 +440,7 @@ class RedundancyGroup(Base):
     __tablename__ = "redundancy_groups"
 
     id = Column(Integer, primary_key=True)
+    service_id = Column(Integer, ForeignKey("services.id"))
 
     service_dependencies = relationship("ServiceDependency",
         cascade="all, delete, delete-orphan", backref="redundancy_group")

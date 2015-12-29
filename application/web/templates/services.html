@@ -11,4 +11,37 @@
             <a href="/services/add/" class="btn btn-primary">Add Service</a>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-body no-padding">
+                    <table class="table table-hover table-fixed">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th class="col-md-5">Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for service in services %}
+                                <tr>
+                                    <td>{{ service.name }}</td>
+                                    <td>{{ service.description }}</td>
+                                    <td>
+                                        <a href="/services/edit/{{ service.id }}/" class="btn btn-info">Edit</a>
+                                        <form class="auto-post inline" method="POST" action="/api/services/delete/" data-auto-post-confirmation="Are you sure you want to delete this service?  This action cannnot be undone!" data-auto-post-remove-closest="tr">
+                                            <input type="hidden" name="service-id" value="{{ service.id }}">
+                                            <button class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

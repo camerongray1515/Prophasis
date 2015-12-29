@@ -711,7 +711,7 @@ def services_add():
             session.add(sd)
 
         for redundancy_group in dependencies["redundancyGroups"]:
-            rg = RedundancyGroup()
+            rg = RedundancyGroup(service_id=service.id)
             session.add(rg)
             session.flush()
             sd = ServiceDependency(service_id=service.id,
@@ -727,9 +727,25 @@ def services_add():
                 session.add(rgc)
 
         session.commit()
-    except SQLAlchemyError:
+    except ValueError:
         session.rollback()
         return error_response("The data sent to the server could not be "
             "understood.  Please refresh the page and try again.")
 
     return jsonify(success=True, message="Service has been added successfully")
+
+@api.route("/services/delete/", methods=["POST"])
+@login_required
+def services_delete():
+    service_id = request.form.get("service-id")
+    s = Service.query.get(service_id)
+
+    if not s:
+        return error_response("The service you are trying to delete could not "
+            "be found")
+
+    session.delete(s)
+    session.commit()
+
+    return jsonify(success=True,
+        message="Service has been deleted successfully")
