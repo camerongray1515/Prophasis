@@ -26,17 +26,17 @@
                     {% endif %}
                     </h3></div>
                 <div class="box-body">
-                    <form class="form-horizontal auto-post" action="/api/services/add/" method="post">
+                    <form class="form-horizontal auto-post" action="/api/services/{{ method }}/" method="post">
                         <div class="form-group">
                             <label class="col-md-2 control-label">Name</label>
                             <div class="col-md-10">
-                                <input type="text" name="name" class="form-control" value="">
+                                <input type="text" name="name" class="form-control" value="{{ service.name }}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-2 control-label">Description</label>
                             <div class="col-md-10">
-                                <input type="text" name="description" class="form-control" value="">
+                                <input type="text" name="description" class="form-control" value="{{ service.description }}">
                             </div>
                         </div>
                         <div class="col-md-10 col-md-offset-2">
@@ -56,10 +56,37 @@
                             {{ include_raw("blocks/service-redundancy-group-item.html") }}
                         </script>
 
-                        <div id="dependency-container"></div>
+                        <div id="dependency-container">
+                            {% if method == "edit" %}
+                                {% for dependency in dependencies %}
+                                    {% if dependency.host %}
+                                        {% set name = dependency.host.name %}
+                                        {% set type = "host" %}
+                                        {% set icon = "desktop" %}
+                                        {% set id = dependency.host.id %}
+                                    {% else %}
+                                        {% set name = dependency.host_group.name %}
+                                        {% set type = "group" %}
+                                        {% set icon = "object-group" %}
+                                        {% set id = dependency.host_group.id %}
+                                    {% endif %}
+                                    {% include("blocks/service-dependency.html") %}
+                                {% endfor %}
+
+                                {% for items in rendered_groups %}
+                                    {% include("blocks/service-redundancy-group.html") %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
 
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary">Add Service</button>
+                            <button type="submit" class="btn btn-primary">
+                                {% if method == "add" %}
+                                    Add Service
+                                {% elif method == "edit" %}
+                                    Edit Service
+                                {% endif %}
+                            </button>
                             <a href="/services/" class="btn btn-default">Back...</a>
                         </div>
 

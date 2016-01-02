@@ -5,7 +5,8 @@ from api import api
 from reports import reports
 from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
     CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval,\
-    PluginThreshold, User, Service
+    PluginThreshold, User, Service, ServiceDependency, RedundancyGroup,\
+    RedundancyGroupComponent
 from datetime import datetime
 from jinja2 import Markup
 
@@ -303,6 +304,53 @@ def services_add():
     return render_template("service-form.html", nav_section="services",
         section="Services", title="Add Service", method="add", hosts=hosts,
         host_groups=host_groups)
+
+@web.route("/services/edit/<service_id>/")
+@login_required
+def services_edit(service_id):
+    hosts = Host.query.all()
+    host_groups = HostGroup.query.all()
+
+    service = Service.query.get(service_id)
+
+    if not service:
+        abort(404)
+
+    dependencies = ServiceDependency.query.filter(
+        ServiceDependency.service_id==service.id,
+        ServiceDependency.redundancy_group_id==None)
+
+    redundancy_groups_raw = RedundancyGroup.query.filter(
+        RedundancyGroup.service_id==service.id)
+
+    # For each group render the item template which will be later inserted into
+    # the redundancy group frame template with the main call to render_template
+    rendered_groups = []
+    for raw_group in redundancy_groups_raw:
+        group_items = ""
+        for component in raw_group.redundancy_group_components:
+            if component.host:
+                item_id = component.host.id
+                item_name = component.host.name
+                item_type = "host"
+                item_icon = "desktop"
+            else:
+                item_id = component.host_group.id
+                item_name = component.host_group.name
+                item_type = "group"
+                item_icon = "object-group"
+            group_items += render_template(
+                "blocks/service-redundancy-group-item.html", id=item_id,
+                name=item_name, type=item_type, icon=item_icon)
+        # Markup() is used here to prevent Jinja2 from escaping the HTML when
+        # it's rendered. We can't use the "safe" filter in the template itself
+        # as this would break compatibility with Handlebars.js
+        rendered_groups.append(Markup(group_items))
+
+    return render_template("service-form.html", nav_section="services",
+        section="Services", title="Edit Service", method="edit", hosts=hosts,
+        host_groups=host_groups, service=service, dependencies=dependencies,
+        rendered_groups=rendered_groups)
 
 if __name__ == "__main__":
     web.run(host="0.0.0.0", debug=True)
