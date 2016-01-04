@@ -84,13 +84,16 @@
                                 {% if method == "add" %}
                                     Add Service
                                 {% elif method == "edit" %}
-                                    Edit Service
+                                    Save Service
                                 {% endif %}
                             </button>
                             <a href="/services/" class="btn btn-default">Back...</a>
                         </div>
 
                         <input type="hidden" name="dependencies" id="input-dependencies" value="">
+                        {% if method == "edit" %}
+                            <input type="hidden" name="service-id" value="{{ service.id }}">
+                        {% endif %}
                     </form>
                 </div>
             </div>

@@ -749,3 +749,67 @@ def services_delete():
 
     return jsonify(success=True,
         message="Service has been deleted successfully")
+
+@api.route("/services/edit/", methods=["POST"])
+@login_required
+def services_edit():
+    name = request.form.get("name")
+    description = request.form.get("description")
+    service_id = request.form.get("service-id")
+    try:
+        dependencies = json.loads(request.form.get("dependencies"))
+    except ValueError:
+        return error_response("Could not understand format of request sent")
+
+    if not name.strip():
+        return error_response("You must specify a name")
+
+    try:
+        service = Service.query.get(service_id)
+        if not service:
+            return error_response("Service could not be found")
+        service.name = name
+        service.description = description
+
+        gs = RedundancyGroup.query.filter(
+            RedundancyGroup.service_id==service.id)
+        for g in gs:
+            session.delete(g)
+
+        ds = ServiceDependency.query.filter(
+            ServiceDependency.service_id==service.id)
+        for d in ds:
+            session.delete(d)
+
+        for dependency in dependencies["dependencies"]:
+            if dependency["type"] == "host":
+                sd = ServiceDependency(service_id=service.id,
+                    host_id=dependency["id"])
+            else:
+                sd = ServiceDependency(service_id=service.id,
+                    host_group_id=dependency["id"])
+            session.add(sd)
+
+        for redundancy_group in dependencies["redundancyGroups"]:
+            rg = RedundancyGroup(service_id=service.id)
+            session.add(rg)
+            session.flush()
+            sd = ServiceDependency(service_id=service.id,
+                redundancy_group_id=rg.id)
+            session.add(sd)
+            for item in redundancy_group["items"]:
+                if item["type"] == "host":
+                    rgc = RedundancyGroupComponent(redundancy_group_id=rg.id,
+                        host_id=item["id"])
+                else:
+                    rgc = RedundancyGroupComponent(redundancy_group_id=rg.id,
+                        host_group_id=item["id"])
+                session.add(rgc)
+
+        session.commit()
+    except ValueError:
+        session.rollback()
+        return error_response("The data sent to the server could not be "
+            "understood.  Please refresh the page and try again.")
+
+    return jsonify(success=True, message="Service has been saved successfully")
