@@ -76,5 +76,17 @@ class TestGetHostMembersip(unittest.TestCase):
 
         self.assertEqual(sorted(group_ids), [2,5,6,7,8])
 
+class TestGetServiceHealth(unittest.TestCase):
+    def setUp(self):
+
+        drop_all()
+        create_all()
+
+        # Add Hosts
+        for i in range(1,10):
+            session.add(Host(id=i, name="Host {}".format(i)))
+
+
+
 if __name__ == "__main__":
     unittest.main()

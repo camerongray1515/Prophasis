@@ -4,36 +4,12 @@ def get_all_hosts():
     severity_ordering = ["critical", "major", "minor", "unknown", "ok",
         "no_data"]
     severities = {
-        "critical": {
-            "priority": 5,
-            "class": "danger",
-            "display": "Critical"
-            },
-        "major": {
-            "priority": 4,
-            "class": "warning",
-            "display": "Major"
-            },
-        "minor": {
-            "priority": 3,
-            "class": "info",
-            "display": "Minor"
-            },
-        "unknown": {
-            "priority": 2,
-            "class": "primary",
-            "display": "Unknown"
-            },
-        "ok": {
-            "priority": 1,
-            "class": "success",
-            "display": "Ok"
-            },
-        "no_data": {
-            "priority": 0,
-            "class": "default",
-            "display": "No Data"
-            }
+        "critical": {"class": "danger", "display": "Critical"},
+        "major": {"class": "warning", "display": "Major"},
+        "minor": {"class": "info", "display": "Minor"},
+        "unknown": {"class": "primary", "display": "Unknown"},
+        "ok": {"class": "success", "display": "Ok"},
+        "no_data": {"class": "default", "display": "No Data"}
     }
     all_hosts = Host.query.all()
 
@@ -43,23 +19,9 @@ def get_all_hosts():
     for severity in severities.keys():
         categorised_hosts[severity] = []
     for host in all_hosts:
-        health = "no_data"
-        highest_severity = 0
-        for plugin in host.assigned_plugins:
-            result = PluginResult.query.filter(
-                PluginResult.plugin_id == plugin.id).filter(
-                    PluginResult.host_id == host.id).order_by(
-                        PluginResult.timestamp.desc()).first()
-            if result:
-                if severities[result.health_status]["priority"] >\
-                    highest_severity:
-                    health = result.health_status
-                    highest_severity = severities[result.health_status]\
-                        ["priority"]
-        host.health = health
-        host.css_class = severities[health]["class"]
-        host.display = severities[health]["display"]
-        categorised_hosts[health].append(host)
+        host.css_class = severities[host.health]["class"]
+        host.display = severities[host.health]["display"]
+        categorised_hosts[host.health].append(host)
 
     # Now order hosts by their severities
     ordered_hosts = []

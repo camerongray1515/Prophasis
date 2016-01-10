@@ -81,6 +81,31 @@ class Host(Base):
                     groups)
         return groups
 
+    @property
+    def health(self):
+        priorities = {
+            "critical": 5,
+            "major": 4,
+            "minor": 3,
+            "unknown": 2,
+            "ok": 1,
+            "no_data": 0
+        }
+
+        health = "no_data"
+        highest_severity = 0
+        for plugin in self.assigned_plugins:
+            result = PluginResult.query.filter(
+                PluginResult.plugin_id == plugin.id).filter(
+                    PluginResult.host_id == self.id).order_by(
+                        PluginResult.timestamp.desc()).first()
+            if result:
+                if priorities[result.health_status] > highest_severity:
+                    health = result.health_status
+                    highest_severity = priorities[result.health_status]
+
+        return health
+
     def _traverse_groups(group_id, visited_groups=None):
         groups = []
         assignments = HostGroupAssignment.query.filter(
@@ -420,6 +445,9 @@ class Service(Base):
 
     redundancy_groups = relationship("RedundancyGroup",
         cascade="all, delete, delete-orphan", backref="service")
+
+    def get_health(self):
+        raise NotImplementedError
 
     def __repr__(self):
         return "<Service id: {}, name: {}>".format(self.id, self.name)
