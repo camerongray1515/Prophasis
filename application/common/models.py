@@ -33,6 +33,16 @@ class Host(Base):
     auth_key = Column(String)
     check_certificate = Column(Boolean, default=True)
 
+    health_priorities = {
+        "critical": 6,
+        "major": 5,
+        "minor": 4,
+        "unknown": 3,
+        "degraded": 2,
+        "ok": 1,
+        "no_data": 0
+    }
+
     group_assignments = relationship("HostGroupAssignment",
         cascade="all, delete, delete-orphan", backref="host")
 
@@ -83,15 +93,6 @@ class Host(Base):
 
     @property
     def health(self):
-        priorities = {
-            "critical": 5,
-            "major": 4,
-            "minor": 3,
-            "unknown": 2,
-            "ok": 1,
-            "no_data": 0
-        }
-
         health = "no_data"
         highest_severity = 0
         for plugin in self.assigned_plugins:
@@ -100,9 +101,11 @@ class Host(Base):
                     PluginResult.host_id == self.id).order_by(
                         PluginResult.timestamp.desc()).first()
             if result:
-                if priorities[result.health_status] > highest_severity:
+                if self.health_priorities[result.health_status] > \
+                    highest_severity:
                     health = result.health_status
-                    highest_severity = priorities[result.health_status]
+                    highest_severity = self.health_priorities[
+                        result.health_status]
 
         return health
 
@@ -165,6 +168,18 @@ class HostGroup(Base):
                         visited_groups=visited_groups)
 
         return hosts
+
+    @property
+    def health(self):
+        health = "no_data"
+        for host in self.member_hosts:
+            host_health = host.health
+
+            if host.health_priorities[host_health] > \
+                host.health_priorities[health]:
+                health = host_health
+        return health
+
 
     def __repr__(self):
         return "<HostGroup id: {0}, name: {1}>".format(self.id, self.name)
@@ -448,7 +463,13 @@ class Service(Base):
 
     @property
     def health(self):
-        raise NotImplementedError
+        health = "no_data"
+        priorities = Host.health_priorities
+        for dependency in self.service_dependencies:
+            dependency_health = dependency.health
+            if priorities[dependency_health] > priorities[health]:
+                health = dependency_health
+        return health
 
     def __repr__(self):
         return "<Service id: {}, name: {}>".format(self.id, self.name)
@@ -461,6 +482,17 @@ class ServiceDependency(Base):
     host_id = Column(Integer, ForeignKey("hosts.id"))
     host_group_id = Column(Integer, ForeignKey("host_groups.id"))
     redundancy_group_id = Column(Integer, ForeignKey("redundancy_groups.id"))
+
+    @property
+    def health(self):
+        if self.host:
+            return self.host.health
+        elif self.host_group:
+            return self.host_group.health
+        elif self.redundancy_group:
+            return self.redundancy_group.health
+        else:
+            return "unknown"
 
     def __repr__(self):
         return "<ServiceDependency id: {}>".format(self.id)
@@ -477,6 +509,23 @@ class RedundancyGroup(Base):
     redundancy_group_components = relationship("RedundancyGroupComponent",
         cascade="all, delete, delete-orphan", backref="redundancy_group")
 
+    @property
+    def health(self):
+        health = "no_data"
+        unhealthy_component = False
+        priorities = Host.health_priorities
+        for component in self.redundancy_group_components:
+            component_health = component.health
+            if priorities[component_health] < priorities[health] or \
+                health == "no_data":
+                health = component_health
+            if component_health not in ["ok", "no_data"]:
+                unhealthy_component = True
+
+        if health == "ok" and unhealthy_component:
+            return "degraded"
+        return health
+
     def __repr__(self):
         return "<RedundancyGroup id: {}>".format(self.id)
 
@@ -487,6 +536,15 @@ class RedundancyGroupComponent(Base):
     host_id = Column(Integer, ForeignKey("hosts.id"))
     host_group_id = Column(Integer, ForeignKey("host_groups.id"))
     redundancy_group_id = Column(Integer, ForeignKey("redundancy_groups.id"))
+
+    @property
+    def health(self):
+        if self.host:
+            return self.host.health
+        elif self.host_group:
+            return self.host_group.health
+        else:
+            return "unknown"
 
     def __repr__(self):
         return "<RedundancyGroupComponent id: {}>".format(self.id)

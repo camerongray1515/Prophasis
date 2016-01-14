@@ -280,11 +280,11 @@ class TestGetServiceHealth(unittest.TestCase):
 
     # All dependencies failed - Service 7
     def test_all_dependency_failed(self):
-        self.assertEqual(Service.query.get(7).health, "major")
+        self.assertEqual(Service.query.get(7).health, "critical")
 
     # One dependency has no data - Service 8
     def test_no_data(self):
-        self.assertEqual(Service.query.get(8).health, "unknown")
+        self.assertEqual(Service.query.get(8).health, "ok")
 
 if __name__ == "__main__":
     unittest.main()
