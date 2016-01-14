@@ -446,7 +446,8 @@ class Service(Base):
     redundancy_groups = relationship("RedundancyGroup",
         cascade="all, delete, delete-orphan", backref="service")
 
-    def get_health(self):
+    @property
+    def health(self):
         raise NotImplementedError
 
     def __repr__(self):

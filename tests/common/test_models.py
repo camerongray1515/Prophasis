@@ -1,6 +1,7 @@
 import unittest
 from models import create_all, drop_all, session, Host, HostGroup,\
-    HostGroupAssignment, Plugin, PluginResult
+    HostGroupAssignment, Plugin, PluginResult, Service, ServiceDependency,\
+    RedundancyGroup, RedundancyGroupComponent
 
 class TestGetHostMembersip(unittest.TestCase):
     def setUp(self):
@@ -172,6 +173,118 @@ class TestGetHostHeatlh(unittest.TestCase):
 
     def test_mixed_results(self):
         self.assertEqual(Host.query.get(8).health, "major")
+
+class TestGetServiceHealth(unittest.TestCase):
+    def setUp(self):
+        drop_all()
+        create_all()
+        session.add(Plugin(id="Plugin", name="Plugin"))
+
+        # Insert all hosts
+        for number in range(1,7):
+            session.add(Host(name=number))
+
+        # Mock the assigned_plugins method
+        Host.assigned_plugins = property(lambda s: Plugin.query.all())
+
+        session.add(PluginResult(host_id=1, plugin_id="Plugin",
+            health_status="ok"))
+        session.add(PluginResult(host_id=2, plugin_id="Plugin",
+            health_status="minor"))
+        session.add(PluginResult(host_id=3, plugin_id="Plugin",
+            health_status="major"))
+        session.add(PluginResult(host_id=4, plugin_id="Plugin",
+            health_status="critical"))
+        session.add(PluginResult(host_id=5, plugin_id="Plugin",
+            health_status="unknown"))
+        # Host ID 6 has no data
+
+        for number in range(1,9):
+            session.add(Service(id=number, name=number))
+
+        # test_failed_dependency
+        session.add(ServiceDependency(service_id=1, host_id=1))
+        session.add(ServiceDependency(service_id=1, host_id=1))
+        session.add(ServiceDependency(service_id=1, host_id=3))
+
+        # test_ok_dependency
+        session.add(ServiceDependency(service_id=2, host_id=1))
+        session.add(ServiceDependency(service_id=2, host_id=1))
+        session.add(ServiceDependency(service_id=2, host_id=1))
+
+        # test_failure_in_redundancy_group
+        session.add(RedundancyGroup(id=1, service_id=3))
+        session.add(RedundancyGroupComponent(redundancy_group_id=1, host_id=1))
+        session.add(RedundancyGroupComponent(redundancy_group_id=1, host_id=1))
+        session.add(RedundancyGroupComponent(redundancy_group_id=1, host_id=4))
+        session.add(ServiceDependency(service_id=3, redundancy_group_id=1))
+
+        # test_failed_redundancy_group
+        session.add(RedundancyGroup(id=2, service_id=4))
+        session.add(RedundancyGroupComponent(redundancy_group_id=2, host_id=2))
+        session.add(RedundancyGroupComponent(redundancy_group_id=2, host_id=2))
+        session.add(RedundancyGroupComponent(redundancy_group_id=2, host_id=4))
+        session.add(ServiceDependency(service_id=4, redundancy_group_id=2))
+
+        # redundancy_group_ok
+        session.add(RedundancyGroup(id=3, service_id=5))
+        session.add(RedundancyGroupComponent(redundancy_group_id=3, host_id=1))
+        session.add(RedundancyGroupComponent(redundancy_group_id=3, host_id=1))
+        session.add(RedundancyGroupComponent(redundancy_group_id=3, host_id=1))
+        session.add(ServiceDependency(service_id=5, redundancy_group_id=3))
+
+        # test_failed_dependency_with_redundancy_group
+        session.add(RedundancyGroup(id=4, service_id=6))
+        session.add(RedundancyGroupComponent(redundancy_group_id=4, host_id=1))
+        session.add(RedundancyGroupComponent(redundancy_group_id=4, host_id=1))
+        session.add(RedundancyGroupComponent(redundancy_group_id=4, host_id=1))
+        session.add(ServiceDependency(service_id=6, redundancy_group_id=4))
+        session.add(ServiceDependency(service_id=6, host_id=3))
+
+        # test_all_dependency_failed
+        session.add(ServiceDependency(service_id=7, host_id=3))
+        session.add(ServiceDependency(service_id=7, host_id=3))
+        session.add(ServiceDependency(service_id=7, host_id=4))
+
+        # test_no_data
+        session.add(ServiceDependency(service_id=8, host_id=1))
+        session.add(ServiceDependency(service_id=8, host_id=1))
+        session.add(ServiceDependency(service_id=8, host_id=6))
+
+
+        session.commit()
+
+    # One dependency has failed, rest ok - Service 1
+    def test_failed_dependency(self):
+        self.assertEqual(Service.query.get(1).health, "major")
+
+    # All dependencies are ok - Service 2
+    def test_ok_dependency(self):
+        self.assertEqual(Service.query.get(2).health, "ok")
+
+    # Host in redundancy group has failed, still contains ok host - Service 3
+    def test_failure_in_redundancy_group(self):
+        self.assertEqual(Service.query.get(3).health, "degraded")
+
+    # Multiple hosts in redundancy groups have failed - Service 4
+    def test_failed_redundancy_group(self):
+        self.assertEqual(Service.query.get(4).health, "minor")
+
+    # Redundancy group with all hosts ok - Service 5
+    def redundancy_group_ok(self):
+        self.assertEqual(Service.query.get(5).health, "ok")
+
+    # Redundancy group ok, dependency failed - Service 6
+    def test_failed_dependency_with_redundancy_group(self):
+        self.assertEqual(Service.query.get(6).health, "major")
+
+    # All dependencies failed - Service 7
+    def test_all_dependency_failed(self):
+        self.assertEqual(Service.query.get(7).health, "major")
+
+    # One dependency has no data - Service 8
+    def test_no_data(self):
+        self.assertEqual(Service.query.get(8).health, "unknown")
 
 if __name__ == "__main__":
     unittest.main()
