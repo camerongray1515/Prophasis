@@ -566,7 +566,6 @@ class Alert(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    entity_type = Column(String)
 
     transitions_from = relationship("AlertTransitionFrom",
         cascade="all, delete, delete-orphan", backref="alert")

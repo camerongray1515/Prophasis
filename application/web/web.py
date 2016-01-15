@@ -352,5 +352,17 @@ def services_edit(service_id):
         host_groups=host_groups, service=service, dependencies=dependencies,
         rendered_groups=rendered_groups)
 
+@web.route("/alerts/")
+@login_required
+def alerts():
+    return render_template("alerts.html", nav_section="alerts",
+        section="Alerts", title="Manage Alerts")
+
+@web.route("/alerts/add/")
+@login_required
+def alerts_add():
+    return render_template("alert-form.html", nav_section="alerts",
+        section="Alerts", title="Add Alert", method="add")
+
 if __name__ == "__main__":
     web.run(host="0.0.0.0", debug=True)
