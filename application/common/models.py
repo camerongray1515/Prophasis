@@ -58,6 +58,9 @@ class Host(Base):
     redundancy_group_components = relationship("RedundancyGroupComponent",
         cascade="all, delete, delete-orphan", backref="host")
 
+    check_entities = relationship("CheckEntity",
+        cascade="all, delete, delete-orphan", backref="alert")
+
     # TODO: Figure out recursion for groups within groups
     @property
     def assigned_plugins(self):
@@ -148,6 +151,9 @@ class HostGroup(Base):
 
     redundancy_group_components = relationship("RedundancyGroupComponent",
         cascade="all, delete, delete-orphan", backref="host_group")
+
+    check_entities = relationship("CheckEntity",
+        cascade="all, delete, delete-orphan", backref="alert")
 
     @property
     def member_hosts(self):
@@ -248,6 +254,9 @@ class Plugin(Base):
 
     plugin_thresholds = relationship("PluginThreshold",
         cascade="all, delete, delete-orphan", backref="plugin")
+
+    check_entities = relationship("CheckEntity",
+        cascade="all, delete, delete-orphan", backref="alert")
 
     def __repr__(self):
         return "<Plugin id: {0}, version: {1}>".format(self.id,
@@ -461,6 +470,9 @@ class Service(Base):
     redundancy_groups = relationship("RedundancyGroup",
         cascade="all, delete, delete-orphan", backref="service")
 
+    check_entities = relationship("CheckEntity",
+        cascade="all, delete, delete-orphan", backref="alert")
+
     @property
     def health(self):
         health = "no_data"
@@ -548,6 +560,56 @@ class RedundancyGroupComponent(Base):
 
     def __repr__(self):
         return "<RedundancyGroupComponent id: {}>".format(self.id)
+
+class Alert(Base):
+    __tablename__ = "alerts"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    entity_type = Column(String)
+
+    transitions_from = relationship("AlertTransitionFrom",
+        cascade="all, delete, delete-orphan", backref="alert")
+    transitions_to = relationship("AlertTransitionTo",
+        cascade="all, delete, delete-orphan", backref="alert")
+    check_entities = relationship("CheckEntity",
+        cascade="all, delete, delete-orphan", backref="alert")
+
+    def __repr__(self):
+        return "<Alert id: {}, name: {}>".format(self.id, self.name)
+
+class AlertCheckEntity(Base):
+    __tablename__ = "alert_check_entities"
+
+    id = Column(Integer, primary_key=True)
+    alert_id = Column(ForeignKey("alerts.id"))
+    host_group_id = Column(ForeignKey("host_groups.id"))
+    host_id = Column(ForeignKey("hosts.id"))
+    plugin_id = Column(ForeignKey("plugins.id"))
+    service_id = Column(ForeignKey("services.id"))
+
+    def __repr__(self):
+        return "<AlertCheckEntity id: {}>".format(self.id)
+
+class AlertTransitionFrom(Base):
+    __tablename__ = "alert_transitions_from"
+
+    id = Column(Integer, primary_key=True)
+    alert_id = Column(ForeignKey("alerts.id"))
+    state = Column(String)
+
+    def __repr__(self):
+        return "<AlertTransitionFrom id: {}>".format(self.id)
+
+class AlertTransitionTo(Base):
+    __tablename__ = "alert_transitions_to"
+
+    id = Column(Integer, primary_key=True)
+    alert_id = Column(ForeignKey("alerts.id"))
+    state = Column(String)
+
+    def __repr__(self):
+        return "<AlertTransitionTo id: {}>".format(self.id)
 
 def create_all():
     Base.metadata.create_all(engine)
