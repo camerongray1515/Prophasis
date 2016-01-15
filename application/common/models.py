@@ -58,8 +58,8 @@ class Host(Base):
     redundancy_group_components = relationship("RedundancyGroupComponent",
         cascade="all, delete, delete-orphan", backref="host")
 
-    check_entities = relationship("CheckEntity",
-        cascade="all, delete, delete-orphan", backref="alert")
+    check_entities = relationship("AlertCheckEntity",
+        cascade="all, delete, delete-orphan", backref="host")
 
     # TODO: Figure out recursion for groups within groups
     @property
@@ -152,8 +152,8 @@ class HostGroup(Base):
     redundancy_group_components = relationship("RedundancyGroupComponent",
         cascade="all, delete, delete-orphan", backref="host_group")
 
-    check_entities = relationship("CheckEntity",
-        cascade="all, delete, delete-orphan", backref="alert")
+    check_entities = relationship("AlertCheckEntity",
+        cascade="all, delete, delete-orphan", backref="host_group")
 
     @property
     def member_hosts(self):
@@ -255,8 +255,8 @@ class Plugin(Base):
     plugin_thresholds = relationship("PluginThreshold",
         cascade="all, delete, delete-orphan", backref="plugin")
 
-    check_entities = relationship("CheckEntity",
-        cascade="all, delete, delete-orphan", backref="alert")
+    check_entities = relationship("AlertCheckEntity",
+        cascade="all, delete, delete-orphan", backref="plugin")
 
     def __repr__(self):
         return "<Plugin id: {0}, version: {1}>".format(self.id,
@@ -470,8 +470,8 @@ class Service(Base):
     redundancy_groups = relationship("RedundancyGroup",
         cascade="all, delete, delete-orphan", backref="service")
 
-    check_entities = relationship("CheckEntity",
-        cascade="all, delete, delete-orphan", backref="alert")
+    check_entities = relationship("AlertCheckEntity",
+        cascade="all, delete, delete-orphan", backref="service")
 
     @property
     def health(self):
@@ -572,7 +572,7 @@ class Alert(Base):
         cascade="all, delete, delete-orphan", backref="alert")
     transitions_to = relationship("AlertTransitionTo",
         cascade="all, delete, delete-orphan", backref="alert")
-    check_entities = relationship("CheckEntity",
+    check_entities = relationship("AlertCheckEntity",
         cascade="all, delete, delete-orphan", backref="alert")
 
     def __repr__(self):
