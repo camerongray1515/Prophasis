@@ -1,4 +1,5 @@
 import os
+import operator
 from flask import Flask, render_template, abort
 from flask.ext.login import LoginManager, login_required, logout_user
 from api import api
@@ -361,8 +362,23 @@ def alerts():
 @web.route("/alerts/add/")
 @login_required
 def alerts_add():
+    hosts = Host.query.all()
+    host_groups = HostGroup.query.all()
+    services = Service.query.all()
+    checks = Check.query.all()
+
+    # Generate a list of tuples of state and it's human readable name ordered
+    # by priority, highest first
+    hp = Host.health_priorities
+    states = []
+    for state, priority in reversed(
+        sorted(hp.items(), key=operator.itemgetter(1))):
+        states.append((state, state.replace("_", " ").title()))
+
     return render_template("alert-form.html", nav_section="alerts",
-        section="Alerts", title="Add Alert", method="add")
+        section="Alerts", title="Add Alert", method="add", hosts=hosts,
+        host_groups=host_groups, services=services, checks=checks,
+        states=states)
 
 if __name__ == "__main__":
     web.run(host="0.0.0.0", debug=True)

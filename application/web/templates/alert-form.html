@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% if alert is not defined %}
+    {% set alert = None %}
+{% endif %}
+
+{% block breadcrumbs %}
+    <li><a href="/"><i class="fa fa-home"></i> Home</a></li>
+    <li><a href="/alerts/">Alerts</a></li>
+    {% if method == "add" %}
+        <li><a href="/alerts/add/">Add Alert</a></li>
+    {% elif method == "edit" %}
+        <li><a href="/alerts/edit/{{ check.id }}/">Edit Alert</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border"><h3 class="box-title">
+                    {% if method == "add" %}
+                        Add Alert
+                    {% elif method == "edit" %}
+                        Edit Alert
+                    {% endif %}
+                    </h3></div>
+                <div class="box-body">
+                    <form class="form-horizontal auto-post" method="POST" action="/api/checks/{{ method }}/">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Name</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" name="name" value="{{ alert.name }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row col-md-offset-2 padding-bottom-md">
+                            <div class="col-md-12">
+                                <label>Alert for state changes to the following entities</label>
+                                <input type="text" class="form-control auto-filter" data-table-id="entity-table" placeholder="Search">
+                                <div class="scroll-area">
+                                    <table class="table table-striped" id="entity-table">
+                                        <tbody>
+                                            {% for group in host_groups %}
+                                                <tr>
+                                                    <td title="Host Group"><i class="fa fa-object-group"></i></td>
+                                                    <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}"></td>
+                                                    <td class="filter-text">{{ group.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            {% for host in hosts %}
+                                                <tr>
+                                                    <td title="Host"><i class="fa fa-desktop"></i></td>
+                                                    <td><input type="checkbox" name="hosts[]" value="{{ host.id }}"></td>
+                                                    <td class="filter-text">{{ host.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            {% for check in checks %}
+                                                <tr>
+                                                    <td title="Check"><i class="fa fa-search"></i></td>
+                                                    <td><input type="checkbox" name="checks[]" value="{{ check.id }}"></td>
+                                                    <td class="filter-text">{{ check.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            {% for service in services %}
+                                                <tr>
+                                                    <td title="Service"><i class="fa fa-cogs"></i></td>
+                                                    <td><input type="checkbox" name="services[]" value="{{ service.id }}"></td>
+                                                    <td class="filter-text">{{ service.name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row col-md-offset-2 padding-bottom-md">
+                            <div class="col-md-12">
+                                <label>Send an alert if the state changes between the following states</label>
+                            </div>
+                            <div class="col-md-6">
+                                <label>From states</label>
+                                <input type="text" class="form-control auto-filter" data-table-id="from-state-table" placeholder="Search">
+                                <div class="scroll-area">
+                                    <table class="table table-striped" id="from-state-table">
+                                        <tbody>
+                                            {% for state, name in states %}
+                                                <tr>
+                                                    <td><input type="checkbox" name="from-states[]" value="{{ state }}"></td>
+                                                    <td class="filter-text">{{ name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>To states</label>
+                                <input type="text" class="form-control auto-filter" data-table-id="to-state-table" placeholder="Search">
+                                <div class="scroll-area">
+                                    <table class="table table-striped" id="to-state-table">
+                                        <tbody>
+                                            {% for state, name in states %}
+                                                <tr>
+                                                    <td><input type="checkbox" name="from-states[]" value="{{ state }}"></td>
+                                                    <td class="filter-text">{{ name }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-10 col-md-offset-2">
+                                {% if method == "add" %}
+                                    <button class="btn btn-primary">Add Alert</button>
+                                {% elif method == "edit" %}
+                                    <input type="hidden" name="alert-id" value="{{ alert.id }}">
+                                    <button class="btn btn-primary">Save Alert</button>
+                                {% endif %}
+                                <a href="/alerts/" class="btn btn-default">Back...</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
