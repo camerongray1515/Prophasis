@@ -722,6 +722,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#0000ff"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O2" connection="12"/>
         <dia:connection handle="1" to="O1" connection="8"/>
@@ -747,6 +750,9 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O2" connection="10"/>
@@ -1770,6 +1776,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#00ff00"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O8" connection="13"/>
         <dia:connection handle="1" to="O5" connection="8"/>
@@ -1796,6 +1805,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#00ff00"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O6" connection="9"/>
         <dia:connection handle="1" to="O7" connection="9"/>
@@ -1821,6 +1833,9 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#0000ff"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O1" connection="8"/>
@@ -2591,6 +2606,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O13" connection="15"/>
         <dia:connection handle="1" to="O12" connection="8"/>
@@ -2621,6 +2639,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O12" connection="9"/>
         <dia:connection handle="1" to="O14" connection="10"/>
@@ -2646,6 +2667,12 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
+      </dia:attribute>
+      <dia:attribute name="line_width">
+        <dia:real val="0.10000000149011612"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O12" connection="9"/>
@@ -2673,6 +2700,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#00ff00"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O14" connection="13"/>
         <dia:connection handle="1" to="O6" connection="8"/>
@@ -2698,6 +2728,9 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#0000ff"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O15" connection="13"/>
@@ -2725,6 +2758,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="1" to="O0" connection="8"/>
       </dia:connections>
@@ -2749,6 +2785,9 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#00ff00"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O13" connection="13"/>
@@ -3025,6 +3064,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#00ff00"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O23" connection="11"/>
         <dia:connection handle="1" to="O5" connection="8"/>
@@ -3050,6 +3092,9 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O12" connection="9"/>
@@ -3325,6 +3370,9 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O12" connection="9"/>
@@ -4118,6 +4166,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#0000ff"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O29" connection="11"/>
         <dia:connection handle="1" to="O28" connection="8"/>
@@ -4143,6 +4194,9 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#00ff00"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O29" connection="17"/>
@@ -4170,6 +4224,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#00ff00"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O31" connection="15"/>
         <dia:connection handle="1" to="O30" connection="8"/>
@@ -4196,6 +4253,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O0" connection="9"/>
       </dia:connections>
@@ -4221,6 +4281,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#00ff00"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="1" to="O1" connection="9"/>
       </dia:connections>
@@ -4245,6 +4308,9 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O31" connection="10"/>
@@ -4272,6 +4338,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#00ff00"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O1" connection="9"/>
         <dia:connection handle="1" to="O31" connection="12"/>
@@ -4297,6 +4366,9 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#0000ff"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O30" connection="11"/>
@@ -4728,7 +4800,10 @@
         <dia:enum val="0"/>
       </dia:attribute>
       <dia:attribute name="autorouting">
-        <dia:boolean val="true"/>
+        <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O41" connection="11"/>
@@ -4756,6 +4831,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O41" connection="14"/>
         <dia:connection handle="1" to="O0" connection="9"/>
@@ -4781,6 +4859,9 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#0000ff"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O41" connection="12"/>
@@ -4808,6 +4889,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O0" connection="9"/>
         <dia:connection handle="1" to="O8" connection="10"/>
@@ -4834,6 +4918,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#0000ff"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O41" connection="19"/>
         <dia:connection handle="1" to="O28" connection="8"/>
@@ -4859,6 +4946,9 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#00ff00"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O41" connection="17"/>
@@ -5246,6 +5336,9 @@
       <dia:attribute name="autorouting">
         <dia:boolean val="true"/>
       </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
+      </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O40" connection="9"/>
         <dia:connection handle="1" to="O48" connection="10"/>
@@ -5271,6 +5364,9 @@
       </dia:attribute>
       <dia:attribute name="autorouting">
         <dia:boolean val="false"/>
+      </dia:attribute>
+      <dia:attribute name="line_color">
+        <dia:color val="#ff0000"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O40" connection="9"/>
