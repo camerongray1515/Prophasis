@@ -1,0 +1,164 @@
+\documentclass[bsc,logo,twoside]{infthesis}
+
+\title{Prophasis - An IT Infrastructure Monitoring Solution - Interim Report}
+\author{Cameron Gray}
+\abstract{Prophasis is an IT infrastructure monitoring system that is designed
+to suit small to medium size businesses where a system needs to be intuitive to
+manage. Management of the entire system can therefore be handled from a single,
+responsive web interface. It is also suitable as a one-stop tool with support
+for both time series monitoring in addition to real time alerting.
+Traditionally two different tools would be needed to gain this level of
+monitoring.}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\chapter{Interim Report}
+\section{Current Progress}
+\paragraph*{}
+	Stuff wot i dun
+
+\section{Future Work}
+\paragraph*{}
+	Stuff wot i need 2 do
+
+\chapter{Introduction}
+\section{Background}
+\paragraph*{}
+	% TODO: Reword this?
+	In recent years, almost all businesses have been expanding their IT 
+	infrastructure to handle the modern demand for IT systems.  As these systems
+	grow and become increasingly important for business operation it is crucial
+	that they are sufficiently monitored to prevent faults and periods of downtime
+	going unnoticed.  There is already a large market of tools for monitoring
+	IT systems however they are designed for use on massive scale networks managed
+	by teams of specialised systems administrators.  They are therefore
+	complicated to set up and manage and multiple tools are often required to gain
+	a suitable level of monitoring.
+	
+\paragraph*{}
+	For example, tools generally either fall into
+	the category of real time alerting (i.e. telling someone when something
+	breaks) and time series monitoring (i.e. capturing data about the performance
+	of systems and presenting graphs and statistics based on it), there is a large
+	gap in the market for tools that provide both of these in one package. This
+	reduces the time required to manage the system as it eliminates the need to
+	set up and configure two completely separate tools.
+
+\paragraph*{}	
+	These tools are also generally managed and configured through various
+	configuration files split across different machines on the network. This means
+	that in order to efficiently use these tools a configuration management system
+	such as	Puppet must be used. In a small business with limited IT resources, a
+	completely self contained system is often preferable.
+
+\section{Improvements}
+% TODO: Find a better place for this?
+\paragraph*{}
+	Prophasis is designed for use in a small to medium business with limited IT
+	resources.  They may have a small IT team with limited resources or may not
+	even have a dedicated IT team at all, instead relying on one or two employees
+	in other roles who manage the business's IT systems on the side of their
+	regular jobs. Therefore the system needs to be quick to deploy and manage with
+	a shallow learning curve. In order to use the system efficiently there should
+	be no requirement for additional tooling to be deployed across the company.
+	
+\subsection{Configuration Management}
+\paragraph*{}
+	It should be possible to manage the configuration of the system from a single
+	location.  Prophasis therefore provides a responsive web interface where every
+	aspect of the system's operation can be configured, Prophasis then handles
+	distributing this configuration to all other machines in the system in the
+	background. Custom code for plugins is handled in the same way; it is uploaded
+	to the single management machine and is then automatically distributed to the
+	appropriate remote machines when it is required.
+	
+\subsection{Time Series Monitoring \& Real Time Alerting}
+\paragraph*{}
+	Prophasis provides both the ability to alert administrators in real time when
+	a fault is discovered with the system alongside functionality to collect
+	performance metrics over time and use this data to generate statistics about
+	how the system has been performing.  This time series data can be used to both
+	investigate the cause of a failure in post-mortem investigations in addition
+	to being able to be used to predict future failures by looking at trends in
+	the collected data.
+	
+\subsection{Expandability}
+\paragraph*{}
+	It is important that a monitoring tool can be expanded to support the
+	monitoring of custom hardware and software.  An example of this would be
+	hardware RAID cards.  Getting the drive health from these types of devices
+	can range from probing for SMART data all the way to communicating with the
+	card over a serial port.  It is therefore crucial that Prophasis can be
+	easily expanded to support custom functionality such as this. Therefore 
+	Prophasis supports a system of custom "plugins" which can be written and
+	uploaded to the monitoring server where they can then be configured to monitor
+	machines. These plugins are designed to be self contained and to follow a well
+	defined and documented structure.  This provides scope for a plugin
+	"marketplace" much like there already exists for plugins for software such as
+	Wordpress and Drupal allowing plugins to be easily shared and installed for
+	monitoring various pieces of hardware and software, therefore eliminating the
+	need for every user to implement custom monitoring code for the systems they
+	are using.
+	
+\chapter{Design}
+\section{Technology Choice}
+\subsection{Why Python?}
+\subsection{Why HTTPS?}
+
+\section{System Structure}
+\begin{itemize}
+	\item Explain different components
+	\item Diagram
+	\item Why separate?
+\end{itemize}
+
+\section{Monitoring Methodology}
+\subsection{Host Management}
+\begin{itemize}
+	\item Stuff about hosts and host groups
+\end{itemize}
+
+\subsection{Plugins}
+\begin{itemize}
+	\item What is a plugin?
+\end{itemize}
+
+\subsection{Checks}
+\begin{itemize}
+	\item What is a check?
+\end{itemize}
+
+\subsection{Schedules}
+\begin{itemize}
+	\item What is a schedule?
+\end{itemize}
+
+\subsection{Services}
+\begin{itemize}
+	\item What is a service?
+	\item Dependencies \& Redundancy Groups
+	\item Why use dependencies?
+	\begin{itemize}
+		\item Alert only if service functionality is severely impacted
+		\item Prevents unnecessary alerts due to failures in redundant infrastructure
+		\item Provides clearer view of impact of a given failure
+	\end{itemize}
+\end{itemize}
+
+\subsection{Alerts}
+\begin{itemize}
+	\item What is an alert?
+	\item Separate alerts for different checks/hosts/plugins/services
+	\item State transition restrictions - Reduce unnecessary alerts
+\end{itemize}
+
+% TODO: Is this more like implementation?
+\section{Plugin Interface}
+\begin{itemize}
+	\item Explain structure of a plugin
+	\item UML Diagram?
+	\item Why Lua for classification logic?
+\end{itemize}
+\end{document}
