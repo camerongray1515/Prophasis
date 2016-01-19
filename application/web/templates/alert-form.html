@@ -48,7 +48,7 @@
                                     <option value="all-services" {% if alert.entity_selection_type == "all-services" %}selected{% endif %}>All Services</option>
                                     <option value="all-plugins" {% if alert.entity_selection_type == "all-plugins" %}selected{% endif %}>All Plugins</option>
                                 </select>
-                                <div id="custom-entity-selection" {% if alert.entity_selection_type != "custom" %}style="display:none;"{% endif %}>
+                                <div id="custom-entity-selection" {% if alert and alert.entity_selection_type != "custom" %}style="display:none;"{% endif %}>
                                     <input type="text" class="form-control auto-filter" data-table-id="entity-table" placeholder="Search">
                                     <div class="scroll-area">
                                         <table class="table table-striped" id="entity-table">
