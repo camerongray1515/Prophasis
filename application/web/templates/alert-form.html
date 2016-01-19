@@ -10,7 +10,7 @@
     {% if method == "add" %}
         <li><a href="/alerts/add/">Add Alert</a></li>
     {% elif method == "edit" %}
-        <li><a href="/alerts/edit/{{ check.id }}/">Edit Alert</a></li>
+        <li><a href="/alerts/edit/{{ alert.id }}/">Edit Alert</a></li>
     {% endif %}
 {% endblock %}
 
@@ -26,7 +26,7 @@
                     {% endif %}
                     </h3></div>
                 <div class="box-body">
-                    <form class="form-horizontal auto-post" method="POST" action="/api/checks/{{ method }}/">
+                    <form class="form-horizontal auto-post" method="POST" action="/api/alerts/{{ method }}/">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -41,40 +41,56 @@
                         <div class="row col-md-offset-2 padding-bottom-md">
                             <div class="col-md-12">
                                 <label>Alert for state changes to the following entities</label>
-                                <input type="text" class="form-control auto-filter" data-table-id="entity-table" placeholder="Search">
-                                <div class="scroll-area">
-                                    <table class="table table-striped" id="entity-table">
-                                        <tbody>
-                                            {% for group in host_groups %}
-                                                <tr>
-                                                    <td title="Host Group"><i class="fa fa-object-group"></i></td>
-                                                    <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}"></td>
-                                                    <td class="filter-text">{{ group.name }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                            {% for host in hosts %}
-                                                <tr>
-                                                    <td title="Host"><i class="fa fa-desktop"></i></td>
-                                                    <td><input type="checkbox" name="hosts[]" value="{{ host.id }}"></td>
-                                                    <td class="filter-text">{{ host.name }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                            {% for check in checks %}
-                                                <tr>
-                                                    <td title="Check"><i class="fa fa-search"></i></td>
-                                                    <td><input type="checkbox" name="checks[]" value="{{ check.id }}"></td>
-                                                    <td class="filter-text">{{ check.name }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                            {% for service in services %}
-                                                <tr>
-                                                    <td title="Service"><i class="fa fa-cogs"></i></td>
-                                                    <td><input type="checkbox" name="services[]" value="{{ service.id }}"></td>
-                                                    <td class="filter-text">{{ service.name }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                <select class="form-control" id="entity-selection" name="entity-selection">
+                                    <option value="custom" {% if alert.entity_selection_type == "custom" %}selected{% endif %}>Custom</option>
+                                    <option value="all-hosts" {% if alert.entity_selection_type == "all-hosts" %}selected{% endif %}>All Hosts</option>
+                                    <option value="all-checks" {% if alert.entity_selection_type == "all-checks" %}selected{% endif %}>All Checks</option>
+                                    <option value="all-services" {% if alert.entity_selection_type == "all-services" %}selected{% endif %}>All Services</option>
+                                    <option value="all-plugins" {% if alert.entity_selection_type == "all-plugins" %}selected{% endif %}>All Plugins</option>
+                                </select>
+                                <div id="custom-entity-selection" {% if alert.entity_selection_type != "custom" %}style="display:none;"{% endif %}>
+                                    <input type="text" class="form-control auto-filter" data-table-id="entity-table" placeholder="Search">
+                                    <div class="scroll-area">
+                                        <table class="table table-striped" id="entity-table">
+                                            <tbody>
+                                                {% for group in host_groups %}
+                                                    <tr>
+                                                        <td title="Host Group"><i class="fa fa-object-group"></i></td>
+                                                        <td><input type="checkbox" name="host-groups[]" value="{{ group.id }}" {% if group.id in alert.entity_host_group_ids %}checked{% endif %}></td>
+                                                        <td class="filter-text">{{ group.name }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                {% for host in hosts %}
+                                                    <tr>
+                                                        <td title="Host"><i class="fa fa-desktop"></i></td>
+                                                        <td><input type="checkbox" name="hosts[]" value="{{ host.id }}" {% if host.id in alert.entity_host_ids %}checked{% endif %}></td>
+                                                        <td class="filter-text">{{ host.name }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                {% for check in checks %}
+                                                    <tr>
+                                                        <td title="Check"><i class="fa fa-search"></i></td>
+                                                        <td><input type="checkbox" name="checks[]" value="{{ check.id }}" {% if check.id in alert.entity_check_ids %}checked{% endif %}></td>
+                                                        <td class="filter-text">{{ check.name }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                {% for service in services %}
+                                                    <tr>
+                                                        <td title="Service"><i class="fa fa-cogs"></i></td>
+                                                        <td><input type="checkbox" name="services[]" value="{{ service.id }}" {% if service.id in alert.entity_service_ids %}checked{% endif %}></td>
+                                                        <td class="filter-text">{{ service.name }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                {% for plugin in plugins %}
+                                                    <tr>
+                                                        <td title="Plugin"><i class="fa fa-plug"></i></td>
+                                                        <td><input type="checkbox" name="plugins[]" value="{{ plugin.id }}" {% if plugin.id in alert.entity_plugin_ids %}checked{% endif %}></td>
+                                                        <td class="filter-text">{{ plugin.name }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -91,7 +107,7 @@
                                         <tbody>
                                             {% for state, name in states %}
                                                 <tr>
-                                                    <td><input type="checkbox" name="from-states[]" value="{{ state }}"></td>
+                                                    <td><input type="checkbox" name="from-states[]" value="{{ state }}" {% if state in alert.transitions_from_states %}checked{% endif %}></td>
                                                     <td class="filter-text">{{ name }}</td>
                                                 </tr>
                                             {% endfor %}
@@ -107,7 +123,7 @@
                                         <tbody>
                                             {% for state, name in states %}
                                                 <tr>
-                                                    <td><input type="checkbox" name="from-states[]" value="{{ state }}"></td>
+                                                    <td><input type="checkbox" name="to-states[]" value="{{ state }}" {% if state in alert.transitions_to_states %}checked{% endif %}></td>
                                                     <td class="filter-text">{{ name }}</td>
                                                 </tr>
                                             {% endfor %}
@@ -133,4 +149,6 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ url_for("static", filename="assets/js/alert-form.js") }}"></script>
 {% endblock %}

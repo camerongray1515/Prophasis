@@ -12,7 +12,8 @@ from responses import error_response
 from models import create_all, session, Host, HostGroup, HostGroupAssignment,\
     Plugin, CheckPlugin, CheckAssignment, Check, Schedule, ScheduleInterval,\
     ScheduleCheck, PluginThreshold, User, ServiceDependency, Service,\
-    RedundancyGroup, RedundancyGroupComponent
+    RedundancyGroup, RedundancyGroupComponent, Alert, AlertCheckEntity,\
+    AlertTransitionTo, AlertTransitionFrom
 from sqlalchemy import or_, and_
 from sqlalchemy.exc import SQLAlchemyError
 from config import get_config, get_config_value
@@ -813,3 +814,150 @@ def services_edit():
             "understood.  Please refresh the page and try again.")
 
     return jsonify(success=True, message="Service has been saved successfully")
+
+@api.route("/alerts/add/", methods=["POST"])
+@login_required
+def alerts_add():
+    name = request.form.get("name")
+    entity_selection = request.form.get("entity-selection")
+    host_groups = request.form.getlist("host-groups[]")
+    hosts = request.form.getlist("hosts[]")
+    checks = request.form.getlist("checks[]")
+    services = request.form.getlist("services[]")
+    plugins = request.form.getlist("plugins[]")
+    from_states = request.form.getlist("from-states[]")
+    to_states = request.form.getlist("to-states[]")
+
+    if not name:
+        return error_response("You must specify a name for this alert")
+
+    if not from_states or not to_states:
+        return error_response("You must specify at least one from state and at "
+            "least one to state")
+
+    alert = Alert(name=name, entity_selection_type=entity_selection)
+    session.add(alert)
+    session.flush()
+    for state in to_states:
+        if state in from_states:
+            session.rollback()
+            return error_response("You cannot have the same state as both a "
+                "\"to\" state and a \"from\" state")
+        session.add(AlertTransitionTo(alert_id=alert.id, state=state))
+
+    for state in from_states:
+        session.add(AlertTransitionFrom(alert_id=alert.id, state=state))
+
+    if entity_selection == "custom":
+        added_entity = False
+        for host_id in hosts:
+            session.add(AlertCheckEntity(alert_id=alert.id, host_id=host_id))
+            added_entity = True
+        for host_group_id in host_groups:
+            session.add(AlertCheckEntity(alert_id=alert.id,
+                host_group_id=host_group_id))
+            added_entity = True
+        for check_id in checks:
+            session.add(AlertCheckEntity(alert_id=alert.id, check_id=check_id))
+            added_entity = True
+        for service_id in services:
+            session.add(AlertCheckEntity(alert_id=alert.id,
+                service_id=service_id))
+            added_entity = True
+        for plugin_id in plugins:
+            session.add(AlertCheckEntity(alert_id=alert.id,
+                plugin_id=plugin_id))
+            added_entity = True
+
+        if not added_entity:
+            session.rollback()
+            return error_response("You must select at least one entity to alert"
+                " for state changes in")
+
+    session.commit()
+    return jsonify(success=True, message="Alert has been added successfully")
+
+@api.route("/alerts/delete/", methods=["POST"])
+@login_required
+def alerts_delete():
+    alert_id = request.form.get("alert-id")
+    alert = Alert.query.get(alert_id)
+    if not alert:
+        return error_response("Alert could not be found!")
+    session.delete(alert)
+    session.commit()
+
+    return jsonify(success=True, message="Alert has been deleted successfully")
+
+@api.route("/alerts/edit/", methods=["POST"])
+@login_required
+def alerts_edit():
+    name = request.form.get("name")
+    alert_id = request.form.get("alert-id")
+    entity_selection = request.form.get("entity-selection")
+    host_groups = request.form.getlist("host-groups[]")
+    hosts = request.form.getlist("hosts[]")
+    checks = request.form.getlist("checks[]")
+    services = request.form.getlist("services[]")
+    plugins = request.form.getlist("plugins[]")
+    from_states = request.form.getlist("from-states[]")
+    to_states = request.form.getlist("to-states[]")
+
+    if not name:
+        return error_response("You must specify a name for this alert")
+
+    alert = Alert.query.get(alert_id)
+    if not alert:
+        abort(404)
+
+    if not from_states or not to_states:
+        return error_response("You must specify at least one from state and at "
+            "least one to state")
+
+    alert.name = name
+    alert.entity_selection_type = entity_selection
+
+    AlertTransitionTo.query.filter(
+        AlertTransitionTo.alert_id==alert_id).delete()
+    AlertTransitionFrom.query.filter(
+        AlertTransitionFrom.alert_id==alert_id).delete()
+    AlertCheckEntity.query.filter(AlertCheckEntity.alert_id==alert_id).delete()
+
+    for state in to_states:
+        if state in from_states:
+            session.rollback()
+            return error_response("You cannot have the same state as both a "
+                "\"to\" state and a \"from\" state")
+        session.add(AlertTransitionTo(alert_id=alert.id, state=state))
+
+    for state in from_states:
+        session.add(AlertTransitionFrom(alert_id=alert.id, state=state))
+
+    if entity_selection == "custom":
+        added_entity = False
+        for host_id in hosts:
+            session.add(AlertCheckEntity(alert_id=alert.id, host_id=host_id))
+            added_entity = True
+        for host_group_id in host_groups:
+            session.add(AlertCheckEntity(alert_id=alert.id,
+                host_group_id=host_group_id))
+            added_entity = True
+        for check_id in checks:
+            session.add(AlertCheckEntity(alert_id=alert.id, check_id=check_id))
+            added_entity = True
+        for service_id in services:
+            session.add(AlertCheckEntity(alert_id=alert.id,
+                service_id=service_id))
+            added_entity = True
+        for plugin_id in plugins:
+            session.add(AlertCheckEntity(alert_id=alert.id,
+                plugin_id=plugin_id))
+            added_entity = True
+
+        if not added_entity:
+            session.rollback()
+            return error_response("You must select at least one entity to alert"
+                " for state changes in")
+
+    session.commit()
+    return jsonify(success=True, message="Alert has been saved successfully")

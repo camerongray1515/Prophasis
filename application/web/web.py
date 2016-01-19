@@ -7,7 +7,7 @@ from reports import reports
 from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
     CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval,\
     PluginThreshold, User, Service, ServiceDependency, RedundancyGroup,\
-    RedundancyGroupComponent
+    RedundancyGroupComponent, Alert
 from datetime import datetime
 from jinja2 import Markup
 
@@ -356,8 +356,14 @@ def services_edit(service_id):
 @web.route("/alerts/")
 @login_required
 def alerts():
+    alerts = Alert.query.all()
+
+    for i in range(0, len(alerts)):
+        alerts[i].type = alerts[i].entity_selection_type.replace("-",
+            " ").title()
+
     return render_template("alerts.html", nav_section="alerts",
-        section="Alerts", title="Manage Alerts")
+        section="Alerts", title="Manage Alerts", alerts=alerts)
 
 @web.route("/alerts/add/")
 @login_required
@@ -366,6 +372,7 @@ def alerts_add():
     host_groups = HostGroup.query.all()
     services = Service.query.all()
     checks = Check.query.all()
+    plugins = Plugin.query.all()
 
     # Generate a list of tuples of state and it's human readable name ordered
     # by priority, highest first
@@ -378,7 +385,33 @@ def alerts_add():
     return render_template("alert-form.html", nav_section="alerts",
         section="Alerts", title="Add Alert", method="add", hosts=hosts,
         host_groups=host_groups, services=services, checks=checks,
-        states=states)
+        states=states, plugins=plugins)
+
+@web.route("/alerts/edit/<alert_id>/")
+@login_required
+def alerts_edit(alert_id):
+    hosts = Host.query.all()
+    host_groups = HostGroup.query.all()
+    services = Service.query.all()
+    checks = Check.query.all()
+    plugins = Plugin.query.all()
+    alert = Alert.query.get(alert_id)
+
+    if not alert:
+        abort(404)
+
+    # Generate a list of tuples of state and it's human readable name ordered
+    # by priority, highest first
+    hp = Host.health_priorities
+    states = []
+    for state, priority in reversed(
+        sorted(hp.items(), key=operator.itemgetter(1))):
+        states.append((state, state.replace("_", " ").title()))
+
+    return render_template("alert-form.html", nav_section="alerts",
+        section="Alerts", title="Add Alert", method="edit", hosts=hosts,
+        host_groups=host_groups, services=services, checks=checks,
+        states=states, plugins=plugins, alert=alert)
 
 if __name__ == "__main__":
     web.run(host="0.0.0.0", debug=True)

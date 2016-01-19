@@ -566,6 +566,57 @@ class Alert(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    entity_selection_type = Column(String)
+
+    @property
+    def transitions_from_states(self):
+        states = []
+        for transition in self.transitions_from:
+            states.append(transition.state)
+        return states
+
+    @property
+    def transitions_to_states(self):
+        states = []
+        for transition in self.transitions_to:
+            states.append(transition.state)
+        return states
+
+    def _get_check_entities_ids(self):
+        ids = {"hosts":[], "host_groups":[], "checks":[], "services":[],
+            "plugins": []}
+        for entity in self.check_entities:
+            if entity.host_id:
+                ids["hosts"].append(entity.host_id)
+            if entity.host_group_id:
+                ids["host_groups"].append(entity.host_group_id)
+            if entity.check_id:
+                ids["checks"].append(entity.check_id)
+            if entity.service_id:
+                ids["services"].append(entity.service_id)
+            if entity.plugin_id:
+                ids["plugins"].append(entity.plugin_id)
+        return ids
+
+    @property
+    def entity_host_ids(self):
+        return self._get_check_entities_ids()["hosts"]
+
+    @property
+    def entity_host_group_ids(self):
+        return self._get_check_entities_ids()["host_groups"]
+
+    @property
+    def entity_check_ids(self):
+        return self._get_check_entities_ids()["checks"]
+
+    @property
+    def entity_service_ids(self):
+        return self._get_check_entities_ids()["services"]
+
+    @property
+    def entity_plugin_ids(self):
+        return self._get_check_entities_ids()["plugins"]
 
     transitions_from = relationship("AlertTransitionFrom",
         cascade="all, delete, delete-orphan", backref="alert")
@@ -585,6 +636,7 @@ class AlertCheckEntity(Base):
     host_group_id = Column(ForeignKey("host_groups.id"))
     host_id = Column(ForeignKey("hosts.id"))
     plugin_id = Column(ForeignKey("plugins.id"))
+    check_id = Column(ForeignKey("checks.id"))
     service_id = Column(ForeignKey("services.id"))
 
     def __repr__(self):
