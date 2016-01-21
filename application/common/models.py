@@ -586,17 +586,21 @@ class Alert(Base):
         return states
 
     def _get_check_entities_ids(self):
-        ids = {"hosts":[], "host_groups":[], "checks":[], "services":[],
-            "plugins": []}
+        ids = {"hosts":[], "host_groups":[], "services":[]}
         for entity in self.check_entities:
             if entity.host_id:
                 ids["hosts"].append(entity.host_id)
             if entity.host_group_id:
                 ids["host_groups"].append(entity.host_group_id)
-            if entity.check_id:
-                ids["checks"].append(entity.check_id)
             if entity.service_id:
                 ids["services"].append(entity.service_id)
+        return ids
+
+    def _get_restrict_to_entities_ids(self):
+        ids = {"checks":[], "plugins": []}
+        for entity in self.restrict_to_entities:
+            if entity.check_id:
+                ids["checks"].append(entity.check_id)
             if entity.plugin_id:
                 ids["plugins"].append(entity.plugin_id)
         return ids
@@ -610,16 +614,16 @@ class Alert(Base):
         return self._get_check_entities_ids()["host_groups"]
 
     @property
-    def entity_check_ids(self):
-        return self._get_check_entities_ids()["checks"]
-
-    @property
     def entity_service_ids(self):
         return self._get_check_entities_ids()["services"]
 
     @property
+    def entity_check_ids(self):
+        return self._get_restrict_to_entities_ids()["checks"]
+
+    @property
     def entity_plugin_ids(self):
-        return self._get_check_entities_ids()["plugins"]
+        return self._get_restrict_to_entities_ids()["plugins"]
 
     transitions_from = relationship("AlertTransitionFrom",
         cascade="all, delete, delete-orphan", backref="alert")

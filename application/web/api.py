@@ -13,7 +13,7 @@ from models import create_all, session, Host, HostGroup, HostGroupAssignment,\
     Plugin, CheckPlugin, CheckAssignment, Check, Schedule, ScheduleInterval,\
     ScheduleCheck, PluginThreshold, User, ServiceDependency, Service,\
     RedundancyGroup, RedundancyGroupComponent, Alert, AlertCheckEntity,\
-    AlertTransitionTo, AlertTransitionFrom
+    AlertTransitionTo, AlertTransitionFrom, AlertRestrictToEntity
 from sqlalchemy import or_, and_
 from sqlalchemy.exc import SQLAlchemyError
 from config import get_config, get_config_value
@@ -857,22 +857,21 @@ def alerts_add():
             session.add(AlertCheckEntity(alert_id=alert.id,
                 host_group_id=host_group_id))
             added_entity = True
-        for check_id in checks:
-            session.add(AlertCheckEntity(alert_id=alert.id, check_id=check_id))
-            added_entity = True
         for service_id in services:
             session.add(AlertCheckEntity(alert_id=alert.id,
                 service_id=service_id))
-            added_entity = True
-        for plugin_id in plugins:
-            session.add(AlertCheckEntity(alert_id=alert.id,
-                plugin_id=plugin_id))
             added_entity = True
 
         if not added_entity:
             session.rollback()
             return error_response("You must select at least one entity to alert"
                 " for state changes in")
+
+    for check_id in checks:
+        session.add(AlertRestrictToEntity(alert_id=alert.id, check_id=check_id))
+    for plugin_id in plugins:
+        session.add(AlertRestrictToEntity(alert_id=alert.id,
+            plugin_id=plugin_id))
 
     session.commit()
     return jsonify(success=True, message="Alert has been added successfully")
@@ -922,6 +921,8 @@ def alerts_edit():
     AlertTransitionFrom.query.filter(
         AlertTransitionFrom.alert_id==alert_id).delete()
     AlertCheckEntity.query.filter(AlertCheckEntity.alert_id==alert_id).delete()
+    AlertRestrictToEntity.query.filter(
+        AlertRestrictToEntity.alert_id==alert_id).delete()
 
     for state in to_states:
         if state in from_states:
@@ -942,22 +943,21 @@ def alerts_edit():
             session.add(AlertCheckEntity(alert_id=alert.id,
                 host_group_id=host_group_id))
             added_entity = True
-        for check_id in checks:
-            session.add(AlertCheckEntity(alert_id=alert.id, check_id=check_id))
-            added_entity = True
         for service_id in services:
             session.add(AlertCheckEntity(alert_id=alert.id,
                 service_id=service_id))
-            added_entity = True
-        for plugin_id in plugins:
-            session.add(AlertCheckEntity(alert_id=alert.id,
-                plugin_id=plugin_id))
             added_entity = True
 
         if not added_entity:
             session.rollback()
             return error_response("You must select at least one entity to alert"
                 " for state changes in")
+
+    for check_id in checks:
+        session.add(AlertRestrictToEntity(alert_id=alert.id, check_id=check_id))
+    for plugin_id in plugins:
+        session.add(AlertRestrictToEntity(alert_id=alert.id,
+            plugin_id=plugin_id))
 
     session.commit()
     return jsonify(success=True, message="Alert has been saved successfully")
