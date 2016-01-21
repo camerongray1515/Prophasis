@@ -143,6 +143,15 @@ monitoring.}
 	need to investigate swapping out the Flask development webserver that
 	currently powers the web interface for something more production ready.
 	
+\subsection{Plugin Signing}
+\paragraph*{}
+	Code for plugins is distributed to the agent from the monitoring server, this
+	means that if the monitoring server were to be compromised, an attacker could
+	use it to send malicious code to and execute the code on the remote hosts. I
+	would like to investigate being able to GPG sign the plugin archives so that
+	even if an attacker gains access to the monitoring host, they cannot send
+	their own malicious code to a remote machine.
+	
 
 \chapter{Introduction}
 \section{Background}
@@ -275,11 +284,47 @@ monitoring.}
 	\item State transition restrictions - Reduce unnecessary alerts
 \end{itemize}
 
-% TODO: Is this more like implementation?
+\chapter{Implementation}
+\section{Code Structure}
+\begin{itemize}
+	\item Separate applications for each task - Why?
+	\item The "common" package
+\end{itemize}
+
 \section{Plugin Interface}
 \begin{itemize}
 	\item Explain structure of a plugin
 	\item UML Diagram?
 	\item Why Lua for classification logic?
 \end{itemize}
+
+\section{Database Design}
+
+\section{Web Interface}
+\begin{itemize}
+	\item Go into detail about web structure WRT templates, assets.etc
+\end{itemize}
+
+\section{Core}
+\begin{itemize}
+	\item Scheduling
+	\item Multithreaded dispatcher
+\end{itemize}
+
+\section{Agent}
+\begin{itemize}
+	\item Communication
+	\item Authentication
+\end{itemize}
+
+\chapter{Testing}
+\begin{itemize}
+	\item Unit testing
+	\item Use within Tardis \& Lynchpin
+\end{itemize}
+	
+\chapter{Evaluation}
+
+\chapter{Conclusion}
+
 \end{document}
