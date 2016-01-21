@@ -394,7 +394,7 @@ class Check(Base):
         cascade="all, delete, delete-orphan", backref="check")
 
     restrict_to_entities = relationship("AlertRestrictToEntity",
-        cascade="all, delete, delete-orphan", backref="plugin")
+        cascade="all, delete, delete-orphan", backref="check")
 
     def __repr__(self):
         return ("<Check id: {0}, name: {1}>".format(self.id, self.name))
@@ -628,7 +628,7 @@ class Alert(Base):
     check_entities = relationship("AlertCheckEntity",
         cascade="all, delete, delete-orphan", backref="alert")
     restrict_to_entities = relationship("AlertRestrictToEntity",
-        cascade="all, delete, delete-orphan", backref="plugin")
+        cascade="all, delete, delete-orphan", backref="alert")
 
     def __repr__(self):
         return "<Alert id: {}, name: {}>".format(self.id, self.name)
