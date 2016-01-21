@@ -255,7 +255,7 @@ class Plugin(Base):
     plugin_thresholds = relationship("PluginThreshold",
         cascade="all, delete, delete-orphan", backref="plugin")
 
-    check_entities = relationship("AlertCheckEntity",
+    restrict_to_entities = relationship("AlertRestrictToEntity",
         cascade="all, delete, delete-orphan", backref="plugin")
 
     def __repr__(self):
@@ -392,6 +392,9 @@ class Check(Base):
 
     plugin_results = relationship("PluginResult",
         cascade="all, delete, delete-orphan", backref="check")
+
+    restrict_to_entities = relationship("AlertRestrictToEntity",
+        cascade="all, delete, delete-orphan", backref="plugin")
 
     def __repr__(self):
         return ("<Check id: {0}, name: {1}>".format(self.id, self.name))
@@ -624,6 +627,8 @@ class Alert(Base):
         cascade="all, delete, delete-orphan", backref="alert")
     check_entities = relationship("AlertCheckEntity",
         cascade="all, delete, delete-orphan", backref="alert")
+    restrict_to_entities = relationship("AlertRestrictToEntity",
+        cascade="all, delete, delete-orphan", backref="plugin")
 
     def __repr__(self):
         return "<Alert id: {}, name: {}>".format(self.id, self.name)
@@ -635,12 +640,21 @@ class AlertCheckEntity(Base):
     alert_id = Column(ForeignKey("alerts.id"))
     host_group_id = Column(ForeignKey("host_groups.id"))
     host_id = Column(ForeignKey("hosts.id"))
-    plugin_id = Column(ForeignKey("plugins.id"))
-    check_id = Column(ForeignKey("checks.id"))
     service_id = Column(ForeignKey("services.id"))
 
     def __repr__(self):
         return "<AlertCheckEntity id: {}>".format(self.id)
+
+class AlertRestrictToEntity(Base):
+    __tablename__ = "alert_restrict_to_entities"
+
+    id = Column(Integer, primary_key=True)
+    alert_id = Column(ForeignKey("alerts.id"))
+    plugin_id = Column(ForeignKey("plugins.id"))
+    check_id = Column(ForeignKey("checks.id"))
+
+    def __repr__(self):
+        return "<AlertRestrictToEntity id: {}>".format(self.id)
 
 class AlertTransitionFrom(Base):
     __tablename__ = "alert_transitions_from"
