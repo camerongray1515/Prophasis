@@ -1,7 +1,7 @@
 import unittest
 from models import create_all, drop_all, session, Host, HostGroup,\
     HostGroupAssignment, Plugin, PluginResult, Service, ServiceDependency,\
-    RedundancyGroup, RedundancyGroupComponent
+    RedundancyGroup, RedundancyGroupComponent, Alert, AlertCheckEntity
 
 class TestGetHostMembersip(unittest.TestCase):
     def setUp(self):
@@ -173,6 +173,51 @@ class TestGetHostHeatlh(unittest.TestCase):
 
     def test_mixed_results(self):
         self.assertEqual(Host.query.get(8).health, "major")
+
+class TestHostAlerts(unittest.TestCase):
+    def setUp(self):
+        drop_all()
+        create_all()
+
+        session.add(Host(id=1)) # Contains alerts 1,2,4
+        session.add(Host(id=2)) # Contains alert 6,7
+
+        for i in range(1,8):
+            session.add(Alert(id=i, name=i))
+
+        session.add(HostGroup(id=1))
+        session.add(HostGroup(id=2))
+        session.add(HostGroupAssignment(member_host_id=1, host_group_id=1))
+
+        session.add(Service(id=1))
+        session.add(Service(id=2))
+        session.add(Service(id=3))
+        session.add(ServiceDependency(host_id=1, service_id=1))
+        session.add(RedundancyGroup(id=1, service_id=3))
+        session.add(RedundancyGroupComponent(host_id=2, redundancy_group_id=1))
+        session.add(ServiceDependency(redundancy_group_id=1, service_id=3))
+
+        session.add(AlertCheckEntity(host_id=1, alert_id=1))
+        session.add(AlertCheckEntity(host_group_id=1, alert_id=2))
+        session.add(AlertCheckEntity(host_group_id=2, alert_id=3))
+        session.add(AlertCheckEntity(service_id=1, alert_id=4))
+        session.add(AlertCheckEntity(service_id=2, alert_id=5))
+        session.add(AlertCheckEntity(host_id=2, alert_id=6))
+        session.add(AlertCheckEntity(service_id=3, alert_id=7))
+
+        session.commit()
+
+    def test_without_redundancy_group(self):
+        alert_ids = []
+        for alert in Host.query.get(1).alerts:
+            alert_ids.append(alert.id)
+        self.assertEqual(sorted(alert_ids), [1,2,4])
+
+    def test_with_redundancy_group(self):
+        alert_ids = []
+        for alert in Host.query.get(2).alerts:
+            alert_ids.append(alert.id)
+        self.assertEqual(sorted(alert_ids), [6,7])
 
 class TestService(unittest.TestCase):
     def setUp(self):

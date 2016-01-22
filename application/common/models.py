@@ -131,6 +131,26 @@ class Host(Base):
 
         return health
 
+    @property
+    def alerts(self):
+        alerts = []
+        for entity in self.check_entities:
+            alerts.append(entity.alert)
+        for group in self.member_of:
+            alerts += group.alerts
+        for service in self.services:
+            alerts += service.alerts
+        alerts += Alert.query.filter(
+            Alert.entity_selection_type=="all-hosts")
+
+        alerts_deduplicated = []
+        seen_alert_ids = []
+        for alert in alerts:
+            if alert.id not in seen_alert_ids:
+                alerts_deduplicated.append(alert)
+                seen_alert_ids.append(alert.id)
+        return alerts_deduplicated
+
     def _traverse_groups(group_id, visited_groups=None):
         groups = []
         assignments = HostGroupAssignment.query.filter(
@@ -203,6 +223,20 @@ class HostGroup(Base):
                 host.health_priorities[health]:
                 health = host_health
         return health
+
+    @property
+    def alerts(self):
+        alerts = []
+        for entity in self.check_entities:
+            alerts.append(entity.alert)
+
+        alerts_deduplicated = []
+        seen_alert_ids = []
+        for alert in alerts:
+            if alert.id not in seen_alert_ids:
+                alerts_deduplicated.append(alert)
+                seen_alert_ids.append(alert.id)
+        return alerts_deduplicated
 
     @property
     def services(self):
@@ -538,6 +572,22 @@ class Service(Base):
                 seen_host_ids.append(host.id)
 
         return deduplicated_plugins
+
+    @property
+    def alerts(self):
+        alerts = []
+        for entity in self.check_entities:
+            alerts.append(entity.alert)
+        alerts += Alert.query.filter(
+            Alert.entity_selection_type=="all-services")
+
+        alerts_deduplicated = []
+        seen_alert_ids = []
+        for alert in alerts:
+            if alert.id not in seen_alert_ids:
+                alerts_deduplicated.append(alert)
+                seen_alert_ids.append(alert.id)
+        return alerts_deduplicated
 
     def __repr__(self):
         return "<Service id: {}, name: {}>".format(self.id, self.name)
