@@ -287,7 +287,26 @@ class TestService(unittest.TestCase):
         self.assertEqual(Service.query.get(8).health, "ok")
 
     def test_member_hosts(self):
-        print(Service.query.get(1).member_hosts)
+        host_ids = []
+        for host in Service.query.get(3).member_hosts:
+            host_ids.append(host.id)
+        self.assertEqual(sorted(host_ids), [1,4])
+
+        host_ids = []
+        for host in Service.query.get(4).member_hosts:
+            host_ids.append(host.id)
+        self.assertEqual(sorted(host_ids), [2,4])
+
+        host_ids = []
+        for host in Service.query.get(6).member_hosts:
+            host_ids.append(host.id)
+        self.assertEqual(sorted(host_ids), [1,3])
+
+        host_ids = []
+        for host in Service.query.get(7).member_hosts:
+            host_ids.append(host.id)
+        self.assertEqual(sorted(host_ids), [3,4])
+
 
 if __name__ == "__main__":
     unittest.main()
