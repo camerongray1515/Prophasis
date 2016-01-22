@@ -125,8 +125,7 @@ class Host(Base):
         return groups
 
     def __repr__(self):
-        return "<Host id: {0}, name: {1}, host: {2}>".format(self.id,
-            self.name, self.host)
+        return "<Host id: {0}, name: {1}>".format(self.id, self.name)
 
 class HostGroup(Base):
     __tablename__ = "host_groups"
@@ -486,6 +485,26 @@ class Service(Base):
                 health = dependency_health
         return health
 
+    @property
+    def member_hosts(self):
+        hosts = []
+        for dependency in self.service_dependencies:
+            if dependency.host:
+                hosts.append(dependency.host)
+            elif dependency.host_group:
+                hosts += dependency.host_group.member_hosts
+            elif dependency.redundancy_group:
+                hosts += dependency.redundancy_group.member_hosts
+
+        deduplicated_plugins = []
+        seen_host_ids = []
+        for host in hosts:
+            if host.id not in seen_host_ids:
+                deduplicated_plugins.append(host)
+                seen_host_ids.append(host.id)
+
+        return deduplicated_plugins
+
     def __repr__(self):
         return "<Service id: {}, name: {}>".format(self.id, self.name)
 
@@ -540,6 +559,24 @@ class RedundancyGroup(Base):
         if health == "ok" and unhealthy_component:
             return "degraded"
         return health
+
+    @property
+    def member_hosts(self):
+        hosts = []
+        for component in self.redundancy_group_components:
+            if component.host:
+                hosts.append(component.host)
+            else:
+                hosts += component.host_group.member_hosts
+
+        hosts_deduplicated = []
+        seen_host_ids = []
+        for host in hosts:
+            if host.id not in seen_host_ids:
+                hosts_deduplicated.append(host)
+                seen_host_ids.append(host.id)
+
+        return hosts_deduplicated
 
     def __repr__(self):
         return "<RedundancyGroup id: {}>".format(self.id)

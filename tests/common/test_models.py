@@ -174,7 +174,7 @@ class TestGetHostHeatlh(unittest.TestCase):
     def test_mixed_results(self):
         self.assertEqual(Host.query.get(8).health, "major")
 
-class TestGetServiceHealth(unittest.TestCase):
+class TestService(unittest.TestCase):
     def setUp(self):
         drop_all()
         create_all()
@@ -285,6 +285,9 @@ class TestGetServiceHealth(unittest.TestCase):
     # One dependency has no data - Service 8
     def test_no_data(self):
         self.assertEqual(Service.query.get(8).health, "ok")
+
+    def test_member_hosts(self):
+        print(Service.query.get(1).member_hosts)
 
 if __name__ == "__main__":
     unittest.main()
