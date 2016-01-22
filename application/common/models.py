@@ -95,6 +95,25 @@ class Host(Base):
         return groups
 
     @property
+    def services(self):
+        services = []
+        for dependency in self.service_dependencies:
+            services.append(dependency.service)
+        for component in self.redundancy_group_components:
+            services.append(component.redundancy_group.service)
+        for assignment in self.group_assignments:
+            services += assignment.host_group.services
+
+        seen_service_ids = []
+        services_deduplicated = []
+        for service in services:
+            if service.id not in seen_service_ids:
+                services_deduplicated.append(service)
+                seen_service_ids.append(service.id)
+
+        return services_deduplicated
+
+    @property
     def health(self):
         health = "no_data"
         highest_severity = 0
@@ -185,6 +204,21 @@ class HostGroup(Base):
                 health = host_health
         return health
 
+    @property
+    def services(self):
+        services = []
+        seen_service_ids = []
+        for dependency in self.service_dependencies:
+            service = dependency.service
+            if service.id not in seen_service_ids:
+                services.append(service)
+                seen_service_ids.append(service.id)
+        for component in self.redundancy_group_components:
+            service = component.redundancy_group.service
+            if service.id not in seen_service_ids:
+                services.append(service)
+                seen_service_ids.append(service.id)
+        return services
 
     def __repr__(self):
         return "<HostGroup id: {0}, name: {1}>".format(self.id, self.name)

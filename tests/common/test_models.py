@@ -307,6 +307,21 @@ class TestService(unittest.TestCase):
             host_ids.append(host.id)
         self.assertEqual(sorted(host_ids), [3,4])
 
+    def test_host_services(self):
+        service_ids = []
+        for service in Host.query.get(1).services:
+            service_ids.append(service.id)
+        self.assertEqual(sorted(service_ids), [1,2,3,5,6,8])
+
+        service_ids = []
+        for service in Host.query.get(3).services:
+            service_ids.append(service.id)
+        self.assertEqual(sorted(service_ids), [1,6,7])
+
+        service_ids = []
+        for service in Host.query.get(6).services:
+            service_ids.append(service.id)
+        self.assertEqual(sorted(service_ids), [8])
 
 if __name__ == "__main__":
     unittest.main()
