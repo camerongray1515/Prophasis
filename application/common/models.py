@@ -746,6 +746,14 @@ class Alert(Base):
     def entity_plugin_ids(self):
         return self._get_restrict_to_entities_ids()["plugins"]
 
+    def is_valid(self, check_id, plugin_id):
+        if len(self.restrict_to_entities) == 0:
+            return True
+        for entity in self.restrict_to_entities:
+            if entity.check_id == check_id or entity.plugin_id == plugin_id:
+                return True
+        return False
+
     transitions_from = relationship("AlertTransitionFrom",
         cascade="all, delete, delete-orphan", backref="alert")
     transitions_to = relationship("AlertTransitionTo",

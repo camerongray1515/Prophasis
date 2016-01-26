@@ -1,7 +1,8 @@
 import unittest
 from models import create_all, drop_all, session, Host, HostGroup,\
     HostGroupAssignment, Plugin, PluginResult, Service, ServiceDependency,\
-    RedundancyGroup, RedundancyGroupComponent, Alert, AlertCheckEntity
+    RedundancyGroup, RedundancyGroupComponent, Alert, AlertCheckEntity, Check,\
+    AlertRestrictToEntity
 
 class TestGetHostMembersip(unittest.TestCase):
     def setUp(self):
@@ -367,6 +368,33 @@ class TestService(unittest.TestCase):
         for service in Host.query.get(6).services:
             service_ids.append(service.id)
         self.assertEqual(sorted(service_ids), [8])
+
+class TestAlertRestriction(unittest.TestCase):
+    def setUp(self):
+        drop_all()
+        create_all()
+
+        session.add(Alert(id=1))
+        session.add(Alert(id=2))
+        session.add(Check(id=1))
+        session.add(Plugin(id=1))
+
+        session.add(AlertRestrictToEntity(alert_id=1, plugin_id=1))
+        session.add(AlertRestrictToEntity(alert_id=1, check_id=1))
+
+        session.commit()
+
+    def test_unrestricted(self):
+        a = Alert.query.get(1)
+        self.assertEqual(a.is_valid(1,1), True)
+
+    def test_valid(self):
+        a = Alert.query.get(1)
+        self.assertEqual(a.is_valid(1,1), True)
+
+    def test_invalid(self):
+        a = Alert.query.get(1)
+        self.assertEqual(a.is_valid(2,2), False)
 
 if __name__ == "__main__":
     unittest.main()
