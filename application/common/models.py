@@ -809,6 +809,17 @@ class AlertTransitionTo(Base):
     def __repr__(self):
         return "<AlertTransitionTo id: {}>".format(self.id)
 
+class LogMessage(Base):
+    __tablename__ = "log_messages"
+    id = Column(Integer, primary_key=True)
+    category = Column(String)
+    read = Column(Boolean, default=False)
+    message = Column(Text)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return "<LogMessage id:{}, category: {}>".format(self.id, self.category)
+
 def create_all():
     Base.metadata.create_all(engine)
 

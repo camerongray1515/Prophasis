@@ -120,6 +120,17 @@
                                         <i class="fa fa-users"></i> <span>Users</span>
                                     </a>
                                 </li>
+                                <li class="header">SYSTEM</li>
+                                <li class="{% if nav_section == "system-logs" %}active{% endif %}">
+                                    <a href="/system_logs/">
+                                        <i class="fa fa-envelope"></i> <span>
+                                            System Logs
+                                            {% if unread_messages != 0 %}
+                                                <span class="label label-danger">{{ unread_messages }} unread</span>
+                                            {% endif %}
+                                        </span>
+                                    </a>
+                                </li>
                                 <li class="header">SESSION</li>
                                 <li>
                                     <a href="/logout/">

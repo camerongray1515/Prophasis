@@ -1,13 +1,13 @@
 import os
 import operator
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, abort, redirect
 from flask.ext.login import LoginManager, login_required, logout_user
 from api import api
 from reports import reports
 from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
     CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval,\
     PluginThreshold, User, Service, ServiceDependency, RedundancyGroup,\
-    RedundancyGroupComponent, Alert
+    RedundancyGroupComponent, Alert, LogMessage, session
 from datetime import datetime
 from jinja2 import Markup
 
@@ -28,6 +28,12 @@ web.jinja_env.globals['include_raw'] = lambda f:\
 login_manager = LoginManager()
 login_manager.init_app(web)
 login_manager.login_view = "login"
+
+# Context Processors
+@web.context_processor
+def inject_unread_messages():
+    unread_messages = LogMessage.query.filter(LogMessage.read == False).count()
+    return dict(unread_messages=unread_messages)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -412,6 +418,19 @@ def alerts_edit(alert_id):
         section="Alerts", title="Add Alert", method="edit", hosts=hosts,
         host_groups=host_groups, services=services, checks=checks,
         states=states, plugins=plugins, alert=alert)
+
+@web.route("/system_logs/")
+@login_required
+def system_logs():
+    messages = LogMessage.query.order_by(LogMessage.timestamp.desc()).all()
+    for message in messages:
+        message.previous_read_status = message.read
+        if not message.read:
+            message.read = True
+    session.commit()
+
+    return render_template("system-logs.html", nav_section="system-logs",
+        section="System Logs", title="View Logs", messages=messages)
 
 if __name__ == "__main__":
     web.run(host="0.0.0.0", debug=True)
