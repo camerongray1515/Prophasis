@@ -1,5 +1,7 @@
 from syslog import syslog
 
+module_name = "Syslog"
+
 config = {
     "prefix": "Default Prefix"
 }
