@@ -308,7 +308,7 @@ class TestService(unittest.TestCase):
         session.add(RedundancyGroup(id=5, service_id=10))
         session.add(RedundancyGroupComponent(redundancy_group_id=5,
             host_group_id=1))
-        session.add(ServiceDependency(service_id=10, redundancy_group_id=1))
+        session.add(ServiceDependency(service_id=10, redundancy_group_id=5))
 
         session.commit()
 
