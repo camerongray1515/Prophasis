@@ -1,16 +1,19 @@
 from models import Host, PluginResult, Service
 
+severities = {
+    "critical": {"class": "danger", "display": "Critical"},
+    "major": {"class": "warning", "display": "Major"},
+    "minor": {"class": "info", "display": "Minor"},
+    "unknown": {"class": "primary", "display": "Unknown"},
+    "ok": {"class": "success", "display": "Ok"},
+    "no_data": {"class": "default", "display": "No Data"},
+    "degraded": {"class": "default", "display": "Degraded"}
+}
+
 def get_all_hosts():
     severity_ordering = ["critical", "major", "minor", "unknown", "ok",
         "no_data"]
-    severities = {
-        "critical": {"class": "danger", "display": "Critical"},
-        "major": {"class": "warning", "display": "Major"},
-        "minor": {"class": "info", "display": "Minor"},
-        "unknown": {"class": "primary", "display": "Unknown"},
-        "ok": {"class": "success", "display": "Ok"},
-        "no_data": {"class": "default", "display": "No Data"}
-    }
+        
     all_hosts = Host.query.all()
 
     categorised_hosts = {}
@@ -31,15 +34,7 @@ def get_all_hosts():
 def get_all_services():
     severity_ordering = ["critical", "degraded", "major", "minor", "unknown", "ok",
         "no_data"]
-    severities = {
-        "critical": {"class": "danger", "display": "Critical"},
-        "major": {"class": "warning", "display": "Major"},
-        "minor": {"class": "info", "display": "Minor"},
-        "unknown": {"class": "primary", "display": "Unknown"},
-        "ok": {"class": "success", "display": "Ok"},
-        "no_data": {"class": "default", "display": "No Data"},
-        "degraded": {"class": "default", "display": "Degraded"}
-    }
+
     all_services = Service.query.all()
 
     categorised_services = {}

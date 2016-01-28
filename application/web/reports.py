@@ -2,9 +2,9 @@ import report_logic
 import uuid
 import datetime
 import json
-from flask import Blueprint, request, render_template, session
+from flask import Blueprint, request, render_template, session, abort
 from flask.ext.login import login_required
-from models import PluginResult
+from models import PluginResult, Host, Service
 from jinja2 import Template
 
 reports = Blueprint("reports", __name__, url_prefix="/reports")
@@ -21,6 +21,9 @@ def hosts():
 @reports.route("/hosts/<host_id>/", methods=["GET"])
 @login_required
 def hosts_host_id(host_id):
+    if not Host.query.get(host_id):
+        abort(404)
+
     if request.args.get("end-timestamp"):
         end_timestamp = request.args.get("end-timestamp")
     else:
@@ -107,4 +110,16 @@ def services():
     ordered_services = report_logic.get_all_services()
 
     return render_template("health-overview.html", nav_section="reports/services",
-        section="Services", title="Host Health", items=ordered_services)
+        section="Services", title="Service Health", link_base="services",
+        items=ordered_services)
+
+@reports.route("/services/<service_id>/")
+@login_required
+def services_service_id(service_id):
+    service = Service.query.get(service_id)
+    if not service:
+        abort(404)
+
+    return render_template("service-health.html", nav_section="reports/services",
+        section="Services", title="Service Information", service=service,
+        severities=report_logic.severities)
