@@ -225,6 +225,14 @@ class HostGroup(Base):
         return health
 
     @property
+    def contains_ok_host(self):
+        health = "no_data"
+        for host in self.member_hosts:
+            if host.health == "ok":
+                return True
+        return False
+
+    @property
     def alerts(self):
         alerts = []
         for entity in self.check_entities:
@@ -633,7 +641,13 @@ class RedundancyGroup(Base):
         unhealthy_component = False
         priorities = Host.health_priorities
         for component in self.redundancy_group_components:
-            component_health = component.health
+            if component.host:
+                component_health = component.host.health
+            else:
+                component_health = component.host_group.health
+                if component_health != "ok" and\
+                    component.host_group.contains_ok_host:
+                    component_health = "degraded"
             if priorities[component_health] < priorities[health] or \
                 health == "no_data":
                 health = component_health
@@ -672,15 +686,6 @@ class RedundancyGroupComponent(Base):
     host_id = Column(Integer, ForeignKey("hosts.id"))
     host_group_id = Column(Integer, ForeignKey("host_groups.id"))
     redundancy_group_id = Column(Integer, ForeignKey("redundancy_groups.id"))
-
-    @property
-    def health(self):
-        if self.host:
-            return self.host.health
-        elif self.host_group:
-            return self.host_group.health
-        else:
-            return "unknown"
 
     def __repr__(self):
         return "<RedundancyGroupComponent id: {}>".format(self.id)
