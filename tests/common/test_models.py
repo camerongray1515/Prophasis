@@ -245,7 +245,11 @@ class TestService(unittest.TestCase):
             health_status="unknown"))
         # Host ID 6 has no data
 
-        for number in range(1,9):
+        session.add(HostGroup(id=1))
+        session.add(HostGroupAssignment(host_group_id=1, member_host_id=1))
+        session.add(HostGroupAssignment(host_group_id=1, member_host_id=4))
+
+        for number in range(1,11):
             session.add(Service(id=number, name=number))
 
         # test_failed_dependency
@@ -296,6 +300,12 @@ class TestService(unittest.TestCase):
         session.add(ServiceDependency(service_id=8, host_id=1))
         session.add(ServiceDependency(service_id=8, host_id=1))
         session.add(ServiceDependency(service_id=8, host_id=6))
+
+        # test_host_group_dependency
+        session.add(ServiceDependency(service_id=9, host_group_id=1))
+
+        # test_host_group_redundancy
+        session.add(ServiceDependency(service_id=10, host_group_id=1))
 
 
         session.commit()
@@ -357,7 +367,7 @@ class TestService(unittest.TestCase):
         service_ids = []
         for service in Host.query.get(1).services:
             service_ids.append(service.id)
-        self.assertEqual(sorted(service_ids), [1,2,3,5,6,8])
+        self.assertEqual(sorted(service_ids), [1,2,3,5,6,8,9,10])
 
         service_ids = []
         for service in Host.query.get(3).services:
@@ -368,6 +378,12 @@ class TestService(unittest.TestCase):
         for service in Host.query.get(6).services:
             service_ids.append(service.id)
         self.assertEqual(sorted(service_ids), [8])
+
+    def test_host_group_dependency(self):
+        self.assertEqual(Service.query.get(9).health, "critical")
+
+    def test_host_group_redundancy(self):
+        self.assertEqual(Service.query.get(10).health, "degraded")
 
 class TestAlertRestriction(unittest.TestCase):
     def setUp(self):
