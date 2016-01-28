@@ -1,4 +1,5 @@
 from models import Alert
+from application_logging import log_message
 import importlib
 import os
 
@@ -14,13 +15,16 @@ def get_alert_modules():
     for filename in os.listdir(module_dir):
         if os.path.isdir(filename):
             continue
-        module = importlib.import_module(
-            "alert_modules.{}".format(filename.replace(".py", "")))
-        module_data = {
-            "name": module.module_name,
-            "config": module.config
-        }
-        modules.append(module_data)
+        try:
+            module = importlib.import_module(
+                "alert_modules.{}".format(filename.replace(".py", "")))
+            module_data = {
+                "name": module.module_name,
+                "config": module.config
+            }
+            modules.append(module_data)
+        except Exception:
+            log_message("Alerting", "Could not read data from an alert module")
 
     return modules
 
