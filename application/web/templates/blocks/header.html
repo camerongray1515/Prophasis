@@ -80,6 +80,11 @@
                                         <i class="fa fa-desktop"></i> <span>Host Health</span>
                                     </a>
                                 </li>
+                                <li class="{% if nav_section == "reports/services" %}active{% endif %}">
+                                    <a href="/reports/services/">
+                                        <i class="fa fa-cogs"></i> <span>Service Health</span>
+                                    </a>
+                                </li>
                                 <li class="header">SETTINGS</li>
                                 <li class="treeview {% if nav_section == "hosts" or nav_section == "host-groups" %}active{% endif %}">
                                     <a href="#">

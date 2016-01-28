@@ -14,8 +14,9 @@ reports = Blueprint("reports", __name__, url_prefix="/reports")
 def hosts():
     ordered_hosts = report_logic.get_all_hosts()
 
-    return render_template("host-health.html", nav_section="reports/hosts",
-        section="Hosts", title="Host Health", ordered_hosts=ordered_hosts)
+    return render_template("health-overview.html", nav_section="reports/hosts",
+        section="Hosts", title="Host Health", link_base="hosts",
+        items=ordered_hosts)
 
 @reports.route("/hosts/<host_id>/", methods=["GET"])
 @login_required
@@ -99,3 +100,11 @@ def hosts_host_id(host_id):
         end_timestamp=end_timestamp,
         historical_unit_value=historical_unit_value,
         historical_unit=historical_unit)
+
+@reports.route("/services/")
+@login_required
+def services():
+    ordered_services = report_logic.get_all_services()
+
+    return render_template("health-overview.html", nav_section="reports/services",
+        section="Services", title="Host Health", items=ordered_services)

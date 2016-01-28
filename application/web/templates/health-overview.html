@@ -6,11 +6,11 @@
             <div class="box">
                 <div class="box-body no-padding">
                     <div class="health-container">
-                        {% for host in ordered_hosts %}
-                            <a href="/reports/hosts/{{ host.id }}" class="host-health btn btn-{{ host.css_class }}">
-                                <strong>{{ host.name }}</strong>
+                        {% for item in items %}
+                            <a href="{% if link_base %}/reports/{{ link_base }}/{{ item.id }}{% else %}#{% endif %}" class="health-item btn btn-{{ item.css_class }}">
+                                <strong>{{ item.name }}</strong>
                                 <br>
-                                {{ host.display }}
+                                {{ item.display }}
                             </a>
                         {% endfor %}
                     </div>
@@ -20,7 +20,7 @@
     </div>
 
     <style media="screen">
-        .host-health {
+        .health-item {
             width: 200px;
             height: 55px;
             border: 1px grey;

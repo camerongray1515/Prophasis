@@ -1,4 +1,4 @@
-from models import Host, PluginResult
+from models import Host, PluginResult, Service
 
 def get_all_hosts():
     severity_ordering = ["critical", "major", "minor", "unknown", "ok",
@@ -13,8 +13,6 @@ def get_all_hosts():
     }
     all_hosts = Host.query.all()
 
-    # For each host find the most severe result from the assigned plugins and
-    # take that as the health of the entire node
     categorised_hosts = {}
     for severity in severities.keys():
         categorised_hosts[severity] = []
@@ -29,3 +27,31 @@ def get_all_hosts():
         ordered_hosts += categorised_hosts[severity]
 
     return ordered_hosts
+
+def get_all_services():
+    severity_ordering = ["critical", "degraded", "major", "minor", "unknown", "ok",
+        "no_data"]
+    severities = {
+        "critical": {"class": "danger", "display": "Critical"},
+        "major": {"class": "warning", "display": "Major"},
+        "minor": {"class": "info", "display": "Minor"},
+        "unknown": {"class": "primary", "display": "Unknown"},
+        "ok": {"class": "success", "display": "Ok"},
+        "no_data": {"class": "default", "display": "No Data"},
+        "degraded": {"class": "default", "display": "Degraded"}
+    }
+    all_services = Service.query.all()
+
+    categorised_services = {}
+    for severity in severities.keys():
+        categorised_services[severity] = []
+    for service in all_services:
+        service.css_class = severities[service.health]["class"]
+        service.display = severities[service.health]["display"]
+        categorised_services[service.health].append(service)
+
+    ordered_services = []
+    for severity in severity_ordering:
+        ordered_services += categorised_services[severity]
+
+    return ordered_services
