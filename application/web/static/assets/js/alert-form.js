@@ -6,8 +6,14 @@ alert = {
             $("#custom-entity-selection").hide();
         }
     },
+    "moduleSelectionChanged": function() {
+        var module_id = $(this).val();
+        var rows = $(".module-options[data-module-id=\"" + module_id + "\"]").html();
+        $("#module-options tbody").html(rows);
+    },
     "bindEventHandlers": function() {
         $("#entity-selection").change(alert.entitySelectionChanged);
+        $("#module-selection").change(alert.moduleSelectionChanged);
     }
 }
 

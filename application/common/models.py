@@ -767,6 +767,8 @@ class Alert(Base):
         cascade="all, delete, delete-orphan", backref="alert")
     restrict_to_entities = relationship("AlertRestrictToEntity",
         cascade="all, delete, delete-orphan", backref="alert")
+    module_options = relationship("AlertModuleOption",
+        cascade="all, delete, delete-orphan", backref="alert")
 
     def __repr__(self):
         return "<Alert id: {}, name: {}>".format(self.id, self.name)
@@ -813,6 +815,17 @@ class AlertTransitionTo(Base):
 
     def __repr__(self):
         return "<AlertTransitionTo id: {}>".format(self.id)
+
+class AlertModuleOption(Base):
+    __tablename__ = "alert_module_options"
+
+    id = Column(Integer, primary_key=True)
+    alert_id = Column(ForeignKey("alerts.id"))
+    key = Column(String)
+    value = Column(String)
+
+    def __repr__(self):
+        return "<AlertModuleOption id: {}, key: {}>".format(self.id, self.key)
 
 class LogMessage(Base):
     __tablename__ = "log_messages"

@@ -16,10 +16,12 @@ def get_alert_modules():
         if os.path.isdir(filename):
             continue
         try:
-            module = importlib.import_module(
-                "alert_modules.{}".format(filename.replace(".py", "")))
+            module_id = filename.replace(".py", "")
+            module = importlib.import_module("alert_modules.{}".format(
+                module_id))
             module_data = {
                 "name": module.module_name,
+                "id": module_id,
                 "config": module.config
             }
             modules.append(module_data)

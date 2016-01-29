@@ -144,6 +144,35 @@
                             </div>
                         </div>
 
+                        <div class="row col-md-offset-2 padding-bottom-md">
+                            <div class="col-md-12">
+                                <label>Use the following module to send the alert</label>
+                                <select class="form-control" id="module-selection" name="module-selection">
+                                    <option value="">Select a module...</option>
+                                    {% for module in alert_modules %}
+                                        <option value="{{ module["id"] }}">{{ module["name"] }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div id="module-options">
+                                    <div class="scroll-area">
+                                        <table class="table table-striped">
+                                            {% for module in alert_modules %}
+                                                <script type="text/html" class="module-options" data-module-id="{{ module.id }}">
+                                                    {% for key in module.config %}
+                                                            <tr>
+                                                                <td>{{ key }}</td>
+                                                                <td><input type="text" class="form-control" name="{{ key }}" value="{{ module.config[key] }}"></td>
+                                                            </tr>
+                                                    {% endfor %}
+                                                </script>
+                                            {% endfor %}
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-10 col-md-offset-2">
                                 {% if method == "add" %}

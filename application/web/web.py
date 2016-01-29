@@ -10,6 +10,7 @@ from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
     RedundancyGroupComponent, Alert, LogMessage, session
 from datetime import datetime
 from jinja2 import Markup
+from alerting import get_alert_modules
 
 web = Flask(__name__)
 web.register_blueprint(api)
@@ -380,6 +381,8 @@ def alerts_add():
     checks = Check.query.all()
     plugins = Plugin.query.all()
 
+    alert_modules = get_alert_modules()
+
     # Generate a list of tuples of state and it's human readable name ordered
     # by priority, highest first
     hp = Host.health_priorities
@@ -391,7 +394,7 @@ def alerts_add():
     return render_template("alert-form.html", nav_section="alerts",
         section="Alerts", title="Add Alert", method="add", hosts=hosts,
         host_groups=host_groups, services=services, checks=checks,
-        states=states, plugins=plugins)
+        states=states, plugins=plugins, alert_modules=alert_modules)
 
 @web.route("/alerts/edit/<alert_id>/")
 @login_required
