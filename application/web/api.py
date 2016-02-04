@@ -13,11 +13,13 @@ from models import create_all, session, Host, HostGroup, HostGroupAssignment,\
     Plugin, CheckPlugin, CheckAssignment, Check, Schedule, ScheduleInterval,\
     ScheduleCheck, PluginThreshold, User, ServiceDependency, Service,\
     RedundancyGroup, RedundancyGroupComponent, Alert, AlertCheckEntity,\
-    AlertTransitionTo, AlertTransitionFrom, AlertRestrictToEntity
+    AlertTransitionTo, AlertTransitionFrom, AlertRestrictToEntity,\
+    AlertModuleOption
 from sqlalchemy import or_, and_
 from sqlalchemy.exc import SQLAlchemyError
 from config import get_config, get_config_value
 from datetime import datetime
+from alerting import send_alert, AlertExecutionError
 api = Blueprint("api", __name__, url_prefix="/api")
 
 config = get_config()
@@ -827,6 +829,7 @@ def alerts_add():
     plugins = request.form.getlist("plugins[]")
     from_states = request.form.getlist("from-states[]")
     to_states = request.form.getlist("to-states[]")
+    module_selection = request.form.get("module-selection")
 
     if not name:
         return error_response("You must specify a name for this alert")
@@ -835,7 +838,11 @@ def alerts_add():
         return error_response("You must specify at least one from state and at "
             "least one to state")
 
-    alert = Alert(name=name, entity_selection_type=entity_selection)
+    if not module_selection:
+        return error_response("You must select a module to use for this alert")
+
+    alert = Alert(name=name, entity_selection_type=entity_selection,
+        module=module_selection)
     session.add(alert)
     session.flush()
     for state in to_states:
@@ -873,6 +880,13 @@ def alerts_add():
         session.add(AlertRestrictToEntity(alert_id=alert.id,
             plugin_id=plugin_id))
 
+    for key in request.form.keys():
+        if key.startswith("module-option-"):
+            option_key = key.replace("module-option-", "", 1)
+            option_value = request.form.get(key)
+            session.add(AlertModuleOption(alert_id=alert.id, key=option_key,
+                value=option_value))
+
     session.commit()
     return jsonify(success=True, message="Alert has been added successfully")
 
@@ -901,6 +915,7 @@ def alerts_edit():
     plugins = request.form.getlist("plugins[]")
     from_states = request.form.getlist("from-states[]")
     to_states = request.form.getlist("to-states[]")
+    module_selection = request.form.get("module-selection")
 
     if not name:
         return error_response("You must specify a name for this alert")
@@ -915,6 +930,7 @@ def alerts_edit():
 
     alert.name = name
     alert.entity_selection_type = entity_selection
+    alert.module = module_selection
 
     AlertTransitionTo.query.filter(
         AlertTransitionTo.alert_id==alert_id).delete()
@@ -959,5 +975,33 @@ def alerts_edit():
         session.add(AlertRestrictToEntity(alert_id=alert.id,
             plugin_id=plugin_id))
 
+    AlertModuleOption.query.filter(
+        AlertModuleOption.alert_id==alert.id).delete()
+    for key in request.form.keys():
+        if key.startswith("module-option-"):
+            option_key = key.replace("module-option-", "", 1)
+            option_value = request.form.get(key)
+            session.add(AlertModuleOption(alert_id=alert.id, key=option_key,
+                value=option_value))
+
     session.commit()
     return jsonify(success=True, message="Alert has been saved successfully")
+
+@api.route("/alerts/test/", methods=["POST"])
+@login_required
+def alerts_test():
+    # TODO: Move most of this logic into alerting
+    alert_id = request.form.get("alert-id")
+    alert = Alert.query.get(alert_id)
+    if not alert:
+        return error_response("Alert could not be found!")
+
+    try:
+        send_alert(alert.id,
+            "This is a test message from the alert \"{}\"".format(alert.name),
+            log_errors=False)
+    except AlertExecutionError as ex:
+        return jsonify(success=False, message=str(ex))
+
+    return jsonify(success=True, message="A test message has been sent using "
+        "this alert")

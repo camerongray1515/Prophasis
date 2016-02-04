@@ -1,6 +1,6 @@
 import requests
 import json
-from application_logging import log_message
+from alerting import AlertExecutionError
 
 module_name = "Pushbullet"
 
@@ -23,4 +23,4 @@ def _send_push(token, message):
 
     r = requests.post(url, data=json.dumps(data), headers=headers).json()
     if "error" in r:
-        log_message("Alerting - Pushbullet", r["error"]["message"])
+        raise AlertExecutionError(r["error"]["message"])

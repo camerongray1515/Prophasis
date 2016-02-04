@@ -4380,7 +4380,7 @@
         <dia:point val="18.6547,-11.1864"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="18.6047,-11.2364;29.9847,-5.93639"/>
+        <dia:rectangle val="18.6047,-11.2364;29.9847,-5.9364"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="18.6547,-11.1864"/>
@@ -5572,14 +5572,14 @@
     </dia:object>
     <dia:object type="Standard - ZigZagLine" version="1" id="O52">
       <dia:attribute name="obj_pos">
-        <dia:point val="18.6547,-9.28639"/>
+        <dia:point val="18.6547,-9.2864"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="17.5547,-9.33639;18.975,-1.3524"/>
+        <dia:rectangle val="17.5547,-9.3364;18.975,-1.3524"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="18.6547,-9.28639"/>
-        <dia:point val="17.6047,-9.28639"/>
+        <dia:point val="18.6547,-9.2864"/>
+        <dia:point val="17.6047,-9.2864"/>
         <dia:point val="17.6047,-1.4024"/>
         <dia:point val="18.925,-1.4024"/>
       </dia:attribute>

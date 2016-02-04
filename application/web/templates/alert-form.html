@@ -150,7 +150,7 @@
                                 <select class="form-control" id="module-selection" name="module-selection">
                                     <option value="">Select a module...</option>
                                     {% for module in alert_modules %}
-                                        <option value="{{ module["id"] }}">{{ module["name"] }}</option>
+                                        <option value="{{ module["id"] }}" {% if alert.module == module["id"] %}selected{% endif %}>{{ module["name"] }}</option>
                                     {% endfor %}
                                 </select>
                                 <div id="module-options">
@@ -161,10 +161,18 @@
                                                     {% for key in module.config %}
                                                             <tr>
                                                                 <td>{{ key }}</td>
-                                                                <td><input type="text" class="form-control" name="{{ key }}" value="{{ module.config[key] }}"></td>
+                                                                <td><input type="text" class="form-control" name="module-option-{{ key }}" value="{{ module.config[key] }}"></td>
                                                             </tr>
                                                     {% endfor %}
                                                 </script>
+                                                {% if module["id"] == alert.module %}
+                                                    {% for key in module.config %}
+                                                            <tr>
+                                                                <td>{{ key }}</td>
+                                                                <td><input type="text" class="form-control" name="module-option-{{ key }}" value="{{ module_options[key] if key in module_options else module.config[key] }}"></td>
+                                                            </tr>
+                                                    {% endfor %}
+                                                {% endif %}
                                             {% endfor %}
                                             <tbody></tbody>
                                         </table>

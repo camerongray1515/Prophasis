@@ -35,6 +35,10 @@
                                             <input type="hidden" name="alert-id" value="{{ alert.id }}">
                                             <button class="btn btn-danger">Delete</button>
                                         </form>
+                                        <form class="auto-post inline" method="POST" action="/api/alerts/test/" data-auto-post-confirmation="This will send a test message using the settings for this alert.  Do you want to continue?">
+                                            <input type="hidden" name="alert-id" value="{{ alert.id }}">
+                                            <button class="btn btn-warning" title="Send a test message using this alert">Test</button>
+                                        </form>
                                     </td>
                                 </tr>
                             {% endfor %}

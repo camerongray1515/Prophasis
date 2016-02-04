@@ -696,6 +696,7 @@ class Alert(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     entity_selection_type = Column(String)
+    module = Column(String)
 
     @property
     def transitions_from_states(self):

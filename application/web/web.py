@@ -7,7 +7,7 @@ from reports import reports
 from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
     CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval,\
     PluginThreshold, User, Service, ServiceDependency, RedundancyGroup,\
-    RedundancyGroupComponent, Alert, LogMessage, session
+    RedundancyGroupComponent, Alert, LogMessage, AlertModuleOption, session
 from datetime import datetime
 from jinja2 import Markup
 from alerting import get_alert_modules
@@ -405,6 +405,13 @@ def alerts_edit(alert_id):
     checks = Check.query.all()
     plugins = Plugin.query.all()
     alert = Alert.query.get(alert_id)
+    module_options_list = AlertModuleOption.query.filter(
+        AlertModuleOption.alert_id==alert_id)
+    alert_modules = get_alert_modules()
+
+    module_options = {}
+    for option in module_options_list:
+        module_options[option.key] = option.value
 
     if not alert:
         abort(404)
@@ -420,7 +427,8 @@ def alerts_edit(alert_id):
     return render_template("alert-form.html", nav_section="alerts",
         section="Alerts", title="Add Alert", method="edit", hosts=hosts,
         host_groups=host_groups, services=services, checks=checks,
-        states=states, plugins=plugins, alert=alert)
+        states=states, plugins=plugins, alert=alert,
+        module_options=module_options, alert_modules=alert_modules)
 
 @web.route("/system_logs/")
 @login_required

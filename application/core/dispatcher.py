@@ -5,9 +5,10 @@ from agent_api import Agent, CommandUnsuccessfulError, AuthenticationError, \
     RequestError
 from requests.exceptions import ConnectionError, Timeout
 from config import get_config, get_config_value
-from models import PluginResult, session
+from models import PluginResult, session, Host
 from datetime import datetime
 from classification import classify
+from alerting import process_alerts
 
 host_queues = {}
 config = get_config()
@@ -53,14 +54,19 @@ def perform_check(host, plugin, check_id):
         message = error
         value = None
 
+    old_health = Host.query.get(host.id).health
+
     pr = PluginResult(host_id=host.id, plugin_id=plugin.id, check_id=check_id,
         value=value, message=message, result_type=result_type,
         timestamp=datetime.now())
 
     pr.health_status = classify(pr, check_id)
-
     session.add(pr)
     session.commit()
+
+    new_health = Host.query.get(host.id).health
+    process_alerts(host.id, plugin.id, check_id, old_health, new_health)
+
 
 def dispatch_job(host, plugin, check_id):
     if host.id not in host_queues:
