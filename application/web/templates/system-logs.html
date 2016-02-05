@@ -2,33 +2,43 @@
 
 {% block content %}
     <div class="row">
+        <div class="col-md-3">
+            <form class="padding-bottom-sm" action="/system_logs/clear/" method="post">
+                <button type="submit" class="btn btn-danger">Clear Logs</button>
+            </form>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
             <div class="box">
                 <div class="box-header">
                     <input type="text" class="form-control auto-filter" data-table-id="message-table" placeholder="Filter">
-
                 </div>
                 <div class="box-body no-padding">
-                    <table class="table table-hover table-fixed" id="message-table">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Category</th>
-                                <th>Message</th>
-                                <th>Timestamp</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for message in messages %}
+                    {% if messages %}
+                        <table class="table table-hover table-fixed" id="message-table">
+                            <thead>
                                 <tr>
-                                    <td class="filter-text">{% if not message.previous_read_status %}<span class="label label-success">New</span>{% endif %}</td>
-                                    <td class="filter-text">{{ message.category }}</td>
-                                    <td class="filter-text">{{ message.message }}</td>
-                                    <td>{{ message.timestamp }}</td>
+                                    <th></th>
+                                    <th>Category</th>
+                                    <th>Message</th>
+                                    <th>Timestamp</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for message in messages %}
+                                    <tr>
+                                        <td class="filter-text">{% if not message.previous_read_status %}<span class="label label-success">New</span>{% endif %}</td>
+                                        <td class="filter-text">{{ message.category }}</td>
+                                        <td class="filter-text">{{ message.message }}</td>
+                                        <td>{{ message.timestamp }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <h4 class="text-center">No logs found</h4>
+                    {% endif %}
                 </div>
             </div>
         </div>

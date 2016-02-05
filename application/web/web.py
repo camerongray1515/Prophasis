@@ -443,5 +443,12 @@ def system_logs():
     return render_template("system-logs.html", nav_section="system-logs",
         section="System Logs", title="View Logs", messages=messages)
 
+@web.route("/system_logs/clear/", methods=["POST"])
+@login_required
+def system_logs_clear():
+    LogMessage.query.delete()
+
+    return redirect("/system_logs/")
+
 if __name__ == "__main__":
     web.run(host="0.0.0.0", debug=True)
