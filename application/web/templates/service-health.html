@@ -19,14 +19,14 @@
                                     {% if dependency.redundancy_group %}
                                         {% for component in dependency.redundancy_group.redundancy_group_components %}
                                             {% if component.host %}
-                                                <a href="#" class="btn btn-{{ severities[component.host.health]["class"] }} health-item">
+                                                <a href="/reports/hosts/{{ component.host.id }}" class="btn btn-{{ severities[component.host.health]["class"] }} health-item">
                                                     <strong>{{ component.host.name }}</strong>
                                                     <br>
                                                     {{ severities[component.host.health]["display"] }}
                                                 </a>
                                             {% else %}
                                                 {% for host in component.host_group.member_hosts %}
-                                                    <a href="#" class="btn btn-{{ severities[host.health]["class"] }} health-item">
+                                                    <a href="/reports/hosts/{{ host.id }}" class="btn btn-{{ severities[host.health]["class"] }} health-item">
                                                         <strong>{{ host.name }}</strong>
                                                         <br>
                                                         {{ severities[host.health]["display"] }}
@@ -36,14 +36,14 @@
                                         {% endfor %}
                                     {% elif dependency.host_group %}
                                         {% for host in dependency.host_group.member_hosts %}
-                                            <a href="#" class="btn btn-{{ severities[host.health]["class"] }} health-item">
+                                            <a href="/reports/hosts/{{ host.id }}" class="btn btn-{{ severities[host.health]["class"] }} health-item">
                                                 <strong>{{ host.name }}</strong>
                                                 <br>
                                                 {{ severities[host.health]["display"] }}
                                             </a>
                                         {% endfor %}
                                     {% else %}
-                                        <a href="#" class="btn btn-{{ severities[dependency.host.health]["class"] }} health-item">
+                                        <a href="/reports/hosts/{{ dependency.host.id }}" class="btn btn-{{ severities[dependency.host.health]["class"] }} health-item">
                                             <strong>{{ dependency.host.name }}</strong>
                                             <br>
                                             {{ severities[dependency.host.health]["display"] }}
