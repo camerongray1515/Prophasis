@@ -471,6 +471,12 @@ class Check(Base):
     restrict_to_entities = relationship("AlertRestrictToEntity",
         cascade="all, delete, delete-orphan", backref="check")
 
+    def contains_plugin(self, plugin_id):
+        for check_plugin in self.check_plugins:
+            if check_plugin.plugin_id == plugin_id:
+                return True
+        return False
+
     def __repr__(self):
         return ("<Check id: {0}, name: {1}>".format(self.id, self.name))
 

@@ -153,7 +153,7 @@ def plugins_thresholds(plugin_id):
     if not p:
         abort(404)
 
-    checks = Check.query.all()
+    checks = filter(lambda c: c.contains_plugin(plugin_id), Check.query.all())
     thresholds = PluginThreshold.query.filter(
         PluginThreshold.plugin_id==plugin_id).order_by(
             PluginThreshold.default.desc()).all()
