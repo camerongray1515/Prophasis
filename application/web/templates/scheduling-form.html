@@ -57,14 +57,14 @@
                             <div class="col-md-12">
                                 <table class="table table-striped" id="interval-table">
                                     <tbody>
-                                    </tbody>                                   
+                                    </tbody>
                                     <tfoot>
                                         {% for interval in schedule_intervals %}
                                             {% include "blocks/schedule-interval-row.html" %}
                                         {% endfor %}
                                         <tr>
                                             <td></td>
-                                            <td><button class="btn btn-success" id="btn-add-interval">Add Interval</button></td>
+                                            <td><button type="button" class="btn btn-success" id="btn-add-interval">Add Interval</button></td>
                                         </tr>
                                     </tfoot>
                                 </table>
