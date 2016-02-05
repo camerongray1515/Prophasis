@@ -66,6 +66,14 @@ def send_alert(alert_id, message, log_errors=True):
         module_config[option.key] = option.value
 
     try:
+        module_found = False
+        for module in get_alert_modules():
+            if module["id"] == alert.module:
+                module_found = True
+
+        if not module_found:
+            raise AlertExecutionError("Module not found!")
+            
         module = importlib.import_module("alert_modules.{}".format(alert.module))
         module.config = module_config
         module.handle_alert(message)
