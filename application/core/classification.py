@@ -3,6 +3,7 @@ import json
 import numbers
 import os
 from models import PluginThreshold, PluginResult
+from application_logging import log_message
 
 def execute_classifier(code, values, messages, result_types):
     lua = lupa.LuaRuntime()
@@ -43,7 +44,8 @@ def classify(latest_result, check_id):
     try:
         threshold = threshold[0]
     except KeyError:
-        # TODO: Log error here
+        log_message("Classification", "No classifier code could be found for "
+            "plugin: {}".format(latest_result.plugin_id))
         return "unknown"
 
     # Get n-1 historical values and then append the latest onto this list
@@ -68,12 +70,14 @@ def classify(latest_result, check_id):
         classification = execute_classifier(threshold.classification_code,
             values_list, messages_list, result_types_list)
     except (lupa._lupa.LuaSyntaxError, lupa._lupa.LuaError) as e:
-        # TODO: Log error here
-        print(str(e))
+        log_message("Classification",
+            "Classification code for plugin {} gave error: {}".format(
+            latest_result.plugin_id, str(e)))
         classification = "unknown"
 
     if classification not in ["major", "minor", "critical", "ok", "unknown"]:
-        # TODO: Log error here
+        log_message("Classification", "\"{}\" is not a valid classification for"
+            " plugin {}".format(classification, latest_result.plugin_id))
         classification = "unknown"
 
     return classification
