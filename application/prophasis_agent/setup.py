@@ -7,7 +7,8 @@ install_requirements = parse_requirements("requirements.txt",
     session=PipSession())
 
 setup(
-    name="Prophais - Agent",
+    name="prophasis-agent",
+    description="Prophasis Monitoring Agent",
     version="1.0",
     author="Cameron Gray",
     packages=["prophasis_agent"],

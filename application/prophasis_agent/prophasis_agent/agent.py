@@ -16,8 +16,7 @@ from shutil import rmtree
 agent = Flask(__name__)
 
 parser = argparse.ArgumentParser()
-g = parser.add_mutually_exclusive_group(required=True)
-g.add_argument("--run-server", action="store_true")
+g = parser.add_mutually_exclusive_group(required=False)
 g.add_argument("--setup", action="store_true")
 args = parser.parse_args()
 
@@ -145,7 +144,9 @@ def update_plugin():
             pass # We don't care if either file doesn't exist
 
 def main():
-    if args.run_server:
+    if args.setup:
+        setup_wizard()
+    else:
         config = get_config()
         print("Agent starting up...")
         # Create directories if they don't exist
@@ -167,8 +168,6 @@ def main():
         http_server.listen(get_config_value(config, "port"))
         print("Running!")
         IOLoop.instance().start()
-    elif args.setup:
-        setup_wizard()
 
 if __name__ == "__main__":
     main()
