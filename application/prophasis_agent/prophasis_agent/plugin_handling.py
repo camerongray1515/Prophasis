@@ -1,11 +1,11 @@
 import os
 import json
 import importlib
-from agent_config import get_config, get_config_value
-from exceptions import PluginExecutionError
+from .agent_config import get_config, get_config_value
+from .exceptions import PluginExecutionError
 
-config = get_config()
 def get_plugin_repo_dir():
+    config = get_config()
     plugin_repo_dir = os.path.normpath(os.path.join(os.path.dirname(
         os.path.realpath(__file__)), get_config_value(config, "plugin_repo")))
 
@@ -20,6 +20,7 @@ def get_plugin_metadata(plugin_id):
         Returns a tuple containing the plugin's directory and its
         manifest or (None, None) if the plugin cannot be found.
     """
+    config = get_config()
     plugin_repo_dir = get_plugin_repo_dir()
     for directory in os.listdir(plugin_repo_dir):
         manifest_file = os.path.join(plugin_repo_dir, directory,
@@ -44,8 +45,9 @@ def get_data_from_plugin(plugin_id):
         Returns a tuple of (value, message) from the plugin.
         Raises PluginExecutionError
     """
+    config = get_config()
     (directory, _) = get_plugin_metadata(plugin_id)
-    
+
     if not directory:
         raise PluginExecutionError("Plugin could not be found")
 

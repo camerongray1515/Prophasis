@@ -5,15 +5,14 @@ import tarfile
 import json
 import hashlib
 from flask import Flask, jsonify, request, Response
-from plugin_handling import get_plugin_metadata, get_data_from_plugin
-from exceptions import PluginExecutionError
-from agent_config import get_config, setup_wizard, get_config_value
+from .plugin_handling import get_plugin_metadata, get_data_from_plugin
+from .exceptions import PluginExecutionError
+from .agent_config import get_config, setup_wizard, get_config_value
 from functools import wraps
 from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from shutil import rmtree
-from responses import error_response
 agent = Flask(__name__)
 
 parser = argparse.ArgumentParser()
@@ -21,6 +20,9 @@ g = parser.add_mutually_exclusive_group(required=True)
 g.add_argument("--run-server", action="store_true")
 g.add_argument("--setup", action="store_true")
 args = parser.parse_args()
+
+def error_response(error_message):
+    return jsonify({"success": False, "message": error_message})
 
 def requires_auth(f):
     @wraps(f)
@@ -33,7 +35,7 @@ def requires_auth(f):
         if auth and correct_hash:
             to_hash = (salt + auth.password).encode("ascii")
             key_correct = hashlib.sha256(to_hash).hexdigest() == correct_hash
-            
+
             if auth.username == "core" and key_correct:
                 auth_valid = True
 
@@ -142,7 +144,7 @@ def update_plugin():
         except FileNotFoundError:
             pass # We don't care if either file doesn't exist
 
-if __name__ == "__main__":
+def main():
     if args.run_server:
         config = get_config()
         print("Agent starting up...")
@@ -167,3 +169,6 @@ if __name__ == "__main__":
         IOLoop.instance().start()
     elif args.setup:
         setup_wizard()
+
+if __name__ == "__main__":
+    main()
