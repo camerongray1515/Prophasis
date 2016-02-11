@@ -2,8 +2,8 @@ import lupa
 import json
 import numbers
 import os
-from models import PluginThreshold, PluginResult
-from application_logging import log_message
+from prophasis_common.models import PluginThreshold, PluginResult
+from prophasis_common.application_logging import log_message
 
 def execute_classifier(code, values, messages, result_types):
     lua = lupa.LuaRuntime()

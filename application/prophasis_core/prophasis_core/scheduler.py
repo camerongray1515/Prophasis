@@ -1,8 +1,8 @@
 import time
 from datetime import datetime, timedelta
-from models import session, ScheduleInterval
+from prophasis_common.models import session, ScheduleInterval
 from sqlalchemy import or_
-from config import get_config, get_config_value
+from prophasis_common.config import get_config, get_config_value
 
 config = get_config()
 scheduler_delay = get_config_value(config, "scheduler_delay")

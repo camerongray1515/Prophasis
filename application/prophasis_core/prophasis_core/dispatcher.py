@@ -1,14 +1,14 @@
 import os
 import multiprocessing
 # from multiprocessing import Process, Queue
-from agent_api import Agent, CommandUnsuccessfulError, AuthenticationError, \
+from .agent_api import Agent, CommandUnsuccessfulError, AuthenticationError, \
     RequestError
 from requests.exceptions import ConnectionError, Timeout
-from config import get_config, get_config_value
-from models import PluginResult, session, Host
+from prophasis_common.config import get_config, get_config_value
+from prophasis_common.models import PluginResult, session, Host
 from datetime import datetime
-from classification import classify
-from alerting import process_alerts
+from .classification import classify
+from prophasis_common.alerting import process_alerts
 
 host_queues = {}
 config = get_config()
