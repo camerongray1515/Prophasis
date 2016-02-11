@@ -1,5 +1,5 @@
-from models import Alert, Host, Plugin, Check
-from application_logging import log_message
+from .models import Alert, Host, Plugin, Check
+from .application_logging import log_message
 import importlib
 import os
 
@@ -73,7 +73,7 @@ def send_alert(alert_id, message, log_errors=True):
 
         if not module_found:
             raise AlertExecutionError("Module not found!")
-            
+
         module = importlib.import_module("alert_modules.{}".format(alert.module))
         module.config = module_config
         module.handle_alert(message)
