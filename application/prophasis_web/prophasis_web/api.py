@@ -8,18 +8,18 @@ import bcrypt
 from requests.exceptions import Timeout, ConnectionError
 from flask import Blueprint, jsonify, request
 from flask.ext.login import login_required, login_user
-from responses import error_response
-from models import create_all, session, Host, HostGroup, HostGroupAssignment,\
+from .responses import error_response
+from prophasis_common.models import create_all, session, Host, HostGroup,\
     Plugin, CheckPlugin, CheckAssignment, Check, Schedule, ScheduleInterval,\
     ScheduleCheck, PluginThreshold, User, ServiceDependency, Service,\
     RedundancyGroup, RedundancyGroupComponent, Alert, AlertCheckEntity,\
     AlertTransitionTo, AlertTransitionFrom, AlertRestrictToEntity,\
-    AlertModuleOption
+    AlertModuleOption, HostGroupAssignment
 from sqlalchemy import or_, and_
 from sqlalchemy.exc import SQLAlchemyError
-from config import get_config, get_config_value
+from prophasis_common.config import get_config, get_config_value
 from datetime import datetime
-from alerting import send_alert, AlertExecutionError
+from prophasis_common.alerting import send_alert, AlertExecutionError
 api = Blueprint("api", __name__, url_prefix="/api")
 
 config = get_config()

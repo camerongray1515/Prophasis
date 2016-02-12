@@ -2,15 +2,15 @@ import os
 import operator
 from flask import Flask, render_template, abort, redirect
 from flask.ext.login import LoginManager, login_required, logout_user
-from api import api
-from reports import reports
-from models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
+from .api import api
+from .reports import reports
+from prophasis_common.models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
     CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval,\
     PluginThreshold, User, Service, ServiceDependency, RedundancyGroup,\
     RedundancyGroupComponent, Alert, LogMessage, AlertModuleOption, session
 from datetime import datetime
 from jinja2 import Markup
-from alerting import get_alert_modules
+from prophasis_common.alerting import get_alert_modules
 
 web = Flask(__name__)
 web.register_blueprint(api)

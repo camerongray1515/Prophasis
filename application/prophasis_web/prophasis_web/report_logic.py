@@ -1,4 +1,4 @@
-from models import Host, PluginResult, Service
+from prophasis_common.models import Host, PluginResult, Service
 
 severities = {
     "critical": {"class": "danger", "display": "Critical"},
@@ -13,7 +13,7 @@ severities = {
 def get_all_hosts():
     severity_ordering = ["critical", "major", "minor", "unknown", "ok",
         "no_data"]
-        
+
     all_hosts = Host.query.all()
 
     categorised_hosts = {}

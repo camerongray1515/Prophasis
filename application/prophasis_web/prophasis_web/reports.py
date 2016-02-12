@@ -1,10 +1,10 @@
-import report_logic
+from .report_logic import get_all_services, get_all_hosts, severities
 import uuid
 import datetime
 import json
 from flask import Blueprint, request, render_template, session, abort
 from flask.ext.login import login_required
-from models import PluginResult, Host, Service
+from prophasis_common.models import PluginResult, Host, Service
 from jinja2 import Template
 
 reports = Blueprint("reports", __name__, url_prefix="/reports")
@@ -12,7 +12,7 @@ reports = Blueprint("reports", __name__, url_prefix="/reports")
 @reports.route("/hosts/")
 @login_required
 def hosts():
-    ordered_hosts = report_logic.get_all_hosts()
+    ordered_hosts = get_all_hosts()
 
     return render_template("health-overview.html", nav_section="reports/hosts",
         section="Hosts", title="Host Health", link_base="hosts",
@@ -107,7 +107,7 @@ def hosts_host_id(host_id):
 @reports.route("/services/")
 @login_required
 def services():
-    ordered_services = report_logic.get_all_services()
+    ordered_services = get_all_services()
 
     return render_template("health-overview.html", nav_section="reports/services",
         section="Services", title="Service Health", link_base="services",
@@ -122,4 +122,4 @@ def services_service_id(service_id):
 
     return render_template("service-health.html", nav_section="reports/services",
         section="Services", title="Service Information", service=service,
-        severities=report_logic.severities)
+        severities=severities)
