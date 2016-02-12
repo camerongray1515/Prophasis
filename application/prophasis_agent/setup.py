@@ -12,6 +12,7 @@ setup(
     version="1.0",
     author="Cameron Gray",
     packages=["prophasis_agent"],
+    package_data={"prophasis_agent": ["plugin_repo/keep.txt"]},
     install_requires=[str(ir.req) for ir in install_requirements],
     entry_points={
         "console_scripts": [
