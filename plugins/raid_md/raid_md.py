@@ -1,5 +1,5 @@
 import re
-from plugin import PluginInterface, PluginResult
+from prophasis_agent.plugin import PluginInterface, PluginResult
 
 # Value is the number of failed disks across all arrays, message contains a list
 # of degraded arrays

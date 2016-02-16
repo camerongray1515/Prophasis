@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import random
 import hashlib
@@ -20,7 +21,7 @@ def main():
             "temp_dir": os.path.join(site_data_dir("Propasis", "Prophasis"),
                 "tmp"),
             "plugin_repo": os.path.join(site_data_dir("Propasis", "Prophasis"),
-                "plugin_repo")
+                "agent_plugin_repo")
             }
 
     print("Prophasis Agent Setup Script")
@@ -60,7 +61,7 @@ def main():
     if not plugin_repo:
         plugin_repo = config["plugin_repo"]
 
-        config["plugin_repo"] = os.path.abspath(plugin_repo)
+    config["plugin_repo"] = os.path.abspath(plugin_repo)
 
     while True:
         use_ssl = input("Run the agent using SSL? (y/n){}: ".format(

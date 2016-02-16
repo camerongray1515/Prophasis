@@ -1,6 +1,6 @@
 import os
 import multiprocessing
-from plugin import PluginInterface, PluginResult
+from prophasis_agent.plugin import PluginInterface, PluginResult
 
 class Plugin(PluginInterface):
     def get_data(self):

@@ -31,8 +31,8 @@ setup(
         re.sub("^prophasis_web/", "", f) for f in package_data_files]},
     entry_points={
         "console_scripts": [
-            "prophasis-web = prophasis_web.web:main",
-            "prophasis-web-setup = prophasis_web.setup_wizard:main"
+            "prophasis-web = prophasis_web.web:main"
         ]
-    }
+    },
+    scripts = ["bin/prophasis-web-setup"]
 )

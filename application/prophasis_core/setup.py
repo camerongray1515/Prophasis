@@ -18,7 +18,7 @@ setup(
     entry_points={
         "console_scripts": [
             "prophasis-core = prophasis_core.core:main",
-            "prophasis-core-setup = prophasis_core.setup_wizard:main"
         ]
-    }
+    },
+    scripts=["bin/prophasis-core-setup"]
 )

@@ -1,13 +1,12 @@
 import os
 import json
-import importlib
+from importlib.machinery import SourceFileLoader
 from .agent_config import get_config, get_config_value
 from .exceptions import PluginExecutionError
 
 def get_plugin_repo_dir():
     config = get_config()
-    plugin_repo_dir = os.path.normpath(os.path.join(os.path.dirname(
-        os.path.realpath(__file__)), get_config_value(config, "plugin_repo")))
+    plugin_repo_dir = get_config_value(config, "plugin_repo")
 
     if not os.path.isdir(plugin_repo_dir):
         raise SystemExit("Plugin repository does not exist at path: {0}".format(
@@ -46,12 +45,15 @@ def get_data_from_plugin(plugin_id):
         Raises PluginExecutionError
     """
     config = get_config()
+    plugin_repo_dir = get_config_value(config, "plugin_repo")
     (directory, _) = get_plugin_metadata(plugin_id)
 
     if not directory:
         raise PluginExecutionError("Plugin could not be found")
 
-    module = importlib.import_module("plugin_repo.{0}".format(directory))
+    # module = importlib.import_module("{}.{}".format(plugin_repo_dir, directory))
+    module = SourceFileLoader("module.{}".format(directory), os.path.join(
+        plugin_repo_dir, directory, "__init__.py")).load_module()
     try:
         plugin = module.Plugin()
     except AttributeError:

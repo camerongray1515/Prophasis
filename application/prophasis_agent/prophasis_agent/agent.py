@@ -13,6 +13,7 @@ from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from shutil import rmtree
 agent = Flask(__name__)
+config = get_config()
 
 def error_response(error_message):
     return jsonify({"success": False, "message": error_message})
@@ -67,6 +68,7 @@ def get_plugin_data():
     try:
         (value, message) = get_data_from_plugin(plugin_id)
     except PluginExecutionError as e:
+        print(str(e))
         return error_response(str(e))
 
     return jsonify({"success": True, "value": value, "message": message})

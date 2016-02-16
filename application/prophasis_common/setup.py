@@ -13,9 +13,5 @@ setup(
     author="Cameron Gray",
     packages=["prophasis_common"],
     install_requires=[str(ir.req) for ir in install_requirements],
-    entry_points={
-        "console_scripts": [
-            "prophasis-common-setup = prophasis_common.setup_wizard:main"
-        ]
-    }
+    scripts=["bin/prophasis-common-setup"]
 )
