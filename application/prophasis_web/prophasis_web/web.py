@@ -2,8 +2,6 @@ import os
 import operator
 from flask import Flask, render_template, abort, redirect
 from flask.ext.login import LoginManager, login_required, logout_user
-from .api import api
-from .reports import reports
 from prophasis_common.models import Host, HostGroup, HostGroupAssignment, Plugin, Check,\
     CheckAssignment, CheckPlugin, Schedule, ScheduleCheck, ScheduleInterval,\
     PluginThreshold, User, Service, ServiceDependency, RedundancyGroup,\
@@ -13,8 +11,6 @@ from jinja2 import Markup
 from prophasis_common.alerting import get_alert_modules
 
 web = Flask(__name__)
-web.register_blueprint(api)
-web.register_blueprint(reports)
 # TODO: Store in config file or something?
 web.secret_key = b'\x0bi\xcb\r\x8f\x8f\x06:\x8f\x0b\x0cw\x7f\x8dJ\x0fd\xdbH'\
     b'\x86\x0egNq\xd0n\xa9\xa7\xdd\xb2\xbf\xa9\x13\x1f\xce\x8f\x9a=\xbc.\xcaV'\
@@ -451,6 +447,12 @@ def system_logs_clear():
     return redirect("/system_logs/")
 
 def main():
+    # Blueprints are located here due to their need to import config which
+    # breaks the setup wizard as it attempts to read config when __init__ is run
+    from .api import api
+    from .reports import reports
+    web.register_blueprint(api)
+    web.register_blueprint(reports)
     web.run(host="0.0.0.0", debug=True)
 
 if __name__ == "__main__":

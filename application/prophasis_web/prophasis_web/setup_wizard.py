@@ -1,0 +1,82 @@
+import os
+import random
+import hashlib
+import json
+from binascii import hexlify
+from appdirs import site_config_dir, site_data_dir
+
+def main():
+    config_file_dir = site_config_dir("Prophasis", "Prophasis")
+    config_file_path = os.path.join(config_file_dir, "web.conf.json")
+    file_loaded = False
+    try:
+        with open(config_file_path, "r") as config_file:
+            config = json.load(config_file)
+        file_loaded = True
+    except FileNotFoundError:
+        # Default values
+        config = {
+            "temp_dir": os.path.join(site_data_dir("Propasis", "Prophasis"),
+                "tmp"),
+            "plugin_repo": os.path.join(site_data_dir("Propasis", "Prophasis"),
+                "plugin_repo")
+            }
+
+    print("Prophasis Web Setup Script")
+    print("==========================")
+    print("Values shown in square brackets are default.  They will be used if "
+        "you do not supply a value for that item.\n")
+    if file_loaded:
+        print("An existing config file has been found, pressing enter without "
+            "entering a value will leave the current value unchanged.\n")
+
+    temp_dir = input("What directory should be used for tempoary files? "
+        "(Will be created if it doesn't exist) [{}]: ".format(
+            config["temp_dir"]))
+
+    if not temp_dir:
+        temp_dir = config["temp_dir"]
+
+    config["temp_dir"] = os.path.abspath(temp_dir)
+
+    plugin_repo = input("Where should installed plugins be stored?"
+        " (Will be created if it doesn't exist) [{}]: ".format(
+            config["plugin_repo"]))
+
+    if not plugin_repo:
+        plugin_repo = config["plugin_repo"]
+
+        config["plugin_repo"] = os.path.abspath(plugin_repo)
+
+    print()
+    config_file_json = json.dumps(config, separators=(",\n", ": "))
+    print("The following config has been generated:")
+    print(config_file_json)
+
+    print()
+    print("Config file: {}".format(config_file_path))
+    print()
+
+    while True:
+        write = input("Would you like to write this config and create "
+            "directories? (y/n): ")
+        if write == "y":
+            break
+        elif write == "n":
+            print()
+            print("Exiting...")
+            return
+
+    print()
+    print("Creating directories....")
+    os.makedirs(config_file_dir, mode=0o755, exist_ok=True)
+    os.makedirs(config["plugin_repo"], mode=0o755, exist_ok=True)
+    os.makedirs(config["temp_dir"], mode=0o755, exist_ok=True)
+
+    print("Writing config file...")
+    with open(config_file_path, "w") as config_file:
+        config_file.write(config_file_json)
+    print("Complete!")
+
+if __name__ == "__main__":
+    main()
