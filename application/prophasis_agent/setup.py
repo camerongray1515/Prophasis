@@ -16,7 +16,8 @@ setup(
     install_requires=[str(ir.req) for ir in install_requirements],
     entry_points={
         "console_scripts": [
-            "prophasis-agent = prophasis_agent.agent:main"
+            "prophasis-agent = prophasis_agent.agent:main",
+            "prophasis-agent-setup = prophasis_agent.setup_wizard:main"
         ]
     }
 )

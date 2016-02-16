@@ -1,4 +1,3 @@
-import argparse
 import os
 import uuid
 import tarfile
@@ -7,18 +6,13 @@ import hashlib
 from flask import Flask, jsonify, request, Response
 from .plugin_handling import get_plugin_metadata, get_data_from_plugin
 from .exceptions import PluginExecutionError
-from .agent_config import get_config, setup_wizard, get_config_value
+from .agent_config import get_config, get_config_value
 from functools import wraps
 from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from shutil import rmtree
 agent = Flask(__name__)
-
-parser = argparse.ArgumentParser()
-g = parser.add_mutually_exclusive_group(required=False)
-g.add_argument("--setup", action="store_true")
-args = parser.parse_args()
 
 def error_response(error_message):
     return jsonify({"success": False, "message": error_message})
@@ -144,30 +138,27 @@ def update_plugin():
             pass # We don't care if either file doesn't exist
 
 def main():
-    if args.setup:
-        setup_wizard()
+    config = get_config()
+    print("Agent starting up...")
+    # Create directories if they don't exist
+    for directory in ["plugin_repo", "temp_dir"]:
+        dir_path = get_config_value(config, directory)
+        if not os.path.isdir(dir_path):
+            print("Creating directory at {0}".format(dir_path))
+            os.mkdir(dir_path)
+
+    if get_config_value(config, "use_ssl"):
+        http_server = HTTPServer(WSGIContainer(agent),
+            ssl_options={
+                "certfile": get_config_value(config, "ssl_crt"),
+                "keyfile": get_config_value(config, "ssl_key")
+            })
     else:
-        config = get_config()
-        print("Agent starting up...")
-        # Create directories if they don't exist
-        for directory in ["plugin_repo", "temp_dir"]:
-            dir_path = get_config_value(config, directory)
-            if not os.path.isdir(dir_path):
-                print("Creating directory at {0}".format(dir_path))
-                os.mkdir(dir_path)
+        http_server = HTTPServer(WSGIContainer(agent))
 
-        if get_config_value(config, "use_ssl"):
-            http_server = HTTPServer(WSGIContainer(agent),
-                ssl_options={
-                    "certfile": get_config_value(config, "ssl_crt"),
-                    "keyfile": get_config_value(config, "ssl_key")
-                })
-        else:
-            http_server = HTTPServer(WSGIContainer(agent))
-
-        http_server.listen(get_config_value(config, "port"))
-        print("Running!")
-        IOLoop.instance().start()
+    http_server.listen(get_config_value(config, "port"))
+    print("Running!")
+    IOLoop.instance().start()
 
 if __name__ == "__main__":
     main()

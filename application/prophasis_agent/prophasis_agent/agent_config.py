@@ -3,18 +3,19 @@ import os
 import random
 import string
 import hashlib
+from appdirs import site_config_dir
 from binascii import hexlify
 
-config_file_path = os.path.join(os.path.dirname(
-    os.path.realpath(__file__)), "config.json")
+config_file_dir = site_config_dir("Prophasis", "Prophasis")
+config_file_path = os.path.join(config_file_dir, "agent.conf.json")
 
 def get_config():
     try:
         with open(config_file_path, "r") as f:
             config = json.load(f)
     except FileNotFoundError:
-        raise SystemExit("Config file, config.json not found in agent "
-            "directory, perhaps you need to run the agent setup script?")
+        raise SystemExit("Config file not found, perhaps you need to run the "
+            "agent setup script?")
 
     required_fields = ["plugin_repo"]
     for field in required_fields:
@@ -30,105 +31,6 @@ def get_config_value(config, key):
     except KeyError:
         raise SystemExit("Key \"{0}\" does not exist in config.json, did you "
             "run setup?".format(key))
-
-def setup_wizard():
-    config = {}
-
-    questions = [
-        {"prompt": "What port would you like the server to run on?",
-        "default": "4048",
-        "validator": lambda x: x.isdigit() and int(x) > 1023 and
-                int(x) <= 65535,
-        "validation_error": "Value must be a number between 1024 and 65535 "
-                "inclusive",
-        "config_section": "Server",
-        "config_key": "port"
-        },
-
-        {"prompt": "Run the server using SSL? (y/n)",
-        "default": "y",
-        "validator": lambda x: x in ["y", "n"],
-        "validation_error": "Must answer 'y' or 'n'",
-        "answer_converter": lambda x: x == "y",
-        "config_key": "use_ssl"
-        },
-
-        {"prompt": "Path to cert file (.crt)",
-        "config_key": "ssl_crt",
-        "ask_condition": lambda config: config["use_ssl"],
-        "answer_converter": lambda x: os.path.abspath(x)
-        },
-
-        {"prompt": "Path to key file (.key)",
-        "config_key": "ssl_key",
-        "ask_condition": lambda config: config["use_ssl"],
-        "answer_converter": lambda x: os.path.abspath(x)
-        },
-
-        {"prompt": "What directory should installed plugins be kept in?",
-        "default": os.path.join(os.path.dirname(__file__), "plugin_repo"),
-        "config_key": "plugin_repo",
-        "answer_converter": lambda x: os.path.abspath(x)
-        },
-
-        {"prompt": "What directory should be used for tempoary files?",
-        "default": "/tmp",
-        "config_key": "temp_dir",
-        "answer_converter": lambda x: os.path.abspath(x)
-        },
-    ]
-
-    for question in questions:
-        if "ask_condition" in question:
-            if not question["ask_condition"](config):
-                continue
-
-        answer_invalid=True
-        while answer_invalid:
-            if "default" in question:
-                question_string = "{0} [{1}]: ".format(question["prompt"],
-                        question["default"])
-            else:
-                question_string = "{0}: ".format(question["prompt"])
-
-            answer = input(question_string)
-            print("")
-
-            if answer == "":
-                if "default" in question:
-                    answer = question["default"]
-                else:
-                    continue
-
-            if "validator" not in question or question["validator"](answer):
-                answer_invalid = False
-
-                if "answer_converter" in question:
-                    answer = question["answer_converter"](answer)
-
-                config[question["config_key"]] = answer
-            else:
-                print("{0}".format(question["validation_error"]))
-
-    # Generate authentication key, display it to the user then store the
-    # hash of it.
-    authentication_key = generate_authentication_key()
-
-    print("The authentication key for this agent is:")
-    print("\t" + authentication_key)
-    print("You will need to enter this into the server when adding this "
-            "agent.  If you lose this key you will need to run setup "
-            "again to generate a new one.")
-
-    salt = generate_authentication_key()
-    salted_key = salt + authentication_key
-    config["auth_key_hash"] = salt + "|" + hashlib.sha256(
-        salted_key.encode("ascii")).hexdigest()
-
-    with open(config_file_path, "w") as f:
-        json.dump(config, f, separators=(",\n", ": "))
-
-    print("\nConfig file written!")
 
 def generate_authentication_key(n_bits=256):
     if n_bits % 8 != 0:
