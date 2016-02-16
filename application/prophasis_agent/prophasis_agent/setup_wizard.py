@@ -1,32 +1,35 @@
 import os
 import random
 import hashlib
+import json
 from binascii import hexlify
+from appdirs import site_config_dir, site_data_dir
 
 def main():
+    config_file_dir = site_config_dir("Prophasis", "Prophasis")
+    config_file_path = os.path.join(config_file_dir, "agent.conf.json")
     file_loaded = False
+    try:
+        with open(config_file_path, "r") as config_file:
+            config = json.load(config_file)
+        file_loaded = True
+    except FileNotFoundError:
+        # Default values
+        config = {
+            "port": 4048,
+            "temp_dir": os.path.join(site_data_dir("Propasis", "Prophasis"),
+                "tmp"),
+            "plugin_repo": os.path.join(site_data_dir("Propasis", "Prophasis"),
+                "plugin_repo")
+            }
 
-    print("╔═════════════════════════════════════════════════════════════════╗")
-    print("║ Prophasis Agent Setup Script                                    ║")
-    print("╠═════════════════════════════════════════════════════════════════╢")
-    print("║ Values shown in square brackets are default.  They will be used ║")
-    print("║ if you do not supply a value for that item.                     ║")
+    print("Prophasis Agent Setup Script")
+    print("============================")
+    print("Values shown in square brackets are default.  They will be used if "
+        "you do not supply a value for that item.\n")
     if file_loaded:
-        print("╠═══════════════════════════════════════════════════════════════"
-            "══╢")
-        print("║ An existing config file has been found, pressing enter without"
-            "  ║")
-        print("║ entering a value will leave the current value unchanged.      "
-            "  ║")
-    print("╚═════════════════════════════════════════════════════════════════╝")
-
-    # Default values
-    config = {
-        "port": 4048,
-        "temp_dir": "/tmp",
-        "plugin_repo": os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "plugin_repo"))
-        }
+        print("An existing config file has been found, pressing enter without "
+            "entering a value will leave the current value unchanged.\n")
 
     while True:
         port = input("What port would you like the server to run on? [{}]: "
@@ -41,35 +44,27 @@ def main():
         else:
             print("ERROR: {} is not a valid port".format(port))
 
-    while True:
-        temp_dir = input("What directory should be used for tempoary files? "
-            "[{}]: ".format(config["temp_dir"]))
+    temp_dir = input("What directory should be used for tempoary files? "
+        "(Will be created if it doesn't exist) [{}]: ".format(
+            config["temp_dir"]))
 
-        if not temp_dir:
-            temp_dir = config["temp_dir"]
+    if not temp_dir:
+        temp_dir = config["temp_dir"]
 
-        if os.path.isdir(temp_dir):
-            config["temp_dir"] = os.path.abspath(temp_dir)
-            break
-        else:
-            print("ERROR: {} is not a valid directory".format(temp_dir))
+    config["temp_dir"] = os.path.abspath(temp_dir)
 
-    while True:
-        plugin_repo = input("Where should installed plugins be stored? [{}]: "
-            "".format(config["plugin_repo"]))
+    plugin_repo = input("Where should installed plugins be stored?"
+        " (Will be created if it doesn't exist) [{}]: ".format(
+            config["plugin_repo"]))
 
-        if not plugin_repo:
-            plugin_repo = config["plugin_repo"]
+    if not plugin_repo:
+        plugin_repo = config["plugin_repo"]
 
-        if os.path.isdir(plugin_repo):
-            config["plugin_repo"] = os.path.abspath(plugin_repo)
-            break
-        else:
-            print("ERROR: {} is not a valid directory".format(plugin_repo))
+        config["plugin_repo"] = os.path.abspath(plugin_repo)
 
     while True:
         use_ssl = input("Run the agent using SSL? (y/n){}: ".format(
-            "" if not file_loaded else "[ {}]".format(
+            "" if not file_loaded else " [{}]".format(
                 "y" if config["use_ssl"] else "n")
         ))
 
@@ -85,7 +80,8 @@ def main():
     if config["use_ssl"]:
         while True:
             ssl_key = input("Path to key file (.key){}: ".format(
-                "" if not file_loaded else " [{}]".format(config["ssl_key"])
+                "" if "ssl_key" not in config else " [{}]".format(
+                    config["ssl_key"])
             ))
 
             if file_loaded and not ssl_key:
@@ -99,7 +95,8 @@ def main():
 
         while True:
             ssl_crt = input("Path to cert file (.crt){}: ".format(
-                "" if not file_loaded else " [{}]".format(config["ssl_crt"])
+                "" if "ssl_crt" not in config else " [{}]".format(
+                    config["ssl_crt"])
             ))
 
             if file_loaded and not ssl_crt:
@@ -128,33 +125,48 @@ def main():
         # hash of it.
         authentication_key = generate_authentication_key()
 
-        print("╔═══════════════════════════════════════════════════════════════"
-            "═══════════════╗")
-        print("║ Authentication Key                                            "
-            "               ║")
-        print("╠═══════════════════════════════════════════════════════════════"
-            "═══════════════╢")
-        print("║ {}{}║".format(authentication_key,
-            " "*(77-len(authentication_key))))
-        print("╠═══════════════════════════════════════════════════════════════"
-            "═══════════════╢")
-        print("║ If you lose this key, run setup again to generate a new one   "
-            "               ║")
-        print("╚═══════════════════════════════════════════════════════════════"
-            "═══════════════╝")
-
-        # print("The authentication key for this agent is:")
-        # print("\t" + authentication_key)
-        # print("You will need to enter this into the server when adding this "
-        #         "agent.  If you lose this key you will need to run setup "
-        #         "again to generate a new one.")
+        print()
+        print("The authentication key for this agent is:")
+        print("\t" + authentication_key)
+        print("You will need to enter this into the server when adding this "
+                "agent.  If you lose this key you will need to run setup "
+                "again to generate a new one.")
+        print()
 
         salt = generate_authentication_key()
         salted_key = salt + authentication_key
         config["auth_key_hash"] = salt + "|" + hashlib.sha256(
             salted_key.encode("ascii")).hexdigest()
 
-    print(config)
+    print()
+    config_file_json = json.dumps(config, separators=(",\n", ": "))
+    print("The following config has been generated:")
+    print(config_file_json)
+
+    print()
+    print("Config file: {}".format(config_file_path))
+    print()
+
+    while True:
+        write = input("Would you like to write this config and create "
+            "directories? (y/n): ")
+        if write == "y":
+            break
+        elif write == "n":
+            print()
+            print("Exiting...")
+            return
+
+    print()
+    print("Creating directories....")
+    os.makedirs(config_file_dir, mode=0o755, exist_ok=True)
+    os.makedirs(config["plugin_repo"], mode=0o755, exist_ok=True)
+    os.makedirs(config["temp_dir"], mode=0o755, exist_ok=True)
+
+    print("Writing config file...")
+    with open(config_file_path, "w") as config_file:
+        config_file.write(config_file_json)
+    print("Complete!")
 
 def generate_authentication_key(n_bits=256):
     if n_bits % 8 != 0:
