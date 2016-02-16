@@ -17,7 +17,7 @@ from prophasis_common.models import create_all, session, Host, HostGroup,\
     AlertModuleOption, HostGroupAssignment
 from sqlalchemy import or_, and_
 from sqlalchemy.exc import SQLAlchemyError
-from prophasis_common.config import get_config, get_config_value
+from .config import get_config, get_config_value
 from datetime import datetime
 from prophasis_common.alerting import send_alert, AlertExecutionError
 api = Blueprint("api", __name__, url_prefix="/api")

@@ -17,7 +17,8 @@ setup(
     package_data={"prophasis_core": ["classifier_functions.lua"]},
     entry_points={
         "console_scripts": [
-            "prophasis-core = prophasis_core.core:main"
+            "prophasis-core = prophasis_core.core:main",
+            "prophasis-core-setup = prophasis_core.setup_wizard:main"
         ]
     }
 )

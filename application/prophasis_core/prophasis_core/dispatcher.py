@@ -4,7 +4,7 @@ import multiprocessing
 from .agent_api import Agent, CommandUnsuccessfulError, AuthenticationError, \
     RequestError
 from requests.exceptions import ConnectionError, Timeout
-from prophasis_common.config import get_config, get_config_value
+from .config import get_config, get_config_value
 from prophasis_common.models import PluginResult, session, Host
 from datetime import datetime
 from .classification import classify

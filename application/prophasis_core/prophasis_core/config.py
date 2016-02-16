@@ -6,7 +6,7 @@ from binascii import hexlify
 from appdirs import site_config_dir
 
 config_file_dir = site_config_dir("Prophasis", "Prophasis")
-config_file_path = os.path.join(config_file_dir, "common.conf.json")
+config_file_path = os.path.join(config_file_dir, "core.conf.json")
 
 def get_config():
     try:
@@ -14,7 +14,7 @@ def get_config():
             config = json.load(f)
     except FileNotFoundError:
         raise SystemExit("Config file, config.json not found at {0}, perhaps "
-            "you need to run the common setup script?".format(config_file_path))
+            "you need to run the core setup script?".format(config_file_path))
 
     return config
 
@@ -23,4 +23,4 @@ def get_config_value(config, key):
         return config[key]
     except KeyError:
         raise SystemExit("Key \"{0}\" does not exist in config.json, did you "
-            "run common setup?".format(key))
+            "run core setup?".format(key))
