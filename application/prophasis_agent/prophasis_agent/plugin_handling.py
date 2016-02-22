@@ -3,6 +3,7 @@ import json
 from importlib.machinery import SourceFileLoader
 from .agent_config import get_config, get_config_value
 from .exceptions import PluginExecutionError
+import timeout_decorator
 
 def get_plugin_repo_dir():
     config = get_config()
@@ -40,6 +41,13 @@ def get_plugin_metadata(plugin_id):
     return (None, None)
 
 def get_data_from_plugin(plugin_id):
+    try:
+        return _timeout_get_data_from_plugin(plugin_id)
+    except timeout_decorator.TimeoutError:
+        raise PluginExecutionError("Plugin execution timed out")
+
+@timeout_decorator.timeout(10)
+def _timeout_get_data_from_plugin(plugin_id):
     """
         Returns a tuple of (value, message) from the plugin.
         Raises PluginExecutionError
@@ -48,10 +56,12 @@ def get_data_from_plugin(plugin_id):
     plugin_repo_dir = get_config_value(config, "plugin_repo")
     (directory, _) = get_plugin_metadata(plugin_id)
 
+    while True:
+        pass
+
     if not directory:
         raise PluginExecutionError("Plugin could not be found")
 
-    # module = importlib.import_module("{}.{}".format(plugin_repo_dir, directory))
     module = SourceFileLoader("module.{}".format(directory), os.path.join(
         plugin_repo_dir, directory, "__init__.py")).load_module()
     try:

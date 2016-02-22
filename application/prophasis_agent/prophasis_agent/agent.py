@@ -68,7 +68,6 @@ def get_plugin_data():
     try:
         (value, message) = get_data_from_plugin(plugin_id)
     except PluginExecutionError as e:
-        print(str(e))
         return error_response(str(e))
 
     return jsonify({"success": True, "value": value, "message": message})

@@ -36,19 +36,19 @@ def perform_check(host, plugin, check_id):
                 a.update_plugin(plugin.id, f)
         (value, message) = a.get_plugin_data(plugin.id)
     except CommandUnsuccessfulError as e:
-        error = str(e)
+        error = "CommandUnsuccessfulError: {}".format(str(e))
         result_type = "command_unsuccessful"
     except AuthenticationError as e:
-        error = str(e)
+        error = "AuthenticationError: {}".format(str(e))
         result_type = "authentication_error"
     except RequestError as e:
-        error = str(e)
+        error = "RequestError: {}".format(str(e))
         result_type = "request_error"
     except ConnectionError as e:
-        error = str(e)
+        error = "ConnectionError: {}".format(str(e))
         result_type = "connection_error"
     except Timeout as e:
-        error = str(e)
+        error = "Timeout: {}".format(str(e))
         result_type = "connection_timeout"
 
     if error:
