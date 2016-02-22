@@ -9,6 +9,7 @@ from prophasis_common.models import PluginResult, session, Host
 from datetime import datetime
 from .classification import classify
 from prophasis_common.alerting import process_alerts
+from prophasis_common.application_logging import log_message
 
 host_queues = {}
 config = get_config()
@@ -51,6 +52,7 @@ def perform_check(host, plugin, check_id):
         result_type = "connection_timeout"
 
     if error:
+        log_message("Dispatcher", error)
         message = error
         value = None
 
