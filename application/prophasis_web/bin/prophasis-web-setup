@@ -17,9 +17,9 @@ def main():
     except FileNotFoundError:
         # Default values
         config = {
-            "temp_dir": os.path.join(site_data_dir("Propasis", "Prophasis"),
+            "temp_dir": os.path.join(site_data_dir("Prophasis", "Prophasis"),
                 "tmp"),
-            "plugin_repo": os.path.join(site_data_dir("Propasis", "Prophasis"),
+            "plugin_repo": os.path.join(site_data_dir("Prophasis", "Prophasis"),
                 "plugin_repo")
             }
 

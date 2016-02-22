@@ -18,9 +18,9 @@ def main():
         # Default values
         config = {
             "port": 4048,
-            "temp_dir": os.path.join(site_data_dir("Propasis", "Prophasis"),
+            "temp_dir": os.path.join(site_data_dir("Prophasis", "Prophasis"),
                 "tmp"),
-            "plugin_repo": os.path.join(site_data_dir("Propasis", "Prophasis"),
+            "plugin_repo": os.path.join(site_data_dir("Prophasis", "Prophasis"),
                 "agent_plugin_repo")
             }
 
