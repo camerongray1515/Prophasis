@@ -16,8 +16,9 @@ def execute_classifier(code, values, messages, result_types):
     sandbox.ipairs = lua.globals().ipairs
     setfenv(0, sandbox)
 
-    # Build up the code by including library functions and the data array itself
-    full_code = "values={}\n".format(list_to_lua_array(values))
+    # Build up the code by including library functions and the data array itself=
+    full_code = "local Null\n"
+    full_code += "values={}\n".format(list_to_lua_array(values))
     full_code += "messages={}\n".format(list_to_lua_array(messages))
     full_code += "result_types={}\n".format(list_to_lua_array(result_types))
     with open(os.path.join(os.path.dirname(__file__),
@@ -86,7 +87,7 @@ def list_to_lua_array(input_list):
     lua_array = "{"
     for entry in input_list:
         if entry == None:
-            lua_array += "nil,"
+            lua_array += "\"none\","
         elif isinstance(entry, numbers.Number):
             lua_array += "{},".format(entry)
         else:

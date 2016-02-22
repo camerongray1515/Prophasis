@@ -56,9 +56,6 @@ def _timeout_get_data_from_plugin(plugin_id):
     plugin_repo_dir = get_config_value(config, "plugin_repo")
     (directory, _) = get_plugin_metadata(plugin_id)
 
-    while True:
-        pass
-
     if not directory:
         raise PluginExecutionError("Plugin could not be found")
 
