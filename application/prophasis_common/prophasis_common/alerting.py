@@ -1,6 +1,6 @@
 from .models import Alert, Host, Plugin, Check
 from .application_logging import log_message
-import importlib
+from importlib.machinery import SourceFileLoader
 import os
 
 module_dir = os.path.normpath(os.path.join(os.path.dirname(
@@ -41,19 +41,20 @@ class AlertExecutionError(Exception):
 def get_alert_modules():
     modules = []
     for filename in os.listdir(module_dir):
-        if os.path.isdir(filename):
+        if os.path.isdir(os.path.join(module_dir, filename)):
             continue
         try:
             module_id = filename.replace(".py", "")
-            module = importlib.import_module("alert_modules.{}".format(
-                module_id))
+            module = SourceFileLoader("module.{}".format(module_id),
+                os.path.join(module_dir, filename)).load_module()
             module_data = {
                 "name": module.module_name,
                 "id": module_id,
                 "config": module.config
             }
             modules.append(module_data)
-        except Exception:
+        except Exception as e:
+            raise
             log_message("Alerting", "Could not read data from an alert module")
 
     return modules
@@ -74,7 +75,8 @@ def send_alert(alert_id, message, log_errors=True):
         if not module_found:
             raise AlertExecutionError("Module not found!")
 
-        module = importlib.import_module("alert_modules.{}".format(alert.module))
+        module = SourceFileLoader("module.{}".format(alert.module),
+            os.path.join(module_dir, "{}.py".format(alert.module))).load_module()
         module.config = module_config
         module.handle_alert(message)
     except AlertExecutionError as ex:
@@ -84,7 +86,7 @@ def send_alert(alert_id, message, log_errors=True):
             raise
     except Exception as ex:
         if log_errors:
-            log_message("Alerting - {}".format(alert.module), "Could not read"
+            log_message("Alerting - {}".format(alert.module), "Could not read "
                 "data from alert module: {}".format(alert.module))
         else:
             raise AlertExecutionError(str(ex))

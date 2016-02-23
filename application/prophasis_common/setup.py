@@ -12,6 +12,7 @@ setup(
     version="1.0",
     author="Cameron Gray",
     packages=["prophasis_common"],
+    package_data={"prophasis_common": ["alert_modules/*.py"]},
     install_requires=[str(ir.req) for ir in install_requirements],
     scripts=["bin/prophasis-common-setup"]
 )

@@ -1,6 +1,6 @@
 import requests
 import json
-from alerting import AlertExecutionError
+from prophasis_common.alerting import AlertExecutionError
 
 module_name = "Pushbullet"
 
