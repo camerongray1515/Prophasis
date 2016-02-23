@@ -18,7 +18,8 @@ def process_alerts(host_id, plugin_id, check_id, old_health, new_health):
             valid_alerts.append(alert)
 
     for alert in valid_alerts:
-        if old_health in alert.transitions_from_states and \
+        if new_health != old_health and \
+            old_health in alert.transitions_from_states and \
             new_health in alert.transitions_to_states:
             plugin = Plugin.query.get(plugin_id)
             check = Check.query.get(check_id)

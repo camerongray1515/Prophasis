@@ -846,10 +846,6 @@ def alerts_add():
     session.add(alert)
     session.flush()
     for state in to_states:
-        if state in from_states:
-            session.rollback()
-            return error_response("You cannot have the same state as both a "
-                "\"to\" state and a \"from\" state")
         session.add(AlertTransitionTo(alert_id=alert.id, state=state))
 
     for state in from_states:
