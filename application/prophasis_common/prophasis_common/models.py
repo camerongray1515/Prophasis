@@ -320,6 +320,7 @@ class Plugin(Base):
     archive_file = Column(String)
     view = Column(String)
     view_source = Column(Text)
+    signature = Column(Text)
 
     check_results = relationship("PluginResult",
         cascade="all, delete, delete-orphan", backref="plugin")

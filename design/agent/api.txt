@@ -20,6 +20,8 @@ Request: POST /update-plugin/
         plugin-id: The unique identifier of the plugin from its manifest file
         plugin: Gzipped and TARed copy of the plugin's source to be
             placed on disk on the agent
+        signature (optional): A base 64 encoded string containing the PGP
+            signature of the plugin
 Response:
     success: Whether the plugin was updated successfully
     message (optional): An error message if success is false
