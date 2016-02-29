@@ -19,20 +19,26 @@
                     <table class="table table-hover table-fixed">
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>Name</th>
                                 <th class="col-md-4">Description</th>
                                 <th>Version</th>
+                                <th>Signature</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for plugin in plugins %}
                                 <tr>
-                                    <td>{{ plugin.id }}</td>
                                     <td>{{ plugin.name }}</td>
                                     <td>{{ plugin.description }}</td>
                                     <td>{{ plugin.version }}</td>
+                                    <td>
+                                        {% if plugin.signature_file %}
+                                            <span class="label label-success">Signed</span>
+                                        {% else %}
+                                            <span class="label label-danger">Unsigned</span>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         <a href="/plugins/thresholds/{{ plugin.id }}/" class="btn btn-info">Set Thresholds</a>
                                         <form class="auto-post inline" method="POST" action="/api/plugins/delete/" data-auto-post-confirmation="Are you sure you want to delete this plugin and all associated data?  This action cannnot be undone!" data-auto-post-remove-closest="tr">

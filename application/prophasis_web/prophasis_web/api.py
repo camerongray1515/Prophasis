@@ -234,6 +234,7 @@ def plugins_install():
     plugin_file = request.files.get("plugin")
     if not plugin_file:
         return error_response("File not specified")
+    signature_file = request.files.get("signature")
 
     allow_overwrite = request.args.get("allow-overwrite")
 
@@ -277,9 +278,18 @@ def plugins_install():
     if not allow_overwrite and p:
         return jsonify(success=True, result="plugin_exists")
 
+    if signature_file:
+        try:
+            signature_file.save(os.path.join(plugin_repo,
+                filename + ".tar.gz.sig"))
+        except Exception as e:
+            return error_response("Failed to save signature file: {}".format(
+                str(e)))
+
     oldfile = None
     if p:
         oldfile = p.archive_file
+        oldsig = p.signature_file
     else:
         p = Plugin()
 
@@ -297,12 +307,18 @@ def plugins_install():
             except FileNotFoundError:
                 return error_response("View source file could not be found")
         p.archive_file = filename + ".tar.gz"
+        if signature_file:
+            p.signature_file = filename + ".tar.gz.sig"
+        else:
+            p.signature_file = None
     except KeyError:
         return error_response("Manifest file is missing some requied keys")
 
     if oldfile:
         try:
             os.remove(os.path.join(plugin_repo, oldfile))
+            if oldsig:
+                os.remove(os.path.join(plugin_repo, oldsig))
         except FileNotFoundError:
             # We don't care if the file doesn't exist as we are deleting it
             pass
@@ -354,6 +370,8 @@ def plugins_delete():
     plugin_repo = get_config_value(config, "plugin_repo")
     try:
         os.remove(os.path.join(plugin_repo, p.archive_file))
+        if p.signature_file:
+            os.remove(os.path.join(plugin_repo, p.signature_file))
     except FileNotFoundError:
         # We are deleting so we don't care if the file doesn't exist
         pass
