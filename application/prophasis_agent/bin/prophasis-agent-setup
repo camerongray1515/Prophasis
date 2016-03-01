@@ -21,8 +21,11 @@ def main():
             "temp_dir": os.path.join(site_data_dir("Prophasis", "Prophasis"),
                 "tmp"),
             "plugin_repo": os.path.join(site_data_dir("Prophasis", "Prophasis"),
-                "agent_plugin_repo")
-            }
+                "agent_plugin_repo"),
+            "pgp_homedir": os.path.join(site_data_dir("Prophasis", "Prophasis"),
+                "agent_pgp_homedir"),
+            "enforce_pgp": True
+        }
 
     print("Prophasis Agent Setup Script")
     print("============================")
@@ -109,6 +112,47 @@ def main():
             else:
                 print("ERROR: File does not exist!")
 
+    while True:
+        use_pgp = input("Check PGP signatures on plugins? (y/n){}: ".format(
+            "" if not file_loaded else " [{}]".format(
+                "y" if config["use_pgp"] else "n")
+        ))
+
+        if file_loaded and not use_pgp:
+            break
+
+        if use_pgp in ["y", "n"]:
+            config["use_pgp"] = use_pgp == "y"
+            break
+        else:
+            print("ERROR: Must enter \"y\" or \"n\"")
+
+    if config["use_pgp"]:
+        pgp_homedir = input("What directory should be used for to hold PGP keys? "
+            "(Will be created if it doesn't exist) [{}]: ".format(
+                config["pgp_homedir"]))
+
+        if not pgp_homedir:
+            pgp_homedir = config["pgp_homedir"]
+
+        config["pgp_homedir"] = os.path.abspath(pgp_homedir)
+
+        while True:
+            enforce_pgp = input("Enforce PGP checks on all plugins (unsigned "
+                "plugins will not be installed) (y/n){}: ".format(
+                    "" if not file_loaded else " [{}]".format(
+                        "y" if config["enforce_pgp"] else "n")
+            ))
+
+            if file_loaded and not enforce_pgp:
+                break
+
+            if enforce_pgp in ["y", "n"]:
+                config["enforce_pgp"] = enforce_pgp == "y"
+                break
+            else:
+                print("ERROR: Must enter \"y\" or \"n\"")
+
     generate_key = True
     if file_loaded:
         while True:
@@ -163,6 +207,8 @@ def main():
     os.makedirs(config_file_dir, mode=0o755, exist_ok=True)
     os.makedirs(config["plugin_repo"], mode=0o755, exist_ok=True)
     os.makedirs(config["temp_dir"], mode=0o755, exist_ok=True)
+    if pgp_homedir in config:
+        os.makedirs(config["pgp_homedir"], mode=0o755, exist_ok=True)
 
     print("Writing config file...")
     with open(config_file_path, "w") as config_file:

@@ -3,6 +3,8 @@ import uuid
 import tarfile
 import json
 import hashlib
+import subprocess
+import io
 from flask import Flask, jsonify, request, Response
 from .plugin_handling import get_plugin_metadata, get_data_from_plugin
 from .exceptions import PluginExecutionError
@@ -83,17 +85,48 @@ def update_plugin():
     plugin_file = request.files.get("plugin")
     if not plugin_file:
         return error_response("File not specified")
+    signature_file = request.files.get("signature")
+    plugin_id = request.form.get("plugin-id")
 
     temp_dir_path = get_config_value(config, "temp_dir")
     plugin_repo = get_config_value(config, "plugin_repo")
     filename = str(uuid.uuid4())
+    plugin_file_path = os.path.join(temp_dir_path, filename + ".tar.gz")
+    signature_file_path = os.path.join(temp_dir_path, filename + ".tar.gz.sig")
     try:
         try:
-            plugin_file.save(os.path.join(temp_dir_path,
-                filename + ".tar.gz"))
+            plugin_file.save(plugin_file_path)
+            if signature_file:
+                signature_file.save(signature_file_path)
         except Exception as e:
-            return error_response("Failed to create tempoary file: {0}".format(
+            return error_response("Failed to create temporary file: {0}".format(
                 str(e)))
+
+        if not signature_file and get_config_value(config, "enforce_pgp"):
+            return error_response("Plugin {} does not have a PGP signature and "
+                "PGP signature checking is enforced.".format(plugin_id))
+
+        if signature_file and get_config_value(config, "use_pgp"):
+            signature_io = io.BytesIO(signature_file.read())
+            try:
+                result = subprocess.check_output([
+                    "gpg",
+                    "--homedir",
+                    get_config_value(config, "pgp_homedir"),
+                    "--status-fd=1",
+                    "--verify",
+                    signature_file_path,
+                    plugin_file_path
+                ])
+            except subprocess.CalledProcessError as ex:
+                return error_response("Failed to verify plugin {}: {}"
+                    "".format(plugin_id, ex.output.decode("UTF-8")))
+
+            signature_valid = b"\n[GNUPG:] VALIDSIG" in result
+
+            if not signature_valid:
+                return error_response("Signature for plugin {} is invalid"
+                    "".format(plugin_id))
 
         try:
             plugin_archive = tarfile.open(os.path.join(temp_dir_path,
@@ -134,6 +167,7 @@ def update_plugin():
     finally:
         try:
             os.remove(os.path.join(temp_dir_path, filename + ".tar.gz"))
+            os.remove(os.path.join(temp_dir_path, filename + ".tar.gz.sig"))
             rmtree(os.path.join(temp_dir_path, filename))
         except FileNotFoundError:
             pass # We don't care if either file doesn't exist

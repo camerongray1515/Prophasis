@@ -32,8 +32,15 @@ def perform_check(host, plugin, check_id):
         if update_required:
             plugin_file = os.path.join(get_config_value(config, "plugin_repo"),
                 plugin.archive_file)
-            with open(plugin_file, "rb") as f:
-                a.update_plugin(plugin.id, f)
+            if plugin.signature_file:
+                signature_file = os.path.join(get_config_value(config,
+                    "plugin_repo"), plugin.signature_file)
+            with open(plugin_file, "rb") as pf:
+                if plugin.signature_file:
+                    with open(signature_file, "rb") as sf:
+                        a.update_plugin(plugin.id, pf, sf)
+                else:
+                    a.update_plugin(plugin.id, pf)
         (value, message) = a.get_plugin_data(plugin.id)
     except CommandUnsuccessfulError as e:
         error = "CommandUnsuccessfulError: {}".format(str(e))

@@ -68,9 +68,12 @@ class Agent():
 
         return (result["value"], result["message"])
 
-    def update_plugin(self, plugin_id, plugin_payload):
+    def update_plugin(self, plugin_id, plugin_payload, signature_payload=None):
         data = {"plugin-id": plugin_id}
         files = {"plugin": plugin_payload}
+        if signature_payload:
+            files["signature"] = signature_payload
+
         r = requests.post(self.url + "/update-plugin/", data=data, files=files,
             verify=self.verify_certs, timeout=self.timeout)
 
