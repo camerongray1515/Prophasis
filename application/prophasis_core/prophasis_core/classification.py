@@ -91,7 +91,9 @@ def list_to_lua_array(input_list):
         elif isinstance(entry, numbers.Number):
             lua_array += "{},".format(entry)
         else:
-            lua_array += "\"{}\",".format(entry.replace("\"", "\\\""))
+            entry = entry.replace("\n", "\\n")
+            entry = entry.replace("\"", "\\\"")
+            lua_array += "\"{}\",".format(entry)
     lua_array = "{}}}".format(lua_array[:-1]) # Remove last comma
     return lua_array
 
