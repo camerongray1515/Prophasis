@@ -200,6 +200,53 @@ No dependency functionality.
 \subsection{Why HTTPS?}
 
 \section{System Structure}
+\paragraph*{}
+	The system is split up into three separate components; Web, Core and Agent.
+	Web and core both share the same relational database allowing data to be
+	shared between them.
+	
+\subsection{Agent}
+\paragraph*{}
+	The agent runs on every machine that is being monitored and provides an API
+	for communication with the monitoring server.  It listens on port 4048 (by
+	default) and exposes an HTTPS API.  This API includes methods to check the
+	version of a plugin currently installed on the agent, a method to push updated
+	plugins to the agent and another method to execute a plugin and to retrieve
+	the value and message produced by it.
+	
+\paragraph*{}
+	The agent's API is authenticated using a long, pre-shared key of which a salted
+	hash is stored on the agent in a configuration file.  Being hashed prevents
+	users who may have access to read the configuration file (possibly through
+	misconfiguration) from getting the key to be able to communicate with the agent.
+	
+\subsection{Core}
+\paragraph*{}
+	The core runs on the machine that is performing the monitoring, it has several
+	different roles; scheduling, dispatching, classification and alerting.
+	
+\paragraph*{Scheduling}
+	The core is responsible for looking at the schedules stored in the database and
+	executing the appropriate checks on the correct hosts at the correct time. There
+	is a configuration value for "maximum lateness" that defines how late after its
+	defined time slot a check can be executed.  The core repeatedly checks the
+	database looking at the intervals for each schedule along with the time at which
+	a given schedule was last executed.  If it decides that a schedule is due to be
+	executed it passes this onto the dispatcher.
+	
+\paragraph*{Dispatching}
+	The dispatcher component of the core is responsible for issuing checks to agents
+	when they are due to be run (as decided by the scheduler).  Checks may take some
+	time to execute so executing these all in series would all be impractical. The
+	solution for this was for the dispatcher to spawn a process for each agent that
+	it is currently executing checks for.  Each process maintains a queue of plugins
+	that are due to be executed and issues them to the agent in the order that they
+	were dispatched.  This way only one plugin can be executing on a given agent at
+	any moment in time.  This both prevents agents from becoming overwhelmed and
+	means that plugin developers do not need to be concerned about other plugins
+	interfering with their plugin.
+
+% NOTES
 \begin{itemize}
 	\item Explain different components
 	\item Diagram
@@ -246,28 +293,53 @@ No dependency functionality.
 	CPU load and memory across all hosts in the "Webservers" host group.
 
 \subsection{Schedules}
-\begin{itemize}
-	\item What is a schedule?
-\end{itemize}
+\paragraph*{}
+	A schedule defines when one or more checks are to be executed.  Each schedule
+	can contain multiple "intervals" which define when the check is run.  An
+	interval has a start date/time and a time delta that defines how regularly
+	it is to be implemented.
 
 \subsection{Services}
-\begin{itemize}
-	\item What is a service?
-	\item Dependencies \& Redundancy Groups
-	\item Why use dependencies?
-	\begin{itemize}
-		\item Alert only if service functionality is severely impacted
-		\item Prevents unnecessary alerts due to failures in redundant infrastructure
-		\item Provides clearer view of impact of a given failure
-	\end{itemize}
-\end{itemize}
+\paragraph*{}
+	Services can be used to define a more fine grained representation of how the
+	availability of a host affects the performance of the system overall.  A
+	service is defined in terms of "dependencies" and "redundancy groups". Each
+	dependency represents a host that must be operational for the service to
+	work. A redundancy group can contain multiple hosts where at least one must
+	be operational for the service to work.
+	
+\paragraph*{}
+	As an example, you may have a "Website" service that has a dependency on
+	the single router but has a redundancy group containing multiple webservers.
+	Therefore, if the router fails then the website will be marked as failed
+	however if one of the webservers fails but at least one other webserver is
+	still operational, the website service will only be marked as degraded.
+
+\paragraph*{}
+	The use of services provides a clearer view of the impact of a given failure
+	on the functionality of the network.  It also allows alerts to be set up so
+	that they are only triggered when the service functionality is severely
+	impacted and prevents alerts from being sent out for host failures that do not
+	have a severe impact.
 
 \subsection{Alerts}
-\begin{itemize}
-	\item What is an alert?
-	\item Separate alerts for different checks/hosts/plugins/services
-	\item State transition restrictions - Reduce unnecessary alerts
-\end{itemize}
+\paragraph*{}
+	In Prophasis, alerts are set up to communicate with a specific person/group of
+	people in a certain situation.  Alerts are defined in terms of to/from stage
+	changes where an alert will be sent if the state of a host/service changes
+	from one state to another (e.g. "ok" to "critical").  These can then be
+	restricted to certain hosts, host groups, services, plugins and checks.
+	
+\paragraph*{}
+	The system supports "alert modules" - Python modules that are used to send
+	alerts using various methods.  Examples of alert modules could be email, SMS
+	or telephone call.
+
+\paragraph*{}
+	Multiple alerts can be set up to handle different severities of issues.  For
+	example, if a redundant service becomes degraded, a SMS or email message may
+	be sufficient but if a service becomes critical it may be desirable to use
+	a telephone call to gain quicker attention.
 
 \chapter{Implementation}
 \section{Code Structure}
