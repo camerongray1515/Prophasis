@@ -245,7 +245,7 @@ def plugins_install():
         plugin_file.save(os.path.join(temp_dir_path,
             filename + ".tar.gz"))
     except Exception as e:
-        return error_response("Failed to create tempoary file: {0}".format(
+        return error_response("Failed to create temporary file: {0}".format(
             str(e)))
 
     try:
