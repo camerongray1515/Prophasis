@@ -245,13 +245,42 @@ No dependency functionality.
 	any moment in time.  This both prevents agents from becoming overwhelmed and
 	means that plugin developers do not need to be concerned about other plugins
 	interfering with their plugin.
-
-% NOTES
-\begin{itemize}
-	\item Explain different components
-	\item Diagram
-	\item Why separate?
-\end{itemize}
+	
+\paragraph*{Classification}
+	When data is collected from an agent, it needs to be classified as "ok", "major",
+	"minor", "critical" or "unknown".  Classification is performed by lua code that
+	is stored alongside each plugin.  When the core finishes collecting a 
+	from an agent it will retrieve the classification code for the plugin and execute
+	it in a sandboxed lua runtime environment.  The result of the classification is
+	then stored in the database.
+	
+\paragraph*{Alerting}
+	Once the core has classified a piece of data, the core now needs to work out
+	whether it needs to send an alert or not.  To do this it looks at the previous
+	state for the plugin and host along with the current state.  It then looks through
+	the database for alerts that match that state transition and are applicable to the
+	host/plugin combination.  If any alerts match it will call the alert module to send
+	the alert out to inform the necessary people about the state change.
+	
+\subsection{Web Interface}
+\paragraph*{}
+	Prophasis provides a web interface for both configuring the system and viewing
+	collected data.  The interface is designed to be clear and easy to understand for
+	users.  It is also built to be fully responsive so will work correctly on mobile
+	device without any loss of functionality.  Designing it to be responsive was the
+	aim from the outset as servers often fail when the administrator may not currently
+	be in easy reach of a computer so will need to use a mobile device to investigate
+	the issue.
+	
+\paragraph*{}
+	The web interface will connect to the same database as the core, the web interface
+	will update the configuration data stored in this database and will retrieve the
+	data about hosts.
+	
+\paragraph*{}
+	The web interface provides dashboards for visualisation of data collected from
+	plugins.  The collected data can then be displayed using graphs, tables, lists
+	of messages or any other way that suits the type of data collected.
 
 \section{Monitoring Methodology}
 \subsection{Host Management}
