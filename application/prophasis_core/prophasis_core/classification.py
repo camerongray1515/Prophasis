@@ -96,6 +96,3 @@ def list_to_lua_array(input_list):
             lua_array += "\"{}\",".format(entry)
     lua_array = "{}}}".format(lua_array[:-1]) # Remove last comma
     return lua_array
-
-if __name__ == "__main__":
-    execute_classifier(example_function, {"ok", "ok", "fail", "fail", "ok"})
