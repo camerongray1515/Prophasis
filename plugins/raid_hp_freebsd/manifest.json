@@ -1,7 +1,7 @@
 {
     "name": "HP RAID Status - FreeBSD",
     "id": "me.camerongray.proj.raid_hp_freebsd",
-    "version": 1.0,
+    "version": 1.1,
     "description": "Checks for failed disks on HP RAID controllers under FreeBSD",
     "default_n_historical": 1,
     "default_classifier": "default_classifier.lua",
