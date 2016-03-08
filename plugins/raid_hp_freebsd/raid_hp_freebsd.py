@@ -10,7 +10,7 @@ class Plugin(PluginInterface):
 
         try:
             result = subprocess.check_output("sudo camcontrol devlist",
-                shell=True)
+                shell=True).decode("UTF-8")
         except subprocess.CalledProcessError as ex:
             return PluginResult(message="ERROR: {}".format(ex.output))
 
