@@ -23,8 +23,7 @@ def main():
             "plugin_repo": os.path.join(site_data_dir("Prophasis", "Prophasis"),
                 "agent_plugin_repo"),
             "pgp_homedir": os.path.join(site_data_dir("Prophasis", "Prophasis"),
-                "agent_pgp_homedir"),
-            "enforce_pgp": True
+                "agent_pgp_homedir")
         }
 
     print("Prophasis Agent Setup Script")
@@ -140,7 +139,7 @@ def main():
         while True:
             enforce_pgp = input("Enforce PGP checks on all plugins (unsigned "
                 "plugins will not be installed) (y/n){}: ".format(
-                    "" if not file_loaded else " [{}]".format(
+                    "" if "enforce_pgp" not in config else " [{}]".format(
                         "y" if config["enforce_pgp"] else "n")
             ))
 
