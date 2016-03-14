@@ -246,9 +246,31 @@ No dependency functionality.
 	a given schedule was last executed.  If it decides that a schedule is due to be
 	executed it passes this onto the dispatcher.
 	
+\paragraph*{}
+	Figure \ref{scheduler_flowchart} describes how the scheduler operates.  Each
+	schedule has a \linebreak\texttt{start\_timestamp} which is defined by the user
+	when the schedule is created, an \texttt{interval} which is how often the
+	schedule executes and a value for \texttt{execute\_next} which is the timestamp
+	that the schedule is next to be executed.  When the scheduler starts up it first
+	gets all schedules that do not have an \texttt{execute\_next} value - These
+	are schedules that have never run.  It then calls \texttt{walk\_execute\_next}
+	which is a simple algorithm that "fast forwards" the \texttt{execute\_next}
+	value until it reaches a timestamp that is in the future.  It then retrieves
+	any schedules that are due to be executed (\texttt{execute\_next} is in the
+	past) and executes them, it then calls \texttt{walk\_execute\_next} on each of
+	these to set the \texttt{execute\_next} value to the time that the schedule
+	should be run again.  The algorithm will then wait for 1 second before
+	executing the process again. 
+	
+\begin{figure}[H]
+	\caption{Flowchart describing the operation of the scheduler}
+	\includegraphics[scale=0.7, angle=-90]{assets/scheduler_flowchart.pdf}
+	\label{scheduler_flowchart}
+\end{figure}
+	
 	
 \subsubsection{Dispatching}
-\paragraph{}
+\paragraph*{}
 	The dispatcher component of the core is responsible for issuing checks to agents
 	when they are due to be run (as decided by the scheduler).  Checks may take some
 	time to execute so executing these all in series would all be impractical. The
@@ -263,8 +285,24 @@ No dependency functionality.
 	
 \begin{figure}[H]
 	\caption{Flowchart describing the operation of the dispatcher}
-	\includegraphics[scale=0.35, angle=-90]{assets/dispatcher_flowchart.pdf}
+	\includegraphics[scale=0.8, angle=-90]{assets/dispatcher_flowchart.pdf}
 	\label{dispatcher_flowchart}
+\end{figure}
+
+\paragraph*{Communication Between Core and Agent}
+	When a check is dispatched, the core and agent communicate to first of all
+	establish if the agent already has the correct version of the plugin due to
+	be executed installed. If it does not then an update will be sent to the
+	agent.  Once this is done the core will then request the agent to execute
+	the plugin and the data will be returned for classification.  Figure
+	\ref{core_agent_communication} describes the communication between the core
+	and the agent.
+	
+\begin{figure}[H]
+	\caption{Flowchart describing the communication between the core and the agent
+		when a check is dispatched}
+	\includegraphics[scale=0.6, angle=-90]{assets/core_agent_communication.pdf}
+	\label{core_agent_communication}
 \end{figure}
 	
 \subsubsection{Classification}
@@ -544,9 +582,7 @@ No dependency functionality.
 	system will automatically fall back and classify the result as "unknown". The
 	error will also be logged within Prophasis and can be easily viewed by the
 	user in the web interface's "System Logs" area.
-	
-\subsection{Scheduling}
-		
+			
 \begin{itemize}
 	\item Scheduling
 	\item Multi-threaded dispatcher

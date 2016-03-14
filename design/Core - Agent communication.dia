@@ -13,25 +13,31 @@
           <dia:string>#A4#</dia:string>
         </dia:attribute>
         <dia:attribute name="tmargin">
-          <dia:real val="2.8222000598907471"/>
+          <dia:real val="0"/>
         </dia:attribute>
         <dia:attribute name="bmargin">
-          <dia:real val="2.8222000598907471"/>
+          <dia:real val="0"/>
         </dia:attribute>
         <dia:attribute name="lmargin">
-          <dia:real val="2.8222000598907471"/>
+          <dia:real val="0"/>
         </dia:attribute>
         <dia:attribute name="rmargin">
-          <dia:real val="2.8222000598907471"/>
+          <dia:real val="0"/>
         </dia:attribute>
         <dia:attribute name="is_portrait">
-          <dia:boolean val="true"/>
+          <dia:boolean val="false"/>
         </dia:attribute>
         <dia:attribute name="scaling">
-          <dia:real val="1"/>
+          <dia:real val="0.50369244813919067"/>
         </dia:attribute>
         <dia:attribute name="fitto">
-          <dia:boolean val="false"/>
+          <dia:boolean val="true"/>
+        </dia:attribute>
+        <dia:attribute name="fitwidth">
+          <dia:int val="1"/>
+        </dia:attribute>
+        <dia:attribute name="fitheight">
+          <dia:int val="1"/>
         </dia:attribute>
       </dia:composite>
     </dia:attribute>
@@ -65,19 +71,19 @@
   <dia:layer name="Background" visible="true" active="true">
     <dia:object type="Flowchart - Terminal" version="1" id="O0">
       <dia:attribute name="obj_pos">
-        <dia:point val="20.6006,6.25"/>
+        <dia:point val="20.0625,6.25"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="20.5506,6.2;31.8481,9.1"/>
+        <dia:rectangle val="20.0125,6.2;32.3862,9.1"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="20.6006,6.25"/>
+        <dia:point val="20.0625,6.25"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="11.197500000000003"/>
+        <dia:real val="12.27375"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="2.7999999999999998"/>
@@ -104,9 +110,9 @@
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
-            <dia:string>#Scheduler requests
-data from plugin to be
-updated#</dia:string>
+            <dia:string>#Dispatcher dispaches
+a check to be performed
+on a host#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
             <dia:font family="sans" style="0" name="Helvetica"/>
@@ -310,13 +316,13 @@ of plugin to agent#</dia:string>
     </dia:object>
     <dia:object type="Flowchart - Box" version="0" id="O6">
       <dia:attribute name="obj_pos">
-        <dia:point val="46.53,10.2375"/>
+        <dia:point val="46.4529,10.2568"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="46.48,10.1875;56.27,14.5875"/>
+        <dia:rectangle val="46.4029,10.2068;56.1929,14.6068"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="46.53,10.2375"/>
+        <dia:point val="46.4529,10.2568"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="9.6899999999999995"/>
@@ -345,7 +351,7 @@ update is requred#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="51.375,11.3825"/>
+            <dia:point val="51.2979,11.4018"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -404,14 +410,14 @@ want an update?#</dia:string>
     </dia:object>
     <dia:object type="Standard - ZigZagLine" version="1" id="O8">
       <dia:attribute name="obj_pos">
-        <dia:point val="51.375,14.5375"/>
+        <dia:point val="51.2979,14.5568"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.0472,14.4875;51.425,18.3929"/>
+        <dia:rectangle val="16.0472,14.5068;51.3479,18.3929"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="51.375,14.5375"/>
-        <dia:point val="51.375,15.1"/>
+        <dia:point val="51.2979,14.5568"/>
+        <dia:point val="51.2979,15.1"/>
         <dia:point val="16.3781,15.1"/>
         <dia:point val="16.3781,18.2811"/>
       </dia:attribute>
@@ -546,13 +552,13 @@ of plugin to agent#</dia:string>
     </dia:object>
     <dia:object type="Flowchart - Box" version="0" id="O12">
       <dia:attribute name="obj_pos">
-        <dia:point val="47,19.025"/>
+        <dia:point val="46.9422,19.0636"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="46.95,18.975;55.3,22.575"/>
+        <dia:rectangle val="46.8922,19.0136;55.2422,22.6136"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="47,19.025"/>
+        <dia:point val="46.9422,19.0636"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="8.25"/>
@@ -580,7 +586,7 @@ success#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="51.125,20.17"/>
+            <dia:point val="51.0672,20.2086"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -596,11 +602,11 @@ success#</dia:string>
         <dia:point val="30.035,12.4"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="29.985,12.057;46.6418,12.7188"/>
+        <dia:rectangle val="29.985,12.0756;46.5647,12.7375"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
         <dia:point val="30.035,12.4"/>
-        <dia:point val="46.53,12.3875"/>
+        <dia:point val="46.4529,12.4068"/>
       </dia:attribute>
       <dia:attribute name="numcp">
         <dia:int val="1"/>
@@ -624,11 +630,11 @@ success#</dia:string>
         <dia:point val="37.05,20.825"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="36.9997,20.4469;47.1118,21.1087"/>
+        <dia:rectangle val="36.9999,20.4833;47.054,21.1451"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
         <dia:point val="37.05,20.825"/>
-        <dia:point val="47,20.775"/>
+        <dia:point val="46.9422,20.8136"/>
       </dia:attribute>
       <dia:attribute name="numcp">
         <dia:int val="1"/>
@@ -652,11 +658,11 @@ success#</dia:string>
         <dia:point val="41.3651,3.95806"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="41.2443,3.90799;41.4152,53.9299"/>
+        <dia:rectangle val="41.2443,3.90798;41.4152,45.6001"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
         <dia:point val="41.3651,3.95806"/>
-        <dia:point val="41.2944,53.8798"/>
+        <dia:point val="41.2944,45.55"/>
       </dia:attribute>
       <dia:attribute name="numcp">
         <dia:int val="1"/>
@@ -667,13 +673,13 @@ success#</dia:string>
     </dia:object>
     <dia:object type="Flowchart - Box" version="0" id="O16">
       <dia:attribute name="obj_pos">
-        <dia:point val="13.9751,28.75"/>
+        <dia:point val="13.9365,28.75"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="13.9251,28.7;23.7926,31.5"/>
+        <dia:rectangle val="13.8865,28.7;23.754,31.5"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="13.9751,28.75"/>
+        <dia:point val="13.9365,28.75"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="9.7675000000000001"/>
@@ -700,7 +706,7 @@ the plugin to the agent#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="18.8589,29.895"/>
+            <dia:point val="18.8203,29.895"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -716,11 +722,11 @@ the plugin to the agent#</dia:string>
         <dia:point val="16.3781,23.6206"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.0819,23.5702;16.7437,28.8618"/>
+        <dia:rectangle val="16.0475,23.5706;16.7093,28.8618"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
         <dia:point val="16.3781,23.6206"/>
-        <dia:point val="16.417,28.75"/>
+        <dia:point val="16.3784,28.75"/>
       </dia:attribute>
       <dia:attribute name="numcp">
         <dia:int val="1"/>
@@ -744,13 +750,13 @@ the plugin to the agent#</dia:string>
         <dia:point val="51.1751,22.7"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="20.9698,22.65;51.2251,28.8618"/>
+        <dia:rectangle val="20.9313,22.65;51.2251,28.8618"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="51.1751,22.7"/>
         <dia:point val="51.1751,25.725"/>
-        <dia:point val="21.3007,25.725"/>
-        <dia:point val="21.3007,28.75"/>
+        <dia:point val="21.2622,25.725"/>
+        <dia:point val="21.2622,28.75"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -822,13 +828,13 @@ result in JSON format#</dia:string>
     </dia:object>
     <dia:object type="Standard - Line" version="0" id="O20">
       <dia:attribute name="obj_pos">
-        <dia:point val="23.7426,30.1"/>
+        <dia:point val="23.704,30.1"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="23.6926,29.7691;46.8507,30.4309"/>
+        <dia:rectangle val="23.654,29.7691;46.8507,30.4309"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
-        <dia:point val="23.7426,30.1"/>
+        <dia:point val="23.704,30.1"/>
         <dia:point val="46.7389,30.1"/>
       </dia:attribute>
       <dia:attribute name="numcp">
@@ -850,16 +856,16 @@ result in JSON format#</dia:string>
     </dia:object>
     <dia:object type="Flowchart - Box" version="0" id="O21">
       <dia:attribute name="obj_pos">
-        <dia:point val="22.7814,35.95"/>
+        <dia:point val="22.6726,35.95"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="22.7314,35.9;31.9189,38.7"/>
+        <dia:rectangle val="22.6226,35.9;32.1326,38.7"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="22.7814,35.95"/>
+        <dia:point val="22.6726,35.95"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="9.0875000000000004"/>
+        <dia:real val="9.4099999999999984"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="2.7000000000000002"/>
@@ -873,8 +879,8 @@ result in JSON format#</dia:string>
       <dia:attribute name="text">
         <dia:composite type="text">
           <dia:attribute name="string">
-            <dia:string>#Store data returned from
-agent in the database#</dia:string>
+            <dia:string>#Execute classification and
+alert logic#</dia:string>
           </dia:attribute>
           <dia:attribute name="font">
             <dia:font family="sans" style="0" name="Helvetica"/>
@@ -883,7 +889,7 @@ agent in the database#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="27.3252,37.095"/>
+            <dia:point val="27.3776,37.095"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -899,13 +905,13 @@ agent in the database#</dia:string>
         <dia:point val="50.9901,31.85"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="26.9942,31.8;51.0402,36.0115"/>
+        <dia:rectangle val="27.0467,31.8;51.0402,36.0115"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="50.9901,31.85"/>
         <dia:point val="50.9901,33.8748"/>
-        <dia:point val="27.3252,33.8748"/>
-        <dia:point val="27.3252,35.8997"/>
+        <dia:point val="27.3776,33.8748"/>
+        <dia:point val="27.3776,35.8997"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -1001,14 +1007,14 @@ agent in the database#</dia:string>
     </dia:object>
     <dia:object type="Standard - Line" version="0" id="O24">
       <dia:attribute name="obj_pos">
-        <dia:point val="27.3252,38.65"/>
+        <dia:point val="27.3776,38.65"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="27.0278,38.5995;27.6896,42.537"/>
+        <dia:rectangle val="27.045,38.6;27.7068,42.537"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
-        <dia:point val="27.3252,38.65"/>
-        <dia:point val="27.3644,42.4252"/>
+        <dia:point val="27.3776,38.65"/>
+        <dia:point val="27.3756,42.4252"/>
       </dia:attribute>
       <dia:attribute name="numcp">
         <dia:int val="1"/>
