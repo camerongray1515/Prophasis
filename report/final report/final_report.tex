@@ -625,12 +625,12 @@ No dependency functionality.
 	key.  A Python decorator (\texttt{@requires\_auth}) is applied to functions
 	that require authentication which will verify the authentication token and only
 	allow the function to execute if the token is correct, otherwise it will
-	respond with HTTP error 401 (Unauthorised). Using a decorator dad
-
-\begin{itemize}
-	\item Communication
-	\item Authentication
-\end{itemize}
+	respond with HTTP error 401 (Unauthorised). Using a decorator keeps
+	authentication logic out of the body of the function which ensures that the
+	user is authenticated before the function is even entered.  This prevents
+	errors such as the authentication check being moved after some restricted
+	functionality or accidentally being removed during changes to the function
+	body.
 
 \chapter{Testing}
 \begin{itemize}
