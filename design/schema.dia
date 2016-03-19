@@ -25,10 +25,10 @@
           <dia:real val="2.8222000598907471"/>
         </dia:attribute>
         <dia:attribute name="is_portrait">
-          <dia:boolean val="true"/>
+          <dia:boolean val="false"/>
         </dia:attribute>
         <dia:attribute name="scaling">
-          <dia:real val="0.18150225281715393"/>
+          <dia:real val="0.28433576226234436"/>
         </dia:attribute>
         <dia:attribute name="fitto">
           <dia:boolean val="true"/>

@@ -5,7 +5,7 @@
         "me.camerongray.proj.memory_usage_percentage": {"value": 20, "message": ""}
     },
     "127.0.0.2:4048": {
-        "me.camerongray.proj.heartbeat": {"value": 0, "message": "ok"},
+        "me.camerongray.proj.heartbeat": {"value": 0, "message": "no"},
         "me.camerongray.proj.cpu_load_percentage": {"value": 20, "message": ""},
         "me.camerongray.proj.memory_usage_percentage": {"value": 20, "message": ""}
     },
@@ -22,7 +22,7 @@
     "127.0.0.5:4048": {
         "me.camerongray.proj.heartbeat": {"value": 0, "message": "ok"},
         "me.camerongray.proj.cpu_load_percentage": {"value": 20, "message": ""},
-        "me.camerongray.proj.memory_usage_percentage": {"value": 20, "message": ""}
+        "me.camerongray.proj.memory_usage_percentage": {"value": 60, "message": ""}
     },
     "127.0.0.255:4048": {
         "me.camerongray.proj.heartbeat": {"value": 0, "message": "ok"},

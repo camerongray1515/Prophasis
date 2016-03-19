@@ -3,6 +3,7 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{courier}
+\usepackage{wrapfig}
 
 \title{Prophasis - An IT Infrastructure Monitoring Solution}
 \author{Cameron Gray}
@@ -318,6 +319,7 @@ No dependency functionality.
 \end{figure}
 
 \subsubsection{Classification}
+\label{core-classification}
 \paragraph*{}
 	When data is collected from an agent, it needs to be classified as "ok",
 	"major", "minor", "critical" or "unknown".  Classification is performed by lua
@@ -363,6 +365,10 @@ No dependency functionality.
 	of messages or any other way that suits the type of data collected.
 
 \section{Monitoring Methodology}
+\paragraph*{}
+	This section explains how Prophasis is laid out and introduces terminology used
+	throughout the system.
+
 \subsection{Host Management}
 \paragraph*{}
 	In Prophasis, a "host" refers to a single machine that is being monitored. To
@@ -401,6 +407,7 @@ No dependency functionality.
 	CPU load and memory across all hosts in the "Webservers" host group.
 
 \subsection{Schedules}
+\label{methodology-schedules}
 \paragraph*{}
 	A schedule defines when one or more checks are to be executed.  Each schedule
 	can contain multiple "intervals" which define when the check is run.  An
@@ -448,6 +455,20 @@ No dependency functionality.
 	example, if a redundant service becomes degraded, a SMS or email message may be
 	sufficient but if a service becomes critical it may be desirable to use a
 	telephone call to gain quicker attention.
+
+\section{User Interface}
+\paragraph*{}
+	The nature of a monitoring system means that it will often need to be used from
+	mobile devices when systems need to be checked on the move or out of hours.
+	Therefore Prophasis's web interface must work correctly on both mobile devices
+	and conventional desktops and laptops.  It was therefore decided to build a
+	responsive web interface that will scale automatically based on the screen size
+	of the device without any loss of functionality.
+	
+\paragraph*{}
+	In order to keep Prophasis as intuitive as possible, the user interface should
+	contain clear explanations of different functionality as well as help text and
+	detailed error messages.
 
 \chapter{Implementation}
 \section{Technologies}
@@ -519,6 +540,19 @@ No dependency functionality.
 	correct directory no matter if Prophasis is installed on Linux, BSD, Windows
 	or an other supported platform.
 
+\subsection{AdminLTE \& Bootstrap}
+\paragraph*{}
+	AdminLTE is an open source theme for building administration dashboards and
+	control panels.  It is MIT licensed and is therefore compatible with the MIT
+	licence Prophasis is built under.  AdminLTE is built on top of Twitter's
+	Bootstrap framework which is well supported with a large range of plugins
+	available.  AdminLTE and Bootstrap have extensive support for responsive user
+	interfaces and therefore very little manual work needs to be done to make the
+	user interface responsive to work well on both desktop and mobile devices.
+
+\subsection{Handlebars.js}
+%TODO Write this!
+
 \section{Plugin Interface}
 \begin{itemize}
 	\item Explain structure of a plugin
@@ -527,11 +561,6 @@ No dependency functionality.
 \end{itemize}
 
 \section{Database Design}
-
-\section{Web Interface}
-\begin{itemize}
-	\item Go into detail about web structure WRT templates, assets.etc
-\end{itemize}
 
 \section{Core}
 \subsection{Dispatcher}
@@ -639,6 +668,119 @@ No dependency functionality.
 	errors such as the authentication check being moved after some restricted
 	functionality or accidentally being removed during changes to the function
 	body.
+	
+\section{Web Interface}
+\subsection{Configuration}
+\paragraph*{}
+	All of the different configuration options are accessible through a clearly
+	organised menu displayed on every page.  This allows the user to access all of
+	the different configuration options from a single location.  This navigation
+	bar can be seen in Figure \ref{settings-nav}.
+
+\begin{figure}[H]
+	\centering
+	\caption{The "settings" navigation bar}
+	\label{settings-nav}
+	\includegraphics[scale=0.7]{assets/screenshots/settings-nav.pdf}
+\end{figure}
+	
+\paragraph*{}
+	Clicking each of these links will take the user to the management area for
+	that section allowing them to configure that part of the system.  The first
+	page of any of these sections is an index page that lists all objects (e.g.
+	plugins or alerts) in the section with options to manage each of them as well
+	as providing a link to add new objects.  An example of the index page for
+	alerts can be seen in Figure \ref{alerts-index}.  This page lists all alerts
+	in the system and provides buttons to edit, delete and test them. There is
+	also a button allowing the user to add new alerts to the system.
+	
+\begin{figure}[H]
+	\caption{The alerts index page}
+	\label{alerts-index}
+	\includegraphics[scale=0.55]{assets/screenshots/alerts-index.pdf}
+\end{figure}
+	
+\paragraph*{}
+	When the user chooses to add or edit an object a form is loaded.  The add and
+	edit forms are both rendered using the exact same template files ensuring that
+	both forms are consistent.  A \texttt{method} parameter is passed into these
+	templates which is set to either "add" or "edit".  This is used to adjust the
+	template.  Figure \ref{edit-check} shows the form for editing a check.
+
+\begin{figure}[H]
+	\caption{The Edit Check form}
+	\label{edit-check}
+	\includegraphics[scale=0.45]{assets/screenshots/edit-check.pdf}
+\end{figure}	
+
+\paragraph*{}
+	This form has a pair of text boxes to specify a name and description for the
+	check and then a pair of lists of checkboxes: the first lists hosts and host
+	groups that the check will be executed on and the second lists plugins that
+	will be executed on those hosts when the check is run.  The search boxes above
+	each of these lists will filter the list to entries that contain the search
+	term. This search system is provided entirely in Javascript and is generic
+	enough to be applied to any HTML table by simply specifying some classes and
+	HTML5 data attributes.  These search boxes are applied to any tables in the
+	system which may contain a lot of items.
+	
+\paragraph*{Code editing}
+	As described in Section \ref{core-classification}, Lua code is used to classify
+	the results retrieved from plugins.  In order to maintain the ability to manage
+	everything through the web interface, it needs to be possible to edit this code
+	through the web interface.  For this, the
+	CodeMirror\footnote{https://codemirror.net/} editor is used which provides an
+	editor with syntax highlighting and support for using the tab key to indent
+	blocks of code as well as intelligently handling indentation when pressing
+	return.  The form for editing classification code can be seen in Figure
+	\ref{set-thresholds}.
+
+\begin{figure}[H]
+	\caption{The form for editing classification Lua code}
+	\label{set-thresholds}
+	\includegraphics[scale=0.45]{assets/screenshots/set-thresholds.pdf}
+\end{figure}
+
+\paragraph*{Schedules}
+	As described in Section \ref{methodology-schedules}, a schedule is used to
+	define when to execute one or more checks.  The interface for this includes the
+	usual form fields for a name for and description of the schedule as well as a
+	checkbox list of available checks to execute.  This page also has additional
+	functionality to configure the time intervals at which the schedule is run. This
+	can be seen in Figure \ref{schedule-intervals}.  Each interval has fields to
+	specify the start time for the schedule as well as a text box and drop down menu
+	to enter the interval period.  The green "Add Interval" button will add another
+	row to this list allowing more intervals to be added and the red "X" button will
+	remove the row it's in from the table.  This is all handled purely in frontend
+	Javascript.
+	
+\begin{figure}[H]
+	\caption{Form for managing the intervals for a schedule}
+	\label{schedule-intervals}
+	\includegraphics[scale=0.54]{assets/screenshots/schedule-intervals.pdf}
+\end{figure}
+
+\paragraph*{}
+	In order to display confirmation messages to users,
+	Bootbox.js\footnote{http://bootboxjs.com/} is used which provides a convenient
+	abstraction around Bootstrap's build in modal functionality.  This allows
+	confirmation messages to be displayed to users without any manual HTML markup
+	and responses to be collected straight into Javascript.  An example of a
+	confirmation message can be seen in Figure \ref{bootbox-delete}.
+
+\begin{figure}[H]
+	\centering
+	\caption{The confirmation message displayed when deleting a plugin}
+	\label{bootbox-delete}
+	\includegraphics[scale=0.6]{assets/screenshots/bootbox-delete.pdf}
+\end{figure}
+
+%TODO Section about service editing
+
+\begin{itemize}
+	\item Go into detail about web structure WRT templates, assets.etc
+\end{itemize}
+
 
 \chapter{Testing}
 \begin{itemize}
