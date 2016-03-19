@@ -508,8 +508,16 @@ No dependency functionality.
 	database platforms such as MySQL or Oracle.  SQLAlchemy transparently handles
 	the difference between different database platforms when generating its
 	queries.
-
-\subsection{File path thingy}
+	
+\subsection{Appdirs}
+\paragraph*{}
+	Prophasis has been designed to support a variety of different operating
+	systems.  Different platforms have different conventions for where an
+	application should store configuration files and other application data.
+	Appdirs is a Python library that works out the correct path for various types
+	of files for the detected platform.  This means that files are stored in the
+	correct directory no matter if Prophasis is installed on Linux, BSD, Windows
+	or an other supported platform.
 
 \section{Plugin Interface}
 \begin{itemize}
