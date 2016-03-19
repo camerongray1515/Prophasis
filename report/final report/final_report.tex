@@ -50,13 +50,13 @@ monitoring.}
 	
 \section{Current Landscape}
 \paragraph*{}
-This section will review current IT infrustructure monitoring systems and evaluate them on
+This section will review current IT infrastructure monitoring systems and evaluate them on
 several points as follows:
 \begin{itemize}
 	\item Support for timeseries monitoring and real time alerting
 	\item How they can be configured to monitor custom metrics
 	\item How are alert thresholds defined
-	\item How configuration and custom code is delivered to nodes (if requried)
+	\item How configuration and custom code is delivered to nodes (if required)
 	\item How the user configures the system
 	\item How dependencies are handled
 \end{itemize}
@@ -496,6 +496,8 @@ No dependency functionality.
 	database platforms such as MySQL or Oracle.  SQLAlchemy transparently handles
 	the difference between different database platforms when generating its
 	queries.
+	
+\subsection{File path thingy}
 
 \section{Plugin Interface}
 \begin{itemize}
@@ -589,6 +591,31 @@ No dependency functionality.
 \end{itemize}
 
 \section{Agent}
+\paragraph*{}
+	The agent is implemented using the Flask web framework to expose a HTTPS API
+	that the core communicates with.  Requests are sent to the agent using regular
+	HTTP GET and POST requests with information passed using URL parameters or HTTP
+	form data respectively.  Responses are formatted as JSON.  The Tornado HTTP
+	server is used to handle incoming HTTP connections and communicates with Flask
+	through using uWSGI.
+	
+\paragraph*{Authentication}
+	In order to prevent unauthorised actions being performed on the agent, the core
+	must authenticate with every request.  The agent stores a hash of a long
+	authentication key in its configuration file. This key is generated on agent 
+	installation and is different for every agent. This ensures that if the key for
+	one agent is obtained, an attacker cannot access every other agent on the network.
+	Storing a hash means that if someone was able to read the agent configuration file
+	they cannot obtain the authentication key which could have allowed them to execute
+	code as the agent's user which may have higher privileges than their user.
+	HTTP's basic access authentication is used which allows a username and password
+	to be easily sent along with an HTTP request, in this situation the username is "core"
+	and the password is the authentication key.  A Python decorator
+	(\texttt{@requires\_auth}) is applied to functions that require authentication which
+	will verify the authentication token and only allow the function to execute if the
+	token is correct, otherwise it will respond with HTTP error 401 (Unauthorised).
+	Using a decorator dad
+	
 \begin{itemize}
 	\item Communication
 	\item Authentication
