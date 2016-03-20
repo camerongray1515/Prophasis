@@ -816,6 +816,65 @@ No dependency functionality.
 	\includegraphics[scale=0.44]{assets/screenshots/edit-service-modal.pdf}
 \end{figure}
 
+\subsection{Reporting}
+\paragraph*{}
+	In addition to being used to configure the system, the web interface is also
+	used to visualise the collected data.  There are currently two reports, one
+	to show the health of all hosts in the system and another to show the health
+	of all services.  There is scope to add more reports to give different views
+	of the data.  
+\subsubsection{Host Health}
+\paragraph*{}
+	Figure \ref{host-health-index} shows the host health report for
+	a selection of machines.  This report lists all the machines in the system
+	as well as displaying their health in both a textual and colour representation.
+	The results here are sorted in order from least to most healthy.  This ensures
+	that even in a network with a large number of systems, unhealthy hosts will not
+	go unnoticed due to being buried deep inside a list, especially on the small
+	screens of mobile devices.
+	
+\begin{figure}[H]
+	\centering
+	\caption{The index page for the Host Health report}
+	\label{host-health-index}
+	\includegraphics[scale=0.7]{assets/screenshots/host-health-index.pdf}
+\end{figure}
+
+\paragraph*{}
+	Clicking on any of these hosts will open a page displaying more detailed
+	breakdowns of the data stored for that host.  This is where the timeseries
+	data can be visualised.  Figure \ref{host-information} shows a sample
+	output of timeseries data collected from a running server.  This shows both
+	the status of the Linux MD RAID devices as well as a graph of CPU load
+	showing a large spike due to a RAID consistency check that occurred on the
+	machine.  At the top of this report are a pair of inputs allowing the time
+	period that the data represents to be specified.
+
+\begin{figure}[H]
+	\centering
+	\caption{The host information page showing timeseries data for a single host}
+	\label{host-information}
+	\includegraphics[scale=0.43]{assets/screenshots/host-information.pdf}
+\end{figure}
+
+\subsubsection{Service Health}
+\paragraph*{}
+	In order to give a view of the overall health of the services running on a
+	system or to show the impact that a fault with a host has on the overall
+	functionality of a system, a report is available to list the health of all
+	services.  This is shown in Figure \ref{service-health-index}. Like the
+	Host Health report, the services are ordered to show the services with the most
+	serious condition first.  As can be seen, services have an additional health
+	status of "Degraded" which means that while a service is operating normally,
+	one of its redundant components is experiencing an issue.
+
+\begin{figure}[H]
+	\centering
+	\caption{Page showing the overall health of all services in the system}
+	\label{service-health-index}
+	\includegraphics[scale=0.6]{assets/screenshots/service-health-index.pdf}
+\end{figure}
+
 \begin{itemize}
 	\item Go into detail about web structure WRT templates, assets.etc
 \end{itemize}
