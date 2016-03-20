@@ -415,6 +415,7 @@ No dependency functionality.
 	is to be implemented.
 
 \subsection{Services}
+\label{methodology-services}
 \paragraph*{}
 	Services can be used to define a more fine grained representation of how the
 	availability of a host affects the performance of the system overall.  A
@@ -777,7 +778,43 @@ No dependency functionality.
 	\includegraphics[scale=0.6]{assets/screenshots/bootbox-delete.pdf}
 \end{figure}
 
-%TODO Section about service editing
+\paragraph*{Services}
+	As described in Section \ref{methodology-services}, services are comprised of
+	one or more dependencies or redundancy groups.  Redundancy groups in turn are
+	comprised of one or more hosts or host groups.  Building a user interface to
+	represent this was particularly challenging as data needed to be represented
+	clearly and be intuitive to edit.  The finished interface can be seen in
+	Figure \ref{edit-service}.
+	
+\begin{figure}[H]
+	\centering
+	\caption{The user interface for editing services}
+	\label{edit-service}
+	\includegraphics[scale=0.44]{assets/screenshots/edit-service.pdf}
+\end{figure}
+
+\paragraph*{}
+	In this interface, dependencies and redundancy groups are represented as boxes
+	each containing the host(s) and host group(s) that are a member of that
+	dependency or redundancy group.  Individual hosts can be added to redundancy
+	groups by clicking the "Add Item" button or removed by clicking the red "X"
+	next to it.  Entire dependencies can be removed by clicking the red "X" in the
+	top right of the box.  To select hosts or host groups to create a dependency
+	or to add to a redundancy group, a Bootstrap modal dialog is displayed as
+	shown in Figure \ref{edit-service-modal}.  On this form, HTML5 data attributes
+	are used to attach data such as IDs to the actual DOM elements that represent
+	the structure of the service.  When the form is saved, Javascript is used to
+	serialise this structure for processing.  This massively simplifies the code
+	as adding and removing dependencies, redundancy groups, hosts.etc can be
+	handled entirely in the DOM without having to also maintain a Javascript data
+	structure at the same time.
+	
+\begin{figure}[H]
+	\centering
+	\caption{The modal dialog for selecting hosts and host groups}
+	\label{edit-service-modal}
+	\includegraphics[scale=0.44]{assets/screenshots/edit-service-modal.pdf}
+\end{figure}
 
 \begin{itemize}
 	\item Go into detail about web structure WRT templates, assets.etc
