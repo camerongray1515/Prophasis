@@ -456,6 +456,31 @@ No dependency functionality.
 	example, if a redundant service becomes degraded, a SMS or email message may be
 	sufficient but if a service becomes critical it may be desirable to use a
 	telephone call to gain quicker attention.
+	
+\subsection{Classification}
+	A classification defines how serious or important the data from a plugin is,
+	for example, the CPU load being slightly higher than normal would probably be
+	classed as a minor issue whereas a system not responding to checks from
+	Prophasis would be likely to be classed as a critical issue. Table
+	\ref{table-classifications} lists all the different classifications ordered
+	by severity.
+	
+\begin{table}[H]
+	\centering
+	\caption{Different classifications that can be given to data ordered by severity}
+	\label{table-classifications}
+    \begin{tabular}{|c|l|l|}
+    \hline
+    Severity     & Classification & Notes                                       \\ \hline
+    Most severe  & Critical       & ~                                           \\
+    \vdots       & Major          & ~                                           \\
+    \vdots       & Minor          & ~                                           \\
+    \vdots       & Degraded       & Only applies to services                    \\
+    \vdots       & Unknown        & ~                                           \\
+    \vdots       & Ok             & ~                                           \\
+    Least severe & No data        & Plugin has never been executed on this host \\ \hline
+    \end{tabular}
+\end{table}
 
 \section{User Interface}
 \paragraph*{}
