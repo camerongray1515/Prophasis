@@ -552,7 +552,17 @@ No dependency functionality.
 	user interface responsive to work well on both desktop and mobile devices.
 
 \subsection{Handlebars.js}
-%TODO Write this!
+	Handlebars.js is a very lightweight Javascript templating engine.  It is used
+	in the frontend of the web interface for rendering portions of the page that
+	are generated after the page has loaded, for example alerts and items that are
+	dynamically added to the DOM such as dependencies when editing services or
+	intervals when editing schedules.  This means that any HTML logic can be
+	totally separated from the Javascript source code.  Unfortunately Handlebars
+	templates are slightly different to Jinja2 ones.  For simply filling in
+	placholders they are compatible with one another however, more advanced
+	functionality such as conditionals and loops require slightly different syntax.
+	Therefore care must be taken when rendering the same template with both Jinja2
+	and handlebars.
 
 \section{Plugin Interface}
 \begin{itemize}
@@ -673,6 +683,16 @@ No dependency functionality.
 	body.
 	
 \section{Web Interface}
+\paragraph*{}
+	The web interface is implemented using the Flask web framework.  The frontend
+	is built using AdminLTE which in turn is based on Twitter's Bootstrap
+	framework.  The web interface is built to be fully responsive so that it
+	performs equally as well on both desktop and mobile devices.  The Jinja2
+	templating engine is used to render the pages from HTML templates.  This allows
+	certain pieces of template logic to be reused preventing code duplication and
+	enforces a clear separation of logic between the processing and templating
+	logic.
+
 \subsection{Configuration}
 \paragraph*{}
 	All of the different configuration options are accessible through a clearly
@@ -873,6 +893,22 @@ No dependency functionality.
 	\caption{Page showing the overall health of all services in the system}
 	\label{service-health-index}
 	\includegraphics[scale=0.6]{assets/screenshots/service-health-index.pdf}
+\end{figure}
+
+\paragraph*{}
+	Clicking on each of these services will load a view that shows the status of
+	all hosts in the service as well as how they are structured in terms of
+	dependencies and redundancy groups.  This is shown in Figure
+	\ref{service-information}.  Clicking on each of the hosts on this page loads
+	the host information view as shown above.  This view clearly shows the reason
+	for a service's health status and allows issues affecting a service to be
+	clearly seen.
+
+\begin{figure}[H]
+	\centering
+	\caption{Page showing the overall health of all services in the system}
+	\label{service-information}
+	\includegraphics[scale=0.44]{assets/screenshots/service-information.pdf}
 \end{figure}
 
 \begin{itemize}
