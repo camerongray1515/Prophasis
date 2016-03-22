@@ -1,9 +1,9 @@
 import unittest
-import sys
+import os
 from prophasis_common.models import create_all, session, Host, PluginResult,\
     Plugin, CheckPlugin,Check, HostGroup, HostGroupAssignment, CheckAssignment
 
-sys.under_unittest = True
+os.environ["UNDER_TEST"] = "1"
 
 class TestHostHealth(unittest.TestCase):
     def setUp(self):

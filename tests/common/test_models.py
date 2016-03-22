@@ -1,4 +1,6 @@
 import unittest
+import os
+os.environ["UNDER_TEST"] = "1"
 from prophasis_common.models import create_all, drop_all, session, Host,\
     HostGroup, HostGroupAssignment, Plugin, PluginResult, Service,\
     ServiceDependency, RedundancyGroup, RedundancyGroupComponent, Alert,\

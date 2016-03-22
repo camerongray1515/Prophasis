@@ -12,13 +12,13 @@ from copy import deepcopy
 config = get_config()
 
 connection_string = get_config_value(config, "db_connection_string")
-def initialise():
-    global engine, Session, session
-    engine = create_engine(connection_string)
-    Session = sessionmaker(bind=engine)
-    session = scoped_session(Session)
 
-initialise()
+if "UNDER_TEST" in os.environ:
+    connection_string = "sqlite://"
+
+engine = create_engine(connection_string)
+Session = sessionmaker(bind=engine)
+session = scoped_session(Session)
 
 Base = declarative_base()
 Base.query = session.query_property()
