@@ -1,7 +1,7 @@
 import unittest
 import sys
-from models import create_all, session, Host, PluginResult, Plugin, CheckPlugin\
-    ,Check, HostGroup, HostGroupAssignment, CheckAssignment
+from prophasis_common.models import create_all, session, Host, PluginResult,\
+    Plugin, CheckPlugin,Check, HostGroup, HostGroupAssignment, CheckAssignment
 
 sys.under_unittest = True
 

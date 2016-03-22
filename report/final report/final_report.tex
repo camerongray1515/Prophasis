@@ -2,8 +2,8 @@
 
 \usepackage{graphicx}
 \usepackage{float}
-\usepackage{courier}
 \usepackage{wrapfig}
+\usepackage{listings}
 
 \title{Prophasis - An IT Infrastructure Monitoring Solution}
 \author{Cameron Gray}
@@ -658,7 +658,9 @@ No dependency functionality.
 	object, changing it's attributes and committing the session.  It is also
 	transactional which means that changes can be staged up and then either
 	committed or rolled back, this is ideal as it makes it easy to abort from
-	changes to the database in the event of an error.
+	changes to the database in the event of an error.  This also provides
+	functionality to make multiple database operations atomic, this is important
+	since there are multiple processes/threads writing to the same database.
 	
 \paragraph*{}
 	Figure \ref{database-diagram} shows a diagram that represents the structure
@@ -1034,6 +1036,78 @@ No dependency functionality.
 
 
 \chapter{Testing}
+\section{Unit Testing}
+\paragraph*{}
+	Unit tests are used to test the more complex functionality of the system such
+	as getting all member hosts in a host group or determining the overall health
+	of a host or service.  These algorithms are somewhat complex so having unit
+	tests is useful to both verify the functionality during development as well
+	as to ensure this functionality is not broken by changes to other parts of the
+	system.  The Python \texttt{unittest} library is used as it included as part of
+	a standard Python install and is well documented.
+	
+\paragraph*{}
+	Each test case is implemented as a single class with each different test in a
+	separate function within this.  Each \texttt{TestCase} has a \texttt{setUp()}
+	method which is called before each test in the class is executed.  The
+	\texttt{setUp()} method will drop all database tables, recreate the database
+	structure from the models file and will then insert sample data for use in the
+	tests.  This ensures that every test starts on a clean database.
+	
+\paragraph*{}
+	In order to prevent tests from affecting the main database or requiring a new
+	database to be set up, SQLite is used.  A temporary, in memory database is
+	created when the tests are executed which is then destroyed when the tests are
+	completed.  The SQLAlchemy ORM completely transparently handles the differences
+	between PostgreSQL and SQLite therefore requiring no changes to the database
+	code for use during testing.
+	
+\section{Mock Agent}
+\paragraph*{}
+	When developing and testing Prophasis, it is important to be able to simulate a
+	network of multiple machines all being monitored and in addition to this it
+	is useful to be able to simulate faults with these machines. While it would be
+	possible to run multiple agents and then use plugins to return data and to
+	simulate faults this is impractical to set up, run and maintain.
+	
+\paragraph*{}
+	As a solution to this, a mock agent was developed.  This is a simple application
+	that implements enough of the agent's functionality to allow the core to
+	communicate with it as though it is a regular agent.  It does not use plugins
+	and instead reads the data to respond with from a JSON file stored on disk. The
+	agent's \texttt{ping} method is implemented as normal, the
+	\texttt{check\_plugin\_version} method always responds saying that an update for
+	the plugin is not required (this means we don't need to implement the
+	\texttt{update\_plugin} method).  The \texttt{get\_plugin\_data} method is then
+	used to read the JSON file and respond with the appropriate data. Figure
+	\ref{mock-agent-data} shows an example of the JSON file used by the agent.
+	
+\begin{figure}[H]
+	\caption{An example of the JSON file read by the mock agent}
+	\label{mock-agent-data}
+	\lstinputlisting[basicstyle=\footnotesize\ttfamily,frame=single]{assets/mock-agent-data.json}
+\end{figure}
+	
+\paragraph*{}
+	In order to keep the mock agent simple, it listens on a single port (4048, the
+	same as the regular agent).  The mock agent binds to all available IP addresses
+	on the system and it uses the destination IP address to determine which data it
+	is to respond with.  In my usage I simply ran the mock agent on the same machine
+	as the core and used loopback IP addresses picked from \texttt{127.0.0.0/8} to
+	add multiple mock agents to the system giving each a different IP addresses.
+	Each of these IP addresses is used as a key in the JSON file which maps to a
+	JSON schema containing plugin IDs mapped to the data that should be sent in
+	response to requests for that plugin.
+	
+\paragraph*{}
+	The JSON file is read every time a request reaches the mock agent.  This means
+	that the test data can be changed on the fly while the mock agent is running by
+	simply changing the data in the file and saving it.  For example, to test what
+	happens if the CPU load on a machine is too high one can simply change the
+	value in the JSON file to the new CPU load and save it, the next time the CPU
+	load plugin is executed on that specific agent, the new CPU load will then be
+	sent out.
+	
 \begin{itemize}
 	\item Unit testing
 	\item Use within Tardis \& Lynchpin

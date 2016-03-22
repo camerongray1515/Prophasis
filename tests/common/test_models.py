@@ -1,11 +1,12 @@
 import unittest
-from models import create_all, drop_all, session, Host, HostGroup,\
-    HostGroupAssignment, Plugin, PluginResult, Service, ServiceDependency,\
-    RedundancyGroup, RedundancyGroupComponent, Alert, AlertCheckEntity, Check,\
-    AlertRestrictToEntity
+from prophasis_common.models import create_all, drop_all, session, Host,\
+    HostGroup, HostGroupAssignment, Plugin, PluginResult, Service,\
+    ServiceDependency, RedundancyGroup, RedundancyGroupComponent, Alert,\
+    AlertCheckEntity, Check, AlertRestrictToEntity
 
 class TestGetHostMembersip(unittest.TestCase):
     def setUp(self):
+        session.commit()
         drop_all()
         create_all()
 
@@ -80,6 +81,7 @@ class TestGetHostMembersip(unittest.TestCase):
 
 class TestGetHostHeatlh(unittest.TestCase):
     def setUp(self):
+        session.commit()
         drop_all()
         create_all()
         # Insert all plugins
@@ -177,6 +179,7 @@ class TestGetHostHeatlh(unittest.TestCase):
 
 class TestHostAlerts(unittest.TestCase):
     def setUp(self):
+        session.commit()
         drop_all()
         create_all()
 
@@ -222,6 +225,7 @@ class TestHostAlerts(unittest.TestCase):
 
 class TestService(unittest.TestCase):
     def setUp(self):
+        session.commit()
         drop_all()
         create_all()
         session.add(Plugin(id="Plugin", name="Plugin"))
@@ -389,6 +393,7 @@ class TestService(unittest.TestCase):
 
 class TestAlertRestriction(unittest.TestCase):
     def setUp(self):
+        session.commit()
         drop_all()
         create_all()
 
