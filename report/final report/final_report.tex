@@ -62,106 +62,92 @@ evaluate them on several points as follows:
 	\item How dependencies are handled
 \end{itemize}
 
-\subsection{Nagios}
-\paragraph*{Timeseries monitoring and real time alerting}
-Nagios is primarily focused at real time alerting and therefore has very little
-in the way of timeseries monitoring.  Additional plugins are available which can
-be used to graph metrics over time but these cannot be used to make decisions on
-the status of a given system or service. All that is supported in terms of
-alerting on historical data is to refrain from alerting until a given condition
-has been observed in the previous $n$ checks, there is no support for alerting
-based on trends in historical data.  Supports basic display of changes in state
-of hosts/services over time but not individual metrics.
+\subsection{Time series monitoring and real time alerting}
+\paragraph*{}
+	This is a section where there appears to be a lack of tools that support both
+	time series monitoring as well as real time alerting in any reasonable capacity.
+	Nagios and Icinga2 are mainly focused on real time alerting so do not have much
+	in the way of support for time series monitoring.  Additional plugins are
+	available to perform basic graphing functionality however historical data
+	cannot be used to make decisions when it comes to determining the overall
+	health of a host. In contrast, Munin is designed primarily as a tool for time
+	series monitoring.  Therefore it has extensive functionality for graphing
+	collected data but has no built in support for alerting about faults or working
+	out the health of a system.
+	
+\paragraph*{}
+	This identifies an issue where there is no single tool that performs well for
+	both real time alerting as well as time series monitoring.  This means that
+	in order to gain both of these, two separate tools (e.g. Nagios and Munin)
+	need to be installed, configured and maintained completely separately.
 
-\paragraph*{Support for custom metrics}
-Nagios has support for custom metrics through the NRPE (Nagios Remote Plugin
-Executor) plugin. These plugins can be any sort of executable which prints out a
-message to represent the data read as well as a specific exit code which defines
-the status, for example "OK", "Critical" .etc
+\subsection{Support for Custom Metrics}
+\paragraph*{}	
+	Nagios, Icinga 2 and Munin all operate in similar ways here through the use of
+	simple scripts that can be written in any language.  Both Nagios and Icinga 2
+	execute the shell script and use the exit code to determine the health of the
+	output (e.g. Exit code 0 means "OK" and exit code 2 means "CRITICAL").  They
+	also read data from stdout which can contain more information about the status
+	of the check.  Munin plugins are similar where the field name and a numerical
+	value are written to stdout and then picked up by the plugin.  Plugins must 
+	also, when passed "config" as a command line argument, print out information
+	such as the title of the graph.
+	
+\paragraph*{}
+	In this area, current tools are all very much the same in the sense that they
+	execute scripts and parse the output. This can be quite fragile as a badly
+	written script could fairly easily output data in the wrong format. Using exit
+	codes to output the overall health of a check is also very restrictive as
+	described in subsection \ref{classification-threshold-definitions}.
 
-\paragraph*{Alert threshold definition}
-Thresholds for NRPE agents must be set on the remote server itself.  These
-thresholds are passed into the remote plugin as an argument when it is executed
-and are used internally by the script to output the appropriate alert level.
+\subsection{Classification Threshold Definitions}
+\label{classification-threshold-definitions}
+\paragraph*{}
+	Both Nagios and Icinga2 classify the result of a check within the plugin itself
+	by the plugin exiting with the appropriate exit code to define the result. This
+	means that the thresholds are also generally stored inside the plugin script.
+	Because Munin does not support real time alerting, there is no support for
+	classifying data.
+	
+\paragraph*{}
+	This is a clear issue with current systems, all classification is performed on
+	remote machines meaning that the logic used for this along with any threshold
+	values are located on every machine in the network making it difficult to
+	update. This also means that classifications can only use the current data
+	collected and can't easily use historical data when deciding on a
+	classification.
 
-\paragraph*{Code/Config delivery to nodes}
-Nagios does not have any in built functionality to distribute configuration
-files or plugin code to remote nodes. In order to automate this, additional
-software such as Puppet would be required.
+\subsection{Code/Configuration Delivery to Nodes}
+\paragraph*{}
+	Nagios, Icinga2 and Munin are configured through several different
+	configuration files and scripts stored on the disks of the server running the
+	monitoring as well as the hosts being monitored.  There is no built in
+	functionality in any of these tools for distributing these files to their
+	respective machines.  For this, separate configuration management tools such as
+	Puppet or Chef would need to be used.
+	
+\paragraph*{}
+	This is a clear area for improvement, in a small business environment with a
+	limited number of machines, each with their own, separate role, often
+	configuration management tools are not deployed.  Deploying an existing tool
+	in an environment like this would be time consuming as configuration would need
+	to be manually copied between hosts and editing the configuration later on
+	would be a manual process of logging into every machine and changing the
+	configuration files manually which always risks creating discrepancies between
+	hosts if one gets missed during an update or updated incorrectly.
 
-\paragraph*{How the user configures the system}
-Configuration for Nagios is primarily managed through text files stored on disk.
-Third party configuration tools are available to allow the system to be
-configured through a web interface. Configuration lives on both the Nagios
-server as well as on the machines being monitored.
-
-\paragraph*{How dependencies are handled}
-Rigid tree - No way to define that a service/host is dependent on a given host
-OR another host being available.  This reduces its usefulness in modern networks
-where redundancy and failover is commonplace. These are defined in config files
-that live on the Nagios server.
-
-\subsection{Icinga 2}
-\paragraph*{Timeseries monitoring and real time alerting}
-Like Nagios, Icinga's primary focus is around real time alerting however it has
-now introduced support for graphing performance metrics.  No support for alerting
-based on trends in historical data beyond Nagios's idea of a state change
-changing to HARD once it has been observed $n$ times.
-
-\paragraph*{Support for Custom Metrics}
-Custom metrics can be written as scripts in any language as long as they echo a
-message to describe the status of what they are checkign and use a certain exit
-code to define the status e.g. "OK", "CRITICAL", "WARNING".etc.
-
-\paragraph*{Alert threshold definition}
-Thresholds are passed into the check commands as command line arguments.
-Therefore they are defined on the machines being monitored individually.
-
-\paragraph*{Code/Config delivery to nodes}
-Icinga 2 does not have any built-in mechanism to distribute code and config
-files to remote hosts. In order for this to be achieved, additional software
-such as Puppet would be required.
-
-\paragraph*{How the user configures the system}
-Configuration is managed through configuration files stored on disk.
-Configuration files exist both on the Icinga server as well as the nodes being
-monitored.
-
-\paragraph*{How dependencies are handled}
-Same as Nagios with a rigid tree.  No way to define a host/service as being
-dependent on one of several different machines as is common in modern
-environments with redundancy/failover systems.
-
-\subsection{Munin}
-\paragraph*{Timeseries monitoring and real time alerting}
-Munin is targeted primarily as a timeseries monitoring tool.  It therefore has
-good functionality for graphing data over time.  However, it does not have much
-power in the way of alerting other than some very basic functionality where
-plugins must manually send out emails/syslog alerts.  This is not really
-sufficient for any sort of production use and it instead recommended to use a
-tool such as Nagios and push the data from Munin into it.
-
-\paragraph*{Support for custom metrics}
-Munin has a simple interface for custom plugins where a plugin is a simple
-script that prints out the name and value of the data being collected.  This is
-then served by the Munin node which the Munin server contacts over the network
-to fetch values from the nodes.
-
-\paragraph*{Alert threshold definition}
-Nothing built in, plugins however can create thresholds internally and use them
-for alerting (as detailed above) although this isn't really the intended use of
-Munin.
-
-\paragraph*{Code/Config delivery to nodes}
-Nothing built in, code and config must be distributed manually or automatically
-through the use of additional software such as Puppet.
-
-\paragraph*{How the user configures the system}
-Configuration is handled through text files stored on disk.  These are stored on
-both the Munin server as well as machines being monitored.
-
-\paragraph*{How dependencies are handled}
-No dependency functionality.
+\subsection{How Dependencies are Handled}
+\paragraph*{}
+	Nagios and Icinga 2 both handle dependencies as a rigid tree where hosts can
+	be set as dependent on other hosts.  There is however no support for redundancy
+	where the availability of a service can be dependant on one of several hosts
+	being available. This is increasingly common in modern environments which often
+	include large amounts of redundancy and failover capacity. Munin has no
+	dependency functionality due to its lack of real time alerting.
+	
+\paragraph*{}
+	This is also a clear area for improvement, in a modern environment it is
+	important for a monitoring system to be able to understand redundancy.
 
 \section{Improvements}
 % TODO: Find a better place for this?
@@ -815,6 +801,8 @@ No dependency functionality.
 	certain pieces of template logic to be reused preventing code duplication and
 	enforces a clear separation of logic between the processing and templating
 	logic.
+
+%TODO - Explain responsive design!
 
 \subsection{Configuration}
 \paragraph*{}
