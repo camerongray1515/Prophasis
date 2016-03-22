@@ -212,8 +212,43 @@ No dependency functionality.
 
 \chapter{Design}
 \section{Technology Choice}
-\subsection{Why Python?}
-\subsection{Why HTTPS?}
+\paragraph*{Python}
+	It was decided to use Python as the language of choice to implement Prophasis.
+	This was chosen for many different reasons: it is available on practically all
+	platforms and is usually bundled with most UNIX-like operating systems.  It
+	also abstracts a large amount of low level details away which both saves
+	development time and prevents subtle, hard to find errors such as memory
+	management issues.  Python also has a huge library of available plugins along
+	with a powerful and flexible package manager (pip) and package repository
+	(PyPi).  This allows external plugins to be used to provide functionality
+	instead of requiring everything to be implemented from scratch.  This saves
+	development time and means that specialised, well tested and maintained code
+	can be used to provide some of the functionality.  Pulling in packages from
+	PyPi instead of bundling external libraries with Prophasis ensures that any
+	external libraries are kept up to date and prevents any licensing issues that
+	could arise from bundling code from other sources alongside the Prophasis
+	source code.
+	
+\paragraph*{HTTP for Communication Protocol}
+	HTTP was chosen as a communication protocol for several reasons.  It is well
+	supported and understood with a large variety of server and client libraries
+	available.  Using a premade library has major benefits for development time,
+	security and support. HTTPS also provides suitable encryption and certificate
+	validation technologies to secure the system. HTTP is also widely permitted
+	through firewalls and can be routed through web/reverse proxies.  This means
+	that Prophasis can be operated on most networks without causing problems with
+	firewalling.  HTTP also includes methods for transferring simple data as well
+	as large binary files which is required for sending plugins to remote agents.
+	Originally an attempt was made to use SSH to implement communication between
+	the core and the agent.  However, it was found that this introduced a huge
+	amount of additional complexity on both the server and client, especially if
+	the SSH server were to be embedded into the agent to keep it as a self
+	contained application.  This additional complexity not only made maintenance
+	and development harder, it also increases the risk of errors being introduced.
+	SSH was also more difficult to route through restricted networks.  Another
+	benefit of using HTTP is how many well documented HTTP libraries and servers
+	there are available, this means that alternative agents can be implemented with
+	ease versus SSH which would involve having to handle a custom wire protocol.
 
 \section{System Structure}
 \paragraph*{}
@@ -596,9 +631,70 @@ No dependency functionality.
 	\item Why Lua for classification logic?
 \end{itemize}
 
-\section{Database Design}
-%TODO Diagram, stuff about relationships including handling deletion, extra methods
-% in models
+\section{Database}
+\paragraph*{}
+	The database is at the very center of Prophasis, it is used to store the
+	configuration of the system along with data collected from agents, it is also
+	the primary means of communication between the core and the web interface.
+	Prophasis was designed to use the PostgreSQL RDBMS and great care was taken to
+	ensure that the database design was built to be efficient and flexible enough
+	to allow for future expansion.
+	
+\paragraph*{}
+	The database was designed in a traditional manner using tables and relations
+	between them in order to build an efficient and normalised design however it
+	was implemented using the SQLAlchemy ORM which abstracts the database into a
+	series of classes which saves time and reduces errors as queries do not need
+	to be written manually.  The manual design was carefully implemented using
+	extensive use of SQLAlchemy's \texttt{relationship()} function.  This allows
+	relationships in the database to be traversed as easily as properties of an
+	object.  For example, if you have an entity \texttt{h} of class \texttt{Host}
+	and an entity \texttt{r} of class \texttt{PluginResult} then it is possible
+	to both access a list of all plugin results attributed to the host with
+	\texttt{h.check\_results} and to access, for example, the name of a host
+	from the plugin result with \texttt{r.host.name}.  The ORM handles all the
+	logic of building the queries to gather the correct data.  The ORM also makes
+	it easy to edit data in the database, it is a simple case of retrieving the
+	object, changing it's attributes and committing the session.  It is also
+	transactional which means that changes can be staged up and then either
+	committed or rolled back, this is ideal as it makes it easy to abort from
+	changes to the database in the event of an error.
+	
+\paragraph*{}
+	Figure \ref{database-diagram} shows a diagram that represents the structure
+	of the entire database.  The colours have no significance and are simply used
+	to illustrate which lines are crossing over and which are not.
+	This diagram was built in a tool called Dia and stored
+	in an XML file which could be kept on version control, this meant that
+	throughout the development process the diagram could be easily maintained to
+	match changes to the database, in fact, the diagram was always updated before
+	the changes were applied to the actual SQLAlchemy models. Having this diagram
+	available was extremely useful when developing parts of the logic that utilise
+	the database as it makes the layout much clearer than simply reading the source
+	code for the models file or by looking at the actual, running database
+	instance.
+	
+\begin{figure}[H]
+	\caption{Diagram representing the Prophasis Database Schema}
+	\label{database-diagram}
+	\includegraphics[scale=0.84]{assets/schema.pdf}
+\end{figure}
+
+\section{Common Module}
+\paragraph*{}
+	Even though the core and web interface are completely separate processes, they
+	still share some common logic: namely the database models, error logging and
+	alert module handling.  It would be impractical to write this functionality
+	twice, especially the database models as this is a huge piece of work.
+	
+\paragraph*{}
+	The best solution to this problem was to build a "common" python module known
+	as \texttt{prophasis\_common}.  This contains the database models as well as
+	error logging and alert module handling and is required by both the core and
+	web interface.  When installing either of these the common module must be
+	installed first.  Structuring the system this way prevents duplication of
+	logic and ensures that there is no risk of there being any differences between
+	the code in the core and the agent.
 
 \section{Core}
 \subsection{Dispatcher}
@@ -935,10 +1031,6 @@ No dependency functionality.
 	\label{service-information}
 	\includegraphics[scale=0.44]{assets/screenshots/service-information.pdf}
 \end{figure}
-
-\begin{itemize}
-	\item Go into detail about web structure WRT templates, assets.etc
-\end{itemize}
 
 
 \chapter{Testing}
