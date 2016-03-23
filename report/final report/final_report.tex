@@ -516,6 +516,41 @@ evaluate them on several points as follows:
 	In order to keep Prophasis as intuitive as possible, the user interface should
 	contain clear explanations of different functionality as well as help text and
 	detailed error messages.
+	
+\section{Determining the Overall Health of a Host or Service}
+\paragraph*{}
+	In Prophasis, the data returned by each plugin is classified individually.
+	However, in order to display the collected data or to create alerts, we need to
+	be able to decide on a general health classification for an entire machine or
+	service based on the classifications for the individual plugins.
+	
+\paragraph*{Determining health of a host}
+	In order to determine the health of a host we first need to find out what
+	checks the host in question is part of. For this we query the database to get
+	a list of all checks the host is assigned to and then for each host group that
+	the host is part of, we get all checks that the group is assigned to.  We then
+	go through all of the checks that have been found to build a de-duplicated list
+	of all plugins that are being executed on the host in question. Then, for each
+	plugin, we get the result of the most recent check of the plugin on the host.
+	Then, using the severity ordering in Table \ref{table-classifications}, we pick
+	the most severe classification from the plugins and use this as the overall
+	health of the host.
+	
+\paragraph*{Determining the health of a service}
+	Determining the health of a service is somewhat less clear cut due to the use
+	of dependencies and redundancy groups.  In Prophasis we take all dependencies
+	and redundancy groups in the service and get the health of each.  We take the
+	health of a redundancy group to be the least severe health out of all hosts in
+	the group (unless the least severe is "ok" and there are non-"ok" hosts in
+	which case the group is classed as degraded).  For example, a redundancy group
+	containing a host with health "minor" and a host with health "major" would be
+	classed as "minor" and a redundancy group with a host of health "critical" and
+	a host of health "ok" would be classed as "degraded".  We then take the overall
+	health of each redundancy group along with the health of all dependencies
+	(which is simply the health of the host that the dependency is for) and then
+	take the most severe of all of these.  Severities are determined based on Table
+	\ref{table-classifications}.
+
 
 \chapter{Implementation}
 \section{Technologies}
