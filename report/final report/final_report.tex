@@ -1046,7 +1046,10 @@ evaluate them on several points as follows:
 	In order to prevent tests from affecting the main database or requiring a new
 	database to be set up, SQLite is used.  A temporary, in memory database is
 	created when the tests are executed which is then destroyed when the tests are
-	completed.  The SQLAlchemy ORM completely transparently handles the differences
+	completed.  When a test is started it sets an OS environment variable called
+	\texttt{UNDER\_TEST}.  If this is set the models module will set the database
+	connection string to \texttt{sqlite://} instead of the one stored in the config
+	file. The SQLAlchemy ORM completely transparently handles the differences
 	between PostgreSQL and SQLite therefore requiring no changes to the database
 	code for use during testing.
 	
