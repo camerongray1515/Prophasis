@@ -2,7 +2,7 @@
 
 \usepackage{graphicx}
 \usepackage{float}
-\usepackage{wrapfig}
+\usepackage{wrapfig} % Still needed?
 \usepackage{listings}
 
 \title{Prophasis - An IT Infrastructure Monitoring Solution}
@@ -645,13 +645,94 @@ evaluate them on several points as follows:
 	Therefore care must be taken when rendering the same template with both Jinja2
 	and handlebars.
 
-\section{Plugin Interface}
-\begin{itemize}
-	\item Explain structure of a plugin
-	\item UML Diagram?
-	\item Why Lua for classification logic?
-\end{itemize}
+\section{Plugin Structure}
+\paragraph*{}
+	Plugins are packaged as gziped TAR archive containing several different files.
 
+\paragraph*{Manifest File}
+	All plugins must contain a file to store information about the plugin called
+ 	\texttt{manifest.json}. Table \ref{table-manifest-contents} explains the
+ 	different attributes of the manifest file and if they are required or not.
+ 	The additional files described in the manifest file will be explained later in
+ 	this section.
+ 	
+\begin{table}[H]
+	\centering
+	\caption{The contents of a plugin's manifest file}
+	\label{table-manifest-contents}
+    \begin{tabular}{|l|l|c|}
+    \hline
+    \textbf{Key} & \textbf{Description} & \textbf{Required?} \\ \hline \hline
+    name
+    	& The name of the plugin
+    	& Yes \\ \hline
+    id
+    	& \shortstack[l]{A unique identifier for the plugin,\\
+    		e.g. com.example.plugin}
+    	& Yes \\ \hline
+    description
+    	& A description for the plugin
+    	& Yes \\ \hline
+    version
+    	& \shortstack[l]{Numerical plugin version, needs to be increased\\to ensure
+    		agents are updated}
+    	& Yes \\ \hline
+    default\_n\_historical
+    	& \shortstack[l]{Integer representing how many previous values \\
+    		should be passed to classification logic. May\\be overridden from web interface.}
+    	& Yes \\ \hline
+    default\_classifier
+    	& \shortstack[l]{File containing lua code to be used as the default\\
+    		classifier.}
+    	& Yes \\ \hline
+    view
+    	& Either the name of an built-in view or "custom"
+    	& Yes \\ \hline
+    view\_source
+    	& Name of the HTML file containing the view
+    	& \shortstack[c]{If view\\is "custom"} \\ \hline
+    \end{tabular}
+\end{table}
+
+\paragraph*{Default Classifier}
+	This is a Lua file containing the code that will be used by default to classify
+	the data from the plugin.  This code will be loaded into the database on plugin
+	installation and can be edited by users through the web interface.
+	
+\paragraph*{View Source Code}
+	If a "custom" view is specified in the manifest file, an HTML file must be
+	included to be used as a view for the data.  This HTML file is passed a list of
+	collected data for the plugin for the date range specified for the report
+	and is rendered using the Jinja2 templating engine.  Any HTML or Javascript
+	can be used to display the data as desired.
+	
+\paragraph*{Python Code}
+	The plugin archive must be a Python module containing a class called 
+	\texttt{Plugin} which is a subclass of \texttt{PluginInterface}.  Therefore, an
+	\texttt{\_\_init\_\_.py} file must be included.  There is no restriction to how
+	the rest of the Python code in the plugin must be layed out however generally
+	there will be a single Python source file containing the \texttt{Plugin} class
+	which is exposed in \texttt{\_\_init\_\_.py}.
+
+\subsection{Plugin Logic}
+\paragraph*{}
+	The plugin is a Python module and can therefore contain any logic that it needs
+	in order to be able to retrieve the appropriate data.  This may be as simple as
+	using built in Python logic to get data such as CPU load, executing shell
+	commands and parsing the result or reading system files.  However, the external
+	interface for a plugin must follow a defined structure.  The structure of a
+	plugin is shown in Figure \ref{plugin-uml}.
+	
+\begin{figure}[H]
+	\centering
+	\caption{UML diagram showing the structure of a plugin}
+	\label{plugin-uml}
+	\includegraphics[scale=0.35,angle=-90]{assets/plugin-uml.pdf}
+	\vspace{-5em}
+\end{figure}
+
+%TODO Explain more about the plugin interface and stuff!
+	
 \section{Database}
 \paragraph*{}
 	The database is at the very center of Prophasis, it is used to store the
