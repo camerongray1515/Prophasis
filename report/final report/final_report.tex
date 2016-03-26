@@ -58,7 +58,7 @@ data to be collected from a huge variety of different software and hardware.}
 This section will review current IT infrastructure monitoring systems and
 evaluate them on several points as follows:
 \begin{itemize}
-	\item Support for timeseries monitoring and real time alerting
+	\item Support for time series monitoring and real time alerting
 	\item How they can be configured to monitor custom metrics
 	\item How are alert thresholds defined
 	\item How configuration and custom code is delivered to nodes (if required)
@@ -146,7 +146,7 @@ evaluate them on several points as follows:
 	be set as dependent on other hosts.  There is however no support for redundancy
 	where the availability of a service can be dependant on one of several hosts
 	being available. This is increasingly common in modern environments which often
-	include large amounts of redundancy and failover capacity. Munin has no
+	include large amounts of redundancy and fail over capacity. Munin has no
 	dependency functionality due to its lack of real time alerting.
 	
 \paragraph*{}
@@ -400,7 +400,7 @@ evaluate them on several points as follows:
 	aid management and organisation, it is possible to organise hosts into "Host
 	Groups."  These can be comprised of hosts or other groups and can be used in
 	place of hosts when defining services and checks.  Hosts can be grouped in
-	various ways such as their role (Webserver, VM Host), hardware configuration
+	various ways such as their role (Web server, VM Host), hardware configuration
 	(Hardware RAID, Contains GPU), location (Edinburgh Office, Datacenter) or any
 	other way that makes sense given the specific implementation.
 
@@ -428,8 +428,8 @@ evaluate them on several points as follows:
 
 \paragraph*{}
 	Checks allow logical grouping of various plugins.  For example you may have a
-	check for "Webserver Resource Usage" which will execute plugins to check the
-	CPU load and memory across all hosts in the "Webservers" host group.
+	check for "Web server Resource Usage" which will execute plugins to check the
+	CPU load and memory across all hosts in the "Web servers" host group.
 
 \subsection{Schedules}
 \label{methodology-schedules}
@@ -451,9 +451,9 @@ evaluate them on several points as follows:
 
 \paragraph*{}
 	As an example, you may have a "Website" service that has a dependency on the
-	single router but has a redundancy group containing multiple webservers.
+	single router but has a redundancy group containing multiple web servers.
 	Therefore, if the router fails then the website will be marked as failed
-	however if one of the webservers fails but at least one other webserver is
+	however if one of the web servers fails but at least one other web server is
 	still operational, the website service will only be marked as degraded.
 
 \paragraph*{}
@@ -502,7 +502,7 @@ evaluate them on several points as follows:
     \vdots       & Minor          & ~                                           \\
     \vdots       & Degraded       & Only applies to services                    \\
     \vdots       & Unknown        & ~                                           \\
-    \vdots       & Ok             & ~                                           \\
+    \vdots       & OK             & ~                                           \\
     Least severe & No data        & Plugin has never been executed on this host \\ \hline
     \end{tabular}
 \end{table}
@@ -583,12 +583,12 @@ evaluate them on several points as follows:
 
 \subsection{Tornado HTTP Server}
 \paragraph*{}
-	While Flask does provide a built in webserver, it is only designed for
+	While Flask does provide a built in web server, it is only designed for
 	development	use.  In order to provide a production suitable web server for the
 	%TODO Did we use Tornado for the web interface too?
 	agent.  Tornado uses the uWSGI interface provided by Flask.  Tornado was chosen
 	as it can easily be integrated directly into the Flask application and
-	therefore does not require any sort of external webserver to be
+	therefore does not require any sort of external web server to be
 	installed/configured on the system.
 
 \subsection{SQLAlchemy ORM}
@@ -637,12 +637,12 @@ evaluate them on several points as follows:
 	user interface responsive to work well on both desktop and mobile devices.
 
 \subsection{Handlebars.js}
-	Handlebars.js is a very lightweight Javascript templating engine.  It is used
+	Handlebars.js is a very lightweight JavaScript templating engine.  It is used
 	in the frontend of the web interface for rendering portions of the page that
 	are generated after the page has loaded, for example alerts and items that are
 	dynamically added to the DOM such as dependencies when editing services or
 	intervals when editing schedules.  This means that any HTML logic can be
-	totally separated from the Javascript source code.  Unfortunately Handlebars
+	totally separated from the JavaScript source code.  Unfortunately Handlebars
 	templates are slightly different to Jinja2 ones.  For simply filling in
 	placholders they are compatible with one another however, more advanced
 	functionality such as conditionals and loops require slightly different syntax.
@@ -707,7 +707,7 @@ evaluate them on several points as follows:
 	If a "custom" view is specified in the manifest file, an HTML file must be
 	included to be used as a view for the data.  This HTML file is passed a list of
 	collected data for the plugin for the date range specified for the report
-	and is rendered using the Jinja2 templating engine.  Any HTML or Javascript
+	and is rendered using the Jinja2 templating engine.  Any HTML or JavaScript
 	can be used to display the data as desired.
 	
 \paragraph*{Python Code}
@@ -767,7 +767,7 @@ evaluate them on several points as follows:
 	The database is at the very center of Prophasis, it is used to store the
 	configuration of the system along with data collected from agents, it is also
 	the primary means of communication between the core and the web interface.
-	Prophasis was designed to use the PostgreSQL RDBMS and great care was taken to
+	Prophasis was designed to use the PostgreSQL DBMS and great care was taken to
 	ensure that the database design was built to be efficient and flexible enough
 	to allow for future expansion.
 	
@@ -842,7 +842,7 @@ evaluate them on several points as follows:
 	The Prophasis dispatcher uses Python's built in "multiprocessing" library. This
 	provides various methods to manage processes as well as thread-safe data
 	structures for communicating between them.  The dispatcher uses
-	\texttt{multithreading.Process} to spawn worker processes and uses
+	\texttt{multi-threading.Process} to spawn worker processes and uses
 	\texttt{multiprocessing.Queue} to define thread safe queues for passing data
 	into these worker processes.
 
@@ -857,7 +857,7 @@ evaluate them on several points as follows:
 	handles from being carried over into the child process. Using spawn is
 	comparatively slower than forking the process but since we are only creating
 	%TODO Better wording than "real world timescale"? worker processes when
-	schedules are called (which is on a real world timescale), this difference will
+	schedules are called (which is on a real world time-scale), this difference will
 	not be noticeable.
 
 \subsection{Classification}
@@ -867,7 +867,7 @@ evaluate them on several points as follows:
 	code that is bundled with the plugin and can also be modified by the user
 	through the web interface.  The Lua classification code is stored in the
 	database for ease of modification.  The "lupa" Python library is used to
-	integrate the Lua runtimes into the Python code.
+	integrate the Lua runtime into the Python code.
 
 \subsubsection{Sandboxing}
 \label{classification_sandboxing}
@@ -999,7 +999,7 @@ evaluate them on several points as follows:
 	groups that the check will be executed on and the second lists plugins that
 	will be executed on those hosts when the check is run.  The search boxes above
 	each of these lists will filter the list to entries that contain the search
-	term. This search system is provided entirely in Javascript and is generic
+	term. This search system is provided entirely in JavaScript and is generic
 	enough to be applied to any HTML table by simply specifying some classes and
 	HTML5 data attributes.  These search boxes are applied to any tables in the
 	system which may contain a lot of items.
@@ -1032,7 +1032,7 @@ evaluate them on several points as follows:
 	to enter the interval period.  The green "Add Interval" button will add another
 	row to this list allowing more intervals to be added and the red "X" button will
 	remove the row it's in from the table.  This is all handled purely in frontend
-	Javascript.
+	JavaScript.
 	
 \begin{figure}[H]
 	\caption{Form for managing the intervals for a schedule}
@@ -1045,7 +1045,7 @@ evaluate them on several points as follows:
 	Bootbox.js\footnote{http://bootboxjs.com/} is used which provides a convenient
 	abstraction around Bootstrap's build in modal functionality.  This allows
 	confirmation messages to be displayed to users without any manual HTML markup
-	and responses to be collected straight into Javascript.  An example of a
+	and responses to be collected straight into JavaScript.  An example of a
 	confirmation message can be seen in Figure \ref{bootbox-delete}.
 
 \begin{figure}[H]
@@ -1080,10 +1080,10 @@ evaluate them on several points as follows:
 	or to add to a redundancy group, a Bootstrap modal dialog is displayed as
 	shown in Figure \ref{edit-service-modal}.  On this form, HTML5 data attributes
 	are used to attach data such as IDs to the actual DOM elements that represent
-	the structure of the service.  When the form is saved, Javascript is used to
+	the structure of the service.  When the form is saved, JavaScript is used to
 	serialise this structure for processing.  This massively simplifies the code
 	as adding and removing dependencies, redundancy groups, hosts.etc can be
-	handled entirely in the DOM without having to also maintain a Javascript data
+	handled entirely in the DOM without having to also maintain a JavaScript data
 	structure at the same time.
 	
 \begin{figure}[H]
@@ -1119,9 +1119,9 @@ evaluate them on several points as follows:
 
 \paragraph*{}
 	Clicking on any of these hosts will open a page displaying more detailed
-	breakdowns of the data stored for that host.  This is where the timeseries
+	breakdowns of the data stored for that host.  This is where the time series
 	data can be visualised.  Figure \ref{host-information} shows a sample
-	output of timeseries data collected from a running server.  This shows both
+	output of time series data collected from a running server.  This shows both
 	the status of the Linux MD RAID devices as well as a graph of CPU load
 	showing a large spike due to a RAID consistency check that occurred on the
 	machine.  At the top of this report are a pair of inputs allowing the time
@@ -1129,7 +1129,7 @@ evaluate them on several points as follows:
 
 \begin{figure}[H]
 	\centering
-	\caption{The host information page showing timeseries data for a single host}
+	\caption{The host information page showing time series data for a single host}
 	\label{host-information}
 	\includegraphics[scale=0.43]{assets/screenshots/host-information.pdf}
 \end{figure}
