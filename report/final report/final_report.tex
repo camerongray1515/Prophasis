@@ -1,4 +1,4 @@
-\documentclass[bsc,logo,twoside,singlespacing]{infthesis}
+\documentclass[bsc,logo,twoside,singlespacing,notimes]{infthesis}
 
 \usepackage{graphicx}
 \usepackage{float}
@@ -18,6 +18,8 @@ monitoring.}
 \begin{document}
 \maketitle
 \tableofcontents
+
+%TODO Acknowledements section.
 
 \chapter{Introduction}
 \section{Background}
@@ -714,7 +716,7 @@ evaluate them on several points as follows:
 	there will be a single Python source file containing the \texttt{Plugin} class
 	which is exposed in \texttt{\_\_init\_\_.py}.
 
-\subsection{Plugin Logic}
+\subsection{Plugin Logic} %TODO Better title!
 \paragraph*{}
 	The plugin is a Python module and can therefore contain any logic that it needs
 	in order to be able to retrieve the appropriate data.  This may be as simple as
@@ -731,7 +733,32 @@ evaluate them on several points as follows:
 	\vspace{-5em}
 \end{figure}
 
-%TODO Explain more about the plugin interface and stuff!
+\paragraph*{}
+	All plugins must contain a class that extends from \texttt{PluginInterface}.
+	This class must contain a \texttt{get\_data()} method which is called by the
+	agent to get the data from the plugin.  The \texttt{get\_data()} method must
+	return and instance of \texttt{PluginResult}.  The \texttt{PluginResult} object
+	must contain a numerical value to represent the data collected by the plugin as
+	well as a message which can contain more information about the data collected.
+	The message defaults to being the empty string so does not need to be
+	specified.
+
+\paragraph*{}
+	The plugin's main class (the one containing the \texttt{get\_data()} method)
+	must be exposed through \texttt{\_\_init\_\_.py} under the name \texttt{Plugin}.
+	If the plugin's main class was called \texttt{CPULoad} in a module called
+	\texttt{plugin.py} then it would be exposed using the line
+	\texttt{from plugin import CPULoad as Plugin} in the \texttt{\_\_init\_\_.py}
+	file.
+	
+\paragraph*{}
+	Structuring plugins in this way provides a large amount of flexibility.  The
+	plugin can have any sort of internal implementation (it can even call out to
+	shell scripts if desired) as long as the external interface follows the correct
+	structure.  Forcing plugins to return data in the form of the
+	\texttt{PluginResult} object forces them to return data in a sensible manner
+	unlike existing tools which attempt to parse stdout of a shell script which is
+	very fragile. 
 	
 \section{Database}
 \paragraph*{}
@@ -919,6 +946,7 @@ evaluate them on several points as follows:
 	logic.
 
 %TODO - Explain responsive design!
+%TODO - Describe error logging to web interface.
 
 \subsection{Configuration}
 \paragraph*{}
@@ -1169,6 +1197,8 @@ evaluate them on several points as follows:
 	between PostgreSQL and SQLite therefore requiring no changes to the database
 	code for use during testing.
 	
+%TODO Bit more here about structure/design of tests?
+	
 \section{Mock Agent}
 \paragraph*{}
 	When developing and testing Prophasis, it is important to be able to simulate a
@@ -1215,12 +1245,199 @@ evaluate them on several points as follows:
 	load plugin is executed on that specific agent, the new CPU load will then be
 	sent out.
 	
-\begin{itemize}
-	\item Unit testing
-	\item Use within Tardis \& Lynchpin
-\end{itemize}
+\section{Use in the Field}
+\paragraph*{}
+	There is only so much information that can be gained from testing a system such
+	% Better word for the environment?
+	as Prophasis in a clean environment through the use of the mock agent and unit
+	tests.  In order to see how Prophasis performs when deployed in a real world
+	environment I installed and ran Prophasis in two different real world
+	environments.
+	
+\subsection{The Tardis Project}
+\paragraph*{}
+	The Tardis Project\footnote{http://www.tardis.ed.ac.uk/} is a computer system
+	operated and maintained by students at the University of Edinburgh.
+	It provides services to students including shell accounts, web hosting and mail
+	services.  The project currently runs off of 9 physical servers and on these
+	operates a large number of virtual machines.
+	
+\paragraph*{}
+	Prophasis was installed on the Tardis system somewhat early in its development
+	so that it could be operated in a running environment 24 hours a day. A virtual
+	machine was created to run the core, web interface, an agent and the database,
+	the agent was also installed on several different hosts including the shell
+	server and the machine that provides network storage to the rest of the system.
+	
+\paragraph*{}
+	Tardis's primary storage host uses Linux MD RAID to provide redundancy.  For
+	this a custom plugin was developed to parse the file at \texttt{/proc/mdstat}
+	which provides information about the health of the disks in the system. This
+	allowed Prophasis to be able to monitor the health of the Tardis system's
+	primary storage.
+	
+\paragraph*{}
+	The deployment on Tardis was extremely useful as it allowed Prophasis to be
+	tested in a real world environment from the very beginning where new features
+	could be launched and tested on live servers rapidly.  It also highlighted
+	issues that would otherwise be hard to find such as those that only occurred
+	infrequently or after the system had been running for a reasonable period of
+	time.
+	
+\paragraph*{Scheduler Deadlock} % Is this a deadlock?
+	One issue that was discovered while running on Tardis is where the scheduler
+	could, in rare cases completely lock preventing future checks from being
+	executed.  This issue was caused where a check could take too long to run
+	resulting in the time at which it was next meant to execute being set to a
+	time which, by the time the check had completed, was in the past.  Therefore
+	the check would never be executed again.  This issue was later solved by
+	allowing checks to execute "late" up until a defined threshold, if they are
+	later than this threshold, the time at which the check is to execute next will
+	still be incremented.  This prevents this locking issue from occurring. Since
+	this issue occurred very rarely, it was extremely useful to be able to use
+	Tardis as the core could be left running 24/7 which allowed this issue to be
+	noticed, if Prophasis had only ever been run on a single machine for short
+	periods of time during development, it is possible that this issue would never
+	have been discovered.
+
+\pagebreak
+\subsection{Lynchpin Analytics Limited}
+\paragraph*{}
+	My employer, Lynchpin Analytics Limited is full service analytics consultancy.
+	Lynchpin is a small business without a dedicated systems administrator yet
+	operates a reasonably sized network running entirely on their own hardware.
+	This is the sort of environment which Prophasis is aimed at and where existing
+	tools fall short.  Prophasis was deployed at Lynchpin when it was nearly
+	complete in order to evaluate how the finished product works in a heterogeneous
+	environment and to highlight any major issues that occur.
+
+\paragraph*{}
+	Lynchpin operates a selection of vastly different systems which makes it an
+	ideal environment to test Prophasis.  Unlike on Tardis where the majority of
+	systems run Debian, Lynchpin operates systems running Citrix XenServer (where
+	Dom0 is based on CentOS 5), Debian and FreeBSD with a wide variety of different
+	types of hardware.  The Prophsis core, database and web interface were
+	installed in a Debian Linux Virtual Machine running on one of the XenServer
+	hosts.  The agent was then installed on several different systems.  Table
+	\ref{table-lypn-hosts} lists the systems on which the Prophasis agent was
+	installed.  This allowed me to test Prophasis on a selection of different
+	operating system families (Linux, BSD and Windows) and storage configurations
+	(Linux MD RAID, Dell Hardware RAID and ZFS on top of an HP SmartArray
+	controller).
+	
+\begin{table}[H]
+	\centering
+	\caption{Systems on which Prophasis was installed}
+	\label{table-lypn-hosts}
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Type} & \textbf{Operating System} & \textbf{Storage} \\ \hline
+    Virtual Machine & Debian 8 (Jessie) & Single Virtual Disk Image \\
+    Virtual Machine & Windows Server 2012 R2 & Single Virtual Disk Image \\
+    HP ProLiant DL180 g6 & FreeBSD 10.2 & ZFS, HP SmartArray P410 \\
+    HP ProLiant DL180 g6 & FreeBSD 10.2 & ZFS, HP SmartArray P410 \\
+    Dell CS24-SC & Citrix XenServer 6.5 & Linux MD (Software) RAID \\
+    Dell CS24-SC & Citrix XenServer 6.5 & Linux MD (Software) RAID \\
+    Dell PowerEdge R630 & Citrix XenServer 6.5 & Dell PERC H330 RAID \\
+    Dell PowerEdge R630 & Citrix XenServer 6.5 & Dell PERC H330 RAID \\ \hline
+    \end{tabular}
+\end{table}
+
+%TODO Reword this
+\paragraph*{}
+	The deployment was extremely successful with Prophasis reliably monitoring all
+	systems.  Performing this deployment on Lynchpin's systems was extremely
+	valuable and both demonstrated that Prophasis works well in such a deployment
+	and highlighted some improvements that could be made.
+	
+\paragraph*{Stability}
+	The deployment of Prophasis at Lynchpin has demonstrated the stability of
+	Prophasis running in a live environment.  The entire system operated
+	successfully for more than a month without requiring any component of the
+	system to be rebooted.  Over this time a large amount of historical data has
+	been collected and stored within the Prophasis database without causing any
+	sort of major performance degradation, this shows that the system will not slow
+	down over time due to the database filling up.  There was also no incidents of
+	the scheduler locking which, while it doesn't prove the absence of issues of
+	this type, shows that the scheduler is stable enough for production use.
+	
+\paragraph*{Documentation}
+	Deploying Prophasis on several different systems at Lynchpin gave a valuable
+	opportunity to document the install process on several different platforms.
+	This allowed installation instructions to be written for Debian Linux,
+	Citrix XenServer, FreeBSD and Windows.  This also gave insight into subtle
+	differences in the availability of different dependencies on different
+	platforms such as the lack of Python 3 in the XenServer (CentOS 5)
+	repositories, requiring it to be built from source.
+	
+\paragraph*{Plugin Development}
+	The large number of different storage configurations on which Prophasis was
+	deployed provided a valuable opportunity to develop plugins for the different
+	storage configurations.  A plugin was developed to read the health of the
+	drives running on an HP SmartArray P410 RAID controller under FreeBSD through
+	the use of \texttt{camcontrol}.  Another plugin was written to check the
+	health of a ZFS zpool which executes \texttt{zpool status} and parses the
+	output.  In order to check the health of the disks running behind the Dell PERC
+	H330 RAID controller, a plugin was developed which read SMART data by calling
+	\texttt{smartctl} with \texttt{-d megaraid,nn} to access the disks behind the
+	Dell PERC (a rebranded LSI MegaRAID) RAID controller.
+	
+\paragraph*{Plugin Execution Timeouts}
+	While testing the deployment at Lynchpin, an issue was discovered with the
+	plugin that was checking the zpool status on the machines using ZFS. One of the
+	hosts developed an issue resulting in the \texttt{zpool status} command simply
+	hanging.  Prophasis had no timeout for this so once this plugin had been
+	executed, any future plugins would be stuck in the dispatch queue in the core
+	and would never be executed (due to the one simultaneous check per host
+	policy).  The solution for this was to implement timeouts on the agent so that
+	if a plugin takes longer than a predetermined time limit to execute, the
+	execution will be terminated and an error would be logged.  This prevented
+	the dispatch queue from being blocked up in the event of a long/infinitely
+	running plugin.
+	
+\paragraph*{Windows Support}
+	The agent was deployed on a virtual machine running Windows Server 2012 R2
+	Standard, this provided an opportunity to test the behaviour of the Prophasis
+	agent when running under Windows (previously it had only ever been executed on
+	UNIX-like operating systems).  It was found that the "timeout-decorator"
+	library being used to allow plugin execution to halted if a plugin was taking
+	too long to execute used \texttt{SIGALARM} signals which are not supported by
+	Windows. %TODO - How did we fix this?
+	
+%TODO - Ensure ref is satisfied
+\paragraph*{Ideas for Future Work}
+	My experiences of deploying and using Prophasis at Lynchpin also gave me
+	several ideas for future features that could be implemented.  While the system
+	was operating, one of the XenServer hosts decided to check the consistency of
+	its RAID arrays.  This resulted in extremely high CPU load which sent out
+	alerts warning of this issue despite this being standard operation. Future work
+	to solve this could involve allowing data from one plugin to be retrieved when
+	classifying data from another plugin. This would mean that the CPU load
+	classification logic could be configured to ignore CPU load caused by MD RAID
+	checks on any hosts which use Linux MD RAID. It was also determined that it
+	would be useful to be able to pass arguments into plugins from the core.  This
+	means that, for example, a plugin could be written to check the free space
+	available on a disk and the disk to check could be specified through an
+	argument to the plugin. This would allow different checks to be created to
+	check the free space on different disks.
+	
+\paragraph*{}
+	Testing Prophasis by deploying it at Lynchpin was incredibly useful. Lynchpin
+	as a company perfectly suits the type of environment that Prophasis is designed
+	for, this shows that Prophasis works reliably in such an environment.  It also
+	provided a valuable opportunity to test on a wide selection of software
+	platforms and hardware configurations to ensure software support.  Deployment
+	%TODO resolve these issues!
+	also indicated some potential issues which have now been resolved as well as
+	inspiring ideas for future features and enhancements.
 
 \chapter{Evaluation}
+
+%TODO - Future work
+%    Arguments to plugins on a check by check basis
+%    Pull data from different plugins into classification logic
+%    Distributed monitoring
+%    Server-side plugins that check remote systems
 
 \chapter{Conclusion}
 
