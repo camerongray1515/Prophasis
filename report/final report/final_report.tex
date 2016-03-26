@@ -30,7 +30,7 @@ monitoring.}
 	grow and become increasingly important for business operation it is crucial
 	that they are sufficiently monitored to prevent faults and periods of downtime
 	going unnoticed.  There is already a large market of tools for monitoring IT
-	systems however they are designed for use on massive scale networks managed by
+	systems however they are  designed for use on massive scale networks managed by
 	teams of specialised systems administrators.  They are therefore complicated to
 	set up and manage and multiple tools are often required to gain a suitable
 	level of monitoring.
@@ -1432,7 +1432,76 @@ evaluate them on several points as follows:
 	inspiring ideas for future features and enhancements.
 
 \chapter{Evaluation}
-
+\section{Future Work}
+\paragraph*{}
+	While Prophasis is now a complete system which could be (and has been) used in
+	production environment in its current form, there is considerable additional
+	functionality and enhancements which could be added to the system to improve
+	it even further.
+	
+\paragraph*{Distributed Monitoring}
+	Currently, the Prophasis core runs on a single host and monitors all other
+	hosts in the network.  This is sufficient for most small to medium sized
+	networks (the ones Prophasis targets) but provides no redundancy in terms of
+	the monitoring system.  If the Prophasis host were to fail then no alerts would
+	be sent out. This could be made worse if Prophasis shared a physical machine
+	with more critical services and this machine was to fail as critical services
+	would become unavailable but since Prophasis has also gone down, nobody would
+	be notified.  A solution to this would be to build in support for multiple
+	cores to be operating simultaneously where each monitors it's own set of nodes.
+	This could be implemented through the use of database replication to keep the
+	database in sync across all monitoring nodes.  One node would then be
+	designated the "master" and would handle the web interface, all other nodes can
+	only insert the results of checks into the database which would reduce the
+	complexity involved.  This could be enhanced with functionality to
+	automatically "repair" the monitoring system in the event of a monitoring node
+	failure by assigning the hosts that the failed node was responsible for
+	monitoring amongst the remaining monitoring nodes.
+	
+\paragraph*{Server-side Plugins}
+	Currently, plugins are executed exclusively on the host they are checking. This
+	additional feature would allow plugins to be marked as "server-side" meaning 
+	that they are executed by the core and run on the monitoring node instead of
+	the agent.   Plugins of this type could check external availability of services
+	running on a host such as ensuring that a web server is listening externally
+	and that no firewalls are blocking traffic.  Server-side plugins could also be
+	used to check devices that cannot run the Agent directly such as routers and
+	switches.  In this case a server-side plugin could be written to communicate
+	with these devices over SNMP.
+	
+\paragraph*{Access another plugin's data in classification logic}
+	Currently, the classification logic for a plugin can only obtain the previous
+	$n$ values that were collected for that plugin itself.  This feature would
+	allow one plugin to read data from another plugin for use when it is deciding
+	how to classify the data.  For example, a CPU load monitoring plugin may want
+	to pull in a list of running processes so that it does not alert about high CPU
+	load when a known "safe" process is using a large amount of CPU. Another
+	example of this could be for a plugin that monitors the temperatures in a
+	system where it may want to have different temperature thresholds based on the
+	current CPU load of the system.
+	
+\paragraph*{Passing arguments into plugins}
+	This feature would allow plugins to accept arguments when they are executed.
+	These arguments would be specified at the check level so that multiple checks
+	can be configured to execute the same plugin but with different arguments. An
+	example of this would be a plugin to check if a certain process is running on
+	a system.  It would be impractical to have a different plugin to check each
+	process so a general one could be developed where the name of the process it
+	is checking for can be passed in as an argument.  It would then be possible to
+	have a check to check if the web server is running by passing "httpd" in as the
+	argument and another check that uses the same plugin to check that the database
+	server is running where "postgres" is passed in as the argument.
+	
+\paragraph*{External API}
+	An API could be developed to allow data collected by Prophasis to be accessed.
+	This would allow external tools to be integrated with for various different
+	tools.  This could allow deeper analysis and better use of the collected data
+	such as automatically provisioning additional servers on a cloud platform in
+	the event of current hosts becoming overloaded.  This API could also be used
+	to manage the configuration of the system such as adding new hosts
+	automatically which would be particularly important in cloud environments where
+	hosts are created and destroyed on a regular basis, often automatically.
+	
 %TODO - Future work
 %    Arguments to plugins on a check by check basis
 %    Pull data from different plugins into classification logic
