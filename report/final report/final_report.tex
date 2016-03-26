@@ -62,7 +62,7 @@ evaluate them on several points as follows:
 	\item How they can be configured to monitor custom metrics
 	\item How are alert thresholds defined
 	\item How configuration and custom code is delivered to nodes (if required)
-	\item How the user configures the system %TODO - This needs added to prior work
+	\item How the user configures the system
 	\item How dependencies are handled
 \end{itemize}
 
@@ -139,6 +139,19 @@ evaluate them on several points as follows:
 	would be a manual process of logging into every machine and changing the
 	configuration files manually which always risks creating discrepancies between
 	hosts if one gets missed during an update or updated incorrectly.
+	
+\subsection{How the user configures the system}
+\paragraph*{}
+	Nagios, Icinga 2 and Munin are all configured entirely using configuration
+	files stored on disk.
+	
+\paragraph*{}
+	This is another area for improvement, while configuration files are suitable
+	for tools targeted towards expert users, they require a rather in depth amount
+	of knowledge about ow the system is configured.  When configuring the system,
+	users will continuously need to reference large amounts of documentation. Using
+	configuration files also provides no mechanism for input sanitisation allowing
+	for broken configuration to be saved.
 
 \subsection{How Dependencies are Handled}
 \paragraph*{}
@@ -199,6 +212,9 @@ evaluate them on several points as follows:
 	eliminating the need for every user to implement custom monitoring code for the
 	systems they are using.
 
+%TODO - Section on "What Prophasis is aimed at"
+%	Not designed for huge networks with thousands of hosts
+%	SMEs
 
 \chapter{Design}
 \section{Technology Choice}
