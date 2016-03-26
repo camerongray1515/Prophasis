@@ -52,6 +52,7 @@ monitoring.}
 	completely self contained system is often preferable.
 
 \section{Prior Work}
+\label{prior-work}
 \paragraph*{}
 This section will review current IT infrastructure monitoring systems and
 evaluate them on several points as follows:
@@ -60,7 +61,7 @@ evaluate them on several points as follows:
 	\item How they can be configured to monitor custom metrics
 	\item How are alert thresholds defined
 	\item How configuration and custom code is delivered to nodes (if required)
-	\item How the user configures the system
+	\item How the user configures the system %TODO - This needs added to prior work
 	\item How dependencies are handled
 \end{itemize}
 
@@ -126,7 +127,7 @@ evaluate them on several points as follows:
 	monitoring as well as the hosts being monitored.  There is no built in
 	functionality in any of these tools for distributing these files to their
 	respective machines.  For this, separate configuration management tools such as
-	Puppet or Chef would need to be used.
+	Puppet or Ansible would need to be used.
 	
 \paragraph*{}
 	This is a clear area for improvement, in a small business environment with a
@@ -1404,7 +1405,6 @@ evaluate them on several points as follows:
 	too long to execute used \texttt{SIGALARM} signals which are not supported by
 	Windows. %TODO - How did we fix this?
 	
-%TODO - Ensure ref is satisfied
 \paragraph*{Ideas for Future Work}
 	My experiences of deploying and using Prophasis at Lynchpin also gave me
 	several ideas for future features that could be implemented.  While the system
@@ -1419,7 +1419,8 @@ evaluate them on several points as follows:
 	means that, for example, a plugin could be written to check the free space
 	available on a disk and the disk to check could be specified through an
 	argument to the plugin. This would allow different checks to be created to
-	check the free space on different disks.
+	check the free space on different disks.  These features are described in more
+	detail in Section \ref{future-work}
 	
 \paragraph*{}
 	Testing Prophasis by deploying it at Lynchpin was incredibly useful. Lynchpin
@@ -1432,7 +1433,76 @@ evaluate them on several points as follows:
 	inspiring ideas for future features and enhancements.
 
 \chapter{Evaluation}
+\paragraph*{}
+	Prophasis is now a complete system that is sufficiently complete that it could
+	be deployed on a network.  It has been tested both in a synthetic environment
+	as well as on multiple real world networks.  The complete system improves on
+	the points at which current systems tend to fall short as described in Section
+	\ref{prior-work}, these enhancements are described below.
+	
+\paragraph*{Time series monitoring and real time alerting}
+	Prophasis has support for both time series monitoring and real time alerting
+	built in.  Time series data is tightly integrated into the system rather than
+	being bolted on later meaning that historical data can be used to make
+	decisions such as the overall health of a host.  This is a clear improvement
+	on existing tools where they traditionally only support time series monitoring
+	or real time alerting.
+
+\paragraph*{Support for Custom Metrics}
+	Like all other tools, Prophasis supports monitoring custom metrics using custom
+	code.  However, Prophasis has a much more rigid structure for plugins which
+	helps to ensure consistency and reliability of plugins.
+
+\paragraph*{Classification Threshold Definitions}
+	This is an area where Prophasis clearly improves on existing systems.  Other
+	systems rely on the plugin code that is executed on the remote host to
+	determine and return the overall classification which means that classification
+	logic is stored all over the place.  In Prophasis, plugins simply return a raw
+	value that represents the collected data, classification is then done by user
+	provided Lua code on the monitoring server itself.  This means that
+	classification code is all stored in one place and can be edited directly from
+	the web interface.  Classification code also has access to historical data so
+	it can make better decisions than it could if it only knew the current state of
+	a host.  Using short blocks of Lua code provides total flexibility to allow any
+	sort of logic to be used to classify the data instead of simply having
+	rigid thresholds defined through a form in the web interface.
+
+\paragraph*{Code/Configuration Delivery to Nodes} %TODO Config?
+	This is another clear area for improvement.  Current systems rely on code for 
+	custom plugins to be stored on the machines being monitored but do not provide
+	functionality to handle this.  Therefore a separate tool such as Puppet or
+	Ansible would be required to manage this, tools such as this may not be in
+	place on smaller networks where each machine has a very distinct role which
+	reduces the need for centralised configuration management.  On the other hand,
+	Prophasis stores a central repository of all plugins on the monitoring server
+	and distributes these to remote agents automatically.  This means that plugins
+	only need to be updated in one place by uploading the plugin archive through
+	the web interface, Prophasis transparently handles the rest.
+
+\paragraph*{How the user configures the system}
+	Current tools also store all of their configuration settings in files stored on
+	disk, these require a deep understanding of the system to configure and
+	maintain. In Prophasis, configuration files only store the minimum amount of
+	information required for the system to be able to start such as database
+	connection settings.  The majority of configuration relating to checks, alerts,
+	schedules.etc is stored in the database and managed through clearly laid out
+	forms in the web interface.  The web interface contains help text and
+	explanations of various terms as well as validating user provided input to
+	prevent invalid configuration being saved.
+
+\paragraph*{How Dependencies are Handled}
+	Prophasis has a flexible system for handling dependencies. A service can be
+	configured as being dependent on all specified hosts being accessible (an
+	\texttt{AND} dependency) or can be configured for redundant systems where the
+	availability of a service requires at least one host from a set of hosts to be
+	accessible (an \texttt{OR} dependency).  Various different combinations of 
+	\texttt{AND} and \texttt{OR} dependencies are possible.  This allows alerts to
+	be fine tuned preventing unnecessary alerts resulting from minor faults in a
+	highly redundant environment.
+
+
 \section{Future Work}
+\label{future-work}
 \paragraph*{}
 	While Prophasis is now a complete system which could be (and has been) used in
 	production environment in its current form, there is considerable additional
@@ -1502,11 +1572,22 @@ evaluate them on several points as follows:
 	automatically which would be particularly important in cloud environments where
 	hosts are created and destroyed on a regular basis, often automatically.
 	
-%TODO - Future work
-%    Arguments to plugins on a check by check basis
-%    Pull data from different plugins into classification logic
-%    Distributed monitoring
-%    Server-side plugins that check remote systems
+\paragraph*{Documentation}
+	Currently there is very little in the way of documentation explaining how to
+	configure and operate the system as well as information about developing
+	plugins.  A large amount of future work would be to write comprehensive
+	documentation about the system instead of relying on using the source code as a
+	reference.
+	
+\paragraph*{Nested Services}
+	Currently services can be defined as a set of \texttt{AND} and \texttt{OR}
+	dependencies across hosts and host groups.  This functionality could be
+ 	enhanced by allowing these dependencies to factor in the health of other
+ 	services thereby reducing duplication of dependency structure.  For example,
+ 	a website may be redundant across multiple web server hosts and also be
+ 	dependant on the availability of the storage service.
+
+%TODO - Links in Bibliography instead of footnotes
 
 \chapter{Conclusion}
 
