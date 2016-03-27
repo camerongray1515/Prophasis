@@ -9,12 +9,13 @@
 \author{Cameron Gray}
 \abstract{Prophasis is an IT infrastructure monitoring system that is designed
 to suit small to medium size businesses where a system needs to be intuitive to
-manage. Management of the entire system can therefore be handled from a single,
-responsive web interface. It is also suitable as a one-stop tool with support
-for both time series monitoring in addition to real time alerting.
-Traditionally two different tools would be needed to gain this level of
+manage. With Prophasis management of the entire system can be handled from a
+single, responsive web interface. Prophasis is also suitable as a one-stop tool
+with support for both time series monitoring in addition to real time alerting.
+Whereas traditionally two different tools would be needed to gain this level of
 monitoring.  Prophasis also has extensive support for custom plugins to enable
 data to be collected from a huge variety of different software and hardware.}
+%TODO Expand Abstract - length limit?
 
 \begin{document}
 \maketitle
@@ -26,35 +27,34 @@ data to be collected from a huge variety of different software and hardware.}
 %TODO See project page for stuff about what to put in intro
 \section{Background}
 \paragraph*{}
-	% TODO: Reword this?
 	In recent years, almost all businesses have been expanding their IT
 	infrastructure to handle the modern demand for IT systems.  As these systems
 	grow and become increasingly important for business operation it is crucial
 	that they are sufficiently monitored to prevent faults and periods of downtime
-	going unnoticed.  There is already a large market of tools for monitoring IT
+	going unnoticed.  There is already a large range of tools for monitoring IT
 	systems however they are  designed for use on massive scale networks managed by
-	teams of specialised systems administrators.  They are therefore complicated to
-	set up and manage and multiple tools are often required to gain a suitable
-	level of monitoring.
+	teams of specialised system administrators.  As a consequence they are
+	complicated to set up and manage and multiple tools are often required to gain
+	a suitable level of monitoring.
 
 \paragraph*{}
-	For example, tools generally either fall into the category of real time
-	alerting (i.e. telling someone when something breaks) and time series
-	monitoring (i.e. capturing data about the performance of systems and presenting
-	graphs and statistics based on it), there is a large gap in the market for
-	tools that provide both of these in one package. This reduces the time required
-	to manage the system as it eliminates the need to set up and configure two
-	completely separate tools.
+	Current tools generally either fall into the category of real time
+	alerting (sending an alert when there is a problem) and time series
+	monitoring (capturing data about the performance of systems and presenting
+	graphs and statistics based on it). There is a large gap in the market for a
+	tool that provide both of these in one package. Such a tool would reduce the
+	time required to manage the system as it eliminates the need to set up and
+	configure two completely separate tools.
 
 \paragraph*{}
-	These tools are also generally managed and configured through various
+	Current tools are also generally managed and configured through various
 	configuration files split across different machines on the network. This means
 	that in order to efficiently use these tools a configuration management system
-	such as	Puppet must be used. In a small business with limited IT resources, a
-	completely self contained system is often preferable.
+	such as	Puppet or Ansible must be used. In a small business with limited IT
+	resources, a completely self contained system is often preferable.
 
-\section{Prior Work}
-\label{prior-work}
+\section{Analysis of Existing Tools}
+\label{analysis-of-existing-tools}
 \paragraph*{}
 This section will review current IT infrastructure monitoring systems and
 evaluate them on several points as follows:
@@ -67,21 +67,23 @@ evaluate them on several points as follows:
 	\item How dependencies are handled
 \end{itemize}
 
+%TODO List current tools being investigated
+
 \subsection{Time series monitoring and real time alerting}
 \paragraph*{}
-	This is a section where there appears to be a lack of tools that support both
+	There is currently a lack of tools that support both
 	time series monitoring as well as real time alerting in any reasonable capacity.
 	Nagios and Icinga2 are mainly focused on real time alerting so do not have much
-	in the way of support for time series monitoring.  Additional plugins are
-	available to perform basic graphing functionality however historical data
+	in the way of support for time series monitoring.  Whilst additional plugins are
+	available to perform basic graphing functionality, historical data
 	cannot be used to make decisions when it comes to determining the overall
-	health of a host. In contrast, Munin is designed primarily as a tool for time
+	health of a host. On the other hand, Munin is designed primarily as a tool for time
 	series monitoring.  Therefore it has extensive functionality for graphing
 	collected data but has no built in support for alerting about faults or working
 	out the health of a system.
 	
 \paragraph*{}
-	This identifies an issue where there is no single tool that performs well for
+	It was identified that that there is no single tool that performs well for
 	both real time alerting as well as time series monitoring.  This means that
 	in order to gain both of these, two separate tools (e.g. Nagios and Munin)
 	need to be installed, configured and maintained completely separately.
@@ -132,13 +134,13 @@ evaluate them on several points as follows:
 	Puppet or Ansible would need to be used.
 	
 \paragraph*{}
-	This is a clear area for improvement, in a small business environment with a
-	limited number of machines, each with their own, separate role, often
-	configuration management tools are not deployed.  Deploying an existing tool
-	in an environment like this would be time consuming as configuration would need
-	to be manually copied between hosts and editing the configuration later on
+	This is a clear area for improvement. In a small business environment with a
+	limited number of machines, each with their own separate role, configuration
+	management tools are often not deployed.  Deploying an existing tool
+	in such an environment would be time consuming as configuration would need
+	to be manually copied between hosts. In addition editing the configuration later on
 	would be a manual process of logging into every machine and changing the
-	configuration files manually which always risks creating discrepancies between
+	configuration files manually. This risks creating discrepancies between
 	hosts if one gets missed during an update or updated incorrectly.
 	
 \subsection{How the user configures the system}
@@ -147,7 +149,7 @@ evaluate them on several points as follows:
 	files stored on disk.
 	
 \paragraph*{}
-	This is another area for improvement, while configuration files are suitable
+	This is another area for improvement. While configuration files are suitable
 	for tools targeted towards expert users, they require a rather in depth amount
 	of knowledge about ow the system is configured.  When configuring the system,
 	users will continuously need to reference large amounts of documentation. Using
@@ -163,25 +165,27 @@ evaluate them on several points as follows:
 	include large amounts of redundancy and fail over capacity. Munin has no
 	dependency functionality due to its lack of real time alerting.
 	
+%TODO Repetition of "clear area"
 \paragraph*{}
-	This is also a clear area for improvement, in a modern environment it is
+	This is also a clear area for improvement. In a modern environment it is
 	important for a monitoring system to be able to understand redundancy.
 
-\section{Improvements}
+\section{Improvements on Existing Tools} %TODO Something
 % TODO: Find a better place for this?
 \paragraph*{}
-	Prophasis is designed for use in a small to medium business with limited IT
-	resources.  They may have a small IT team with limited resources or may not
+	After looking into the weaknesses in existing offerings	Prophasis was designed.
+	This tool was designed specifically for use in a small to medium business with limited IT
+	resources.  Such businesses may have a small IT team with limited resources or may not
 	even have a dedicated IT team at all, instead relying on one or two employees
-	in other roles who manage the business's IT systems on the side of their
-	regular jobs. Therefore the system needs to be quick to deploy and manage with
-	a shallow learning curve. In order to use the system efficiently there should
+	in other roles who manage the business's IT systems in addition to their
+	regular jobs. The system therefore needs to be quick to deploy and manage without
+	a steep learning curve. In order to use the system efficiently there should
 	be no requirement for additional tooling to be deployed across the company.
 
 \subsection{Configuration Management}
 \paragraph*{}
 	It should be possible to manage the configuration of the system from a single
-	location.  Prophasis therefore provides a responsive web interface where every
+	location.  Prophasis provides a responsive web interface where every
 	aspect of the system's operation can be configured, Prophasis then handles
 	distributing this configuration to all other machines in the system in the
 	background. Custom code for plugins is handled in the same way; it is uploaded
@@ -191,21 +195,21 @@ evaluate them on several points as follows:
 \subsection{Time Series Monitoring \& Real Time Alerting}
 \paragraph*{}
 	Prophasis provides both the ability to alert administrators in real time when a
-	fault is discovered with the system alongside functionality to collect
-	performance metrics over time and use this data to generate statistics about
+	system fault is discovered and functionality to collect
+	performance metrics over time. This data can be used to generate statistics about
 	how the system has been performing.  This time series data can be used to both
-	investigate the cause of a failure in post-mortem investigations in addition to
-	being able to be used to predict future failures by looking at trends in the
-	collected data.
+	investigate the cause of a failure in post-mortem investigations and to predict
+	future failures by looking at trends in the	collected data.
 
 \subsection{Expandability}
+%TODO Why is this important?
 \paragraph*{}
 	It is important that a monitoring tool can be expanded to support the
 	monitoring of custom hardware and software.  An example of this would be
 	hardware RAID cards.  Getting the drive health from these types of devices can
 	range from probing for SMART data all the way to communicating with the card
 	over a serial port.  It is therefore crucial that Prophasis can be easily
-	expanded to support custom functionality such as this. Therefore Prophasis
+	expanded to support custom functionality such as this. Prophasis therefore 
 	supports a system of custom "plugins" which can be written and uploaded to the
 	monitoring server where they can then be configured to monitor machines. These
 	plugins are designed to be self contained and to follow a well defined and
@@ -219,28 +223,28 @@ evaluate them on several points as follows:
 
 \chapter{Design}
 \section{Technology Choice}
-\paragraph*{Python}
-	It was decided to use Python as the language of choice to implement Prophasis.
-	This was chosen for many different reasons: it is available on practically all
-	platforms and is usually bundled with most UNIX-like operating systems.  It
+\paragraph*{Implementation Language}
+	It was decided to use Python as the language of choice to implement Prophasis
+	for many different reasons. It is available on practically all
+	platforms and is usually bundled with most UNIX-like operating systems.  Python
 	also abstracts a large amount of low level details away which both saves
 	development time and prevents subtle, hard to find errors such as memory
-	management issues.  Python also has a huge library of available plugins along
+	management issues.  Python also has a huge library of available packages along
 	with a powerful and flexible package manager (pip) and package repository
-	(PyPi).  This allows external plugins to be used to provide functionality
-	instead of requiring everything to be implemented from scratch.  This saves
-	development time and means that specialised, well tested and maintained code
+	(PyPi).  This allows external libraries to be used to provide functionality
+	instead of requiring everything to be implemented from scratch.  Development time
+	is therefore saved and specialised, well tested and maintained code
 	can be used to provide some of the functionality.  Pulling in packages from
 	PyPi instead of bundling external libraries with Prophasis ensures that any
 	external libraries are kept up to date and prevents any licensing issues that
 	could arise from bundling code from other sources alongside the Prophasis
 	source code.
 	
-\paragraph*{HTTP for Communication Protocol}
+\paragraph*{Communications Protocol}
 	HTTP was chosen as a communication protocol for several reasons.  It is well
 	supported and understood with a large variety of server and client libraries
 	available.  Using a premade library has major benefits for development time,
-	security and support. HTTPS also provides suitable encryption and certificate
+	security and support. HTTPS provides suitable encryption and certificate
 	validation technologies to secure the system. HTTP is also widely permitted
 	through firewalls and can be routed through web/reverse proxies.  This means
 	that Prophasis can be operated on most networks without causing problems with
@@ -251,7 +255,7 @@ evaluate them on several points as follows:
 	amount of additional complexity on both the server and client, especially if
 	the SSH server were to be embedded into the agent to keep it as a self
 	contained application.  This additional complexity not only made maintenance
-	and development harder, it also increases the risk of errors being introduced.
+	and development harder, it also increased the risk of errors being introduced.
 	SSH was also more difficult to route through restricted networks.  Another
 	benefit of using HTTP is how many well documented HTTP libraries and servers
 	there are available, this means that alternative agents can be implemented with
@@ -259,11 +263,12 @@ evaluate them on several points as follows:
 
 \section{System Structure}
 \paragraph*{}
-	The system is split up into three separate components; Web, Core and Agent. Web
-	and core both share the same relational database allowing data to be shared
+	The system is split into three separate components; Agent, Core and Web. Web
+	and Core share the same relational database allowing data to be shared
 	between them.  Figure \ref{system_structure} shows the individual components of
 	the system and how they all interact.
 
+%TODO B/W?
 \begin{figure}[H]
 	\caption{Diagram showing the layout of the components of the system}
 	\includegraphics[scale=0.5]{assets/system_structure.pdf}
@@ -364,12 +369,12 @@ evaluate them on several points as follows:
 \label{core-classification}
 \paragraph*{}
 	When data is collected from an agent, it needs to be classified as "ok",
-	"major", "minor", "critical" or "unknown".  Classification is performed by lua
+	"major", "minor", "critical" or "unknown".  Classification is performed by Lua
 	code that is stored alongside each plugin.  When the core finishes collecting a
 	from an agent it will retrieve the classification code for the plugin and
-	execute it in a sandboxed lua runtime environment.  The result of the
+	execute it in a sandboxed Lua runtime environment.  The result of the
 	classification is then stored in the database.  The use of Lua code provides
-	total flexibility, classifications can be as simple as comparing values to a
+	total flexibility. Classifications can be as simple as comparing values to a
 	threshold or could go as far as looking at previous historical values and
 	classifying based on a trend in the data. Plugins define how many previous
 	historical values they want to classify on ($n$), the plugin's classifier code
@@ -378,7 +383,7 @@ evaluate them on several points as follows:
 
 \subsubsection{Alerting}
 \paragraph*{}
-	Once the core has classified a piece of data, the core now needs to work out
+	Once the core has classified a piece of data, it now needs to work out
 	whether it needs to send an alert or not.  To do this it looks at the previous
 	state for the plugin and host along with the current state.  It then looks
 	through the database for alerts that match that state transition and are
@@ -397,9 +402,9 @@ evaluate them on several points as follows:
 	device to investigate the issue.
 
 \paragraph*{}
-	The web interface will connect to the same database as the core, the web
-	interface will update the configuration data stored in this database and will
-	retrieve the data about hosts.
+	The web interface will connect to the same database as the core, and will
+	update the configuration data stored in this database and will retrieve
+	the data about hosts.
 
 \paragraph*{}
 	The web interface provides dashboards for visualisation of data collected from
@@ -410,6 +415,8 @@ evaluate them on several points as follows:
 \paragraph*{}
 	This section explains how Prophasis is laid out and introduces terminology used
 	throughout the system.
+
+%TODO What is a host?
 
 \subsection{Host Management}
 \paragraph*{}
@@ -459,18 +466,16 @@ evaluate them on several points as follows:
 \subsection{Services}
 \label{methodology-services}
 \paragraph*{}
-	Services can be used to define a more fine grained representation of how the
-	availability of a host affects the performance of the system overall.  A
-	service is defined in terms of "dependencies" and "redundancy groups". Each
+	A service is defined in terms of "dependencies" and "redundancy groups". Each
 	dependency represents a host that must be operational for the service to work.
 	A redundancy group can contain multiple hosts where at least one must be
 	operational for the service to work.
 
 \paragraph*{}
-	As an example, you may have a "Website" service that has a dependency on the
+	As an example, there may be a "Website" service that has a dependency on the
 	single router but has a redundancy group containing multiple web servers.
-	Therefore, if the router fails then the website will be marked as failed
-	however if one of the web servers fails but at least one other web server is
+	In this case, if the router fails then the website will be marked as failed.
+	If however one of the web servers fails but at least one other web server is
 	still operational, the website service will only be marked as degraded.
 
 \paragraph*{}
@@ -507,6 +512,7 @@ evaluate them on several points as follows:
 	\ref{table-classifications} lists all the different classifications ordered
 	by severity.
 	
+%TODO Heighht of rows without vdots
 \begin{table}[H]
 	\centering
 	\caption{Different classifications that can be given to data ordered by severity}
@@ -527,8 +533,8 @@ evaluate them on several points as follows:
 \section{User Interface}
 \paragraph*{}
 	The nature of a monitoring system means that it will often need to be used from
-	mobile devices when systems need to be checked on the move or out of hours.
-	Therefore Prophasis's web interface must work correctly on both mobile devices
+	mobile devices when systems need to be checked on the move or out of hours. This
+	requires that Prophasis's web interface must work correctly on both mobile devices
 	and conventional desktops and laptops.  It was therefore decided to build a
 	responsive web interface that will scale automatically based on the screen size
 	of the device without any loss of functionality.
@@ -540,36 +546,36 @@ evaluate them on several points as follows:
 	
 \section{Determining the Overall Health of a Host or Service}
 \paragraph*{}
-	In Prophasis, the data returned by each plugin is classified individually.
-	However, in order to display the collected data or to create alerts, we need to
+	In Prophasis, although the data returned by each plugin is classified individually,
+	in order to display the collected data or to create alerts it is necessary to
 	be able to decide on a general health classification for an entire machine or
 	service based on the classifications for the individual plugins.
 	
-\paragraph*{Determining health of a host}
-	In order to determine the health of a host we first need to find out what
-	checks the host in question is part of. For this we query the database to get
+\paragraph*{Determining the health of a host}
+	In order to determine the health of a host it is first necessary to establish what
+	checks the host in question is part of. For this the database is queried to get
 	a list of all checks the host is assigned to and then for each host group that
-	the host is part of, we get all checks that the group is assigned to.  We then
-	go through all of the checks that have been found to build a de-duplicated list
+	the host is part of, all checks that the group is assigned to are fetched.  The next
+	step is to iterate over the checks that have been found to build a de-duplicated list
 	of all plugins that are being executed on the host in question. Then, for each
-	plugin, we get the result of the most recent check of the plugin on the host.
-	Then, using the severity ordering in Table \ref{table-classifications}, we pick
-	the most severe classification from the plugins and use this as the overall
+	plugin, the result of the most recent check of the plugin on the host is retrieved.
+	Then, using the severity ordering in Table \ref{table-classifications}, the most
+	severe classification from the plugins is chosen and this is used as the overall
 	health of the host.
 	
 \paragraph*{Determining the health of a service}
 	Determining the health of a service is somewhat less clear cut due to the use
-	of dependencies and redundancy groups.  In Prophasis we take all dependencies
-	and redundancy groups in the service and get the health of each.  We take the
-	health of a redundancy group to be the least severe health out of all hosts in
-	the group (unless the least severe is "ok" and there are non-"ok" hosts in
-	which case the group is classed as degraded).  For example, a redundancy group
+	of dependencies and redundancy groups.  In Prophasis the health of all dependencies
+	and redundancy groups in the service is obtained. The health of a redundancy group
+	is taken as the least severe health out of all hosts in the group (unless the least
+	severe is "ok" and there are non-"ok" hosts in the group in
+	which case the group is classified as degraded).  For example, a redundancy group
 	containing a host with health "minor" and a host with health "major" would be
 	classed as "minor" and a redundancy group with a host of health "critical" and
-	a host of health "ok" would be classed as "degraded".  We then take the overall
-	health of each redundancy group along with the health of all dependencies
+	a host of health "ok" would be classed as "degraded".  The overall
+	health of each redundancy group is used along with the health of all dependencies
 	(which is simply the health of the host that the dependency is for) and then
-	take the most severe of all of these.  Severities are determined based on Table
+	the most severe of all of these is taken.  Severities are determined based on Table
 	\ref{table-classifications}.
 
 
@@ -656,7 +662,7 @@ evaluate them on several points as follows:
 \subsection{Handlebars.js}
 	Handlebars.js is a very lightweight JavaScript templating engine.  It is used
 	in the frontend of the web interface for rendering portions of the page that
-	are generated after the page has loaded, for example alerts and items that are
+	are generated after the page has loaded. In Prophasis alerts and items that are
 	dynamically added to the DOM such as dependencies when editing services or
 	intervals when editing schedules.  This means that any HTML logic can be
 	totally separated from the JavaScript source code.  Unfortunately Handlebars
@@ -858,8 +864,8 @@ evaluate them on several points as follows:
 \paragraph*{}
 	The Prophasis dispatcher uses Python's built in "multiprocessing" library. This
 	provides various methods to manage processes as well as thread-safe data
-	structures for communicating between them.  The dispatcher uses
-	\texttt{multi-threading.Process} to spawn worker processes and uses
+	structures for communicating between them.  The dispatcher uses\linebreak
+	\texttt{multi-threading.Process} to spawn worker processes and uses\linebreak
 	\texttt{multiprocessing.Queue} to define thread safe queues for passing data
 	into these worker processes.
 
@@ -870,12 +876,11 @@ evaluate them on several points as follows:
 	the already open database connection - this causes conflicts when the workers
 	try to write to the database.  The solution to this is to tell the
 	multiprocessing library to use the "spawn" context (the default on Windows)
-	which will create a fresh Python interpreter process, this prevents open
+	which will create a fresh Python interpreter process. This prevents open
 	handles from being carried over into the child process. Using spawn is
-	comparatively slower than forking the process but since we are only creating
-	%TODO Better wording than "real world timescale"? worker processes when
-	schedules are called (which is on a real world time-scale), this difference will
-	not be noticeable.
+	marginally slower than forking the process. In practice this not an issue however 
+	because processes are only spawned when schedules are called and these
+	schedules are only called at most every second.
 
 \subsection{Classification}
 \paragraph*{}
@@ -883,7 +888,7 @@ evaluate them on several points as follows:
 	whether it is "ok", "major", "critical".etc.  Classification is done by Lua
 	code that is bundled with the plugin and can also be modified by the user
 	through the web interface.  The Lua classification code is stored in the
-	database for ease of modification.  The "lupa" Python library is used to
+	database for ease of modification.  The "Lupa" Python library is used to
 	integrate the Lua runtime into the Python code.
 
 \subsubsection{Sandboxing}
@@ -911,7 +916,7 @@ evaluate them on several points as follows:
 
 \subsubsection{Handling Errors}
 \paragraph*{}
-	When dealing with user defined code, there is always the potential for errors
+	When dealing with user defined code there is always the potential for errors
 	to occur when the classification code is executed.  In this situation the
 	system will automatically fall back and classify the result as "unknown". The
 	error will also be logged within Prophasis and can be easily viewed by the user
@@ -929,7 +934,7 @@ evaluate them on several points as follows:
 \paragraph*{Authentication}
 	In order to prevent unauthorised actions being performed on the agent, the core
 	must authenticate with every request.  The agent stores a hash of a long
-	authentication key in its configuration file. This key is generated on agent
+	authentication key in its configuration file. This key is generated during agent
 	installation and is different for every agent. This ensures that if the key for
 	one agent is obtained, an attacker cannot access every other agent on the
 	network. Storing a hash means that if someone was able to read the agent
@@ -1184,16 +1189,16 @@ evaluate them on several points as follows:
 \chapter{Testing}
 \section{Unit Testing}
 \paragraph*{}
-	Unit tests are used to test the more complex functionality of the system such
+	Unit tests were used to test the more complex functionality of the system such
 	as getting all member hosts in a host group or determining the overall health
 	of a host or service.  These algorithms are somewhat complex so having unit
-	tests is useful to both verify the functionality during development as well
+	tests was useful to both verify the functionality during development as well
 	as to ensure this functionality is not broken by changes to other parts of the
-	system.  The Python \texttt{unittest} library is used as it included as part of
+	system.  The Python \texttt{unittest} library was used as it is included as part of
 	a standard Python install and is well documented.
 	
 \paragraph*{}
-	Each test case is implemented as a single class with each different test in a
+	Each test case was implemented as a single class with each different test in a
 	separate function within this.  Each \texttt{TestCase} has a \texttt{setUp()}
 	method which is called before each test in the class is executed.  The
 	\texttt{setUp()} method will drop all database tables, recreate the database
@@ -1206,7 +1211,7 @@ evaluate them on several points as follows:
 	created when the tests are executed which is then destroyed when the tests are
 	completed.  When a test is started it sets an OS environment variable called
 	\texttt{UNDER\_TEST}.  If this is set the models module will set the database
-	connection string to \texttt{sqlite://} instead of the one stored in the config
+	connection string to \texttt{"sqlite://"} instead of the one stored in the config
 	file. The SQLAlchemy ORM completely transparently handles the differences
 	between PostgreSQL and SQLite therefore requiring no changes to the database
 	code for use during testing.
@@ -1215,11 +1220,11 @@ evaluate them on several points as follows:
 	
 \section{Mock Agent}
 \paragraph*{}
-	When developing and testing Prophasis, it is important to be able to simulate a
+	When developing and testing Prophasis, it was important to be able to simulate a
 	network of multiple machines all being monitored and in addition to this it
-	is useful to be able to simulate faults with these machines. While it would be
-	possible to run multiple agents and then use plugins to return data and to
-	simulate faults this is impractical to set up, run and maintain.
+	was essential to be able to simulate faults with these machines. While it would
+	have been possible to run multiple agents and then use plugins to return data
+	and to simulate faults this would have been impractical to set up, run and maintain.
 	
 \paragraph*{}
 	As a solution to this, a mock agent was developed.  This is a simple application
@@ -1228,8 +1233,8 @@ evaluate them on several points as follows:
 	and instead reads the data to respond with from a JSON file stored on disk. The
 	agent's \texttt{ping} method is implemented as normal, the
 	\texttt{check\_plugin\_version} method always responds saying that an update for
-	the plugin is not required (this means we don't need to implement the
-	\texttt{update\_plugin} method).  The \texttt{get\_plugin\_data} method is then
+	the plugin is not required (this means that the \texttt{update\_plugin} method does
+	not need to be implemented).  The \texttt{get\_plugin\_data} method is then
 	used to read the JSON file and respond with the appropriate data. Figure
 	\ref{mock-agent-data} shows an example of the JSON file used by the agent.
 	
@@ -1243,7 +1248,8 @@ evaluate them on several points as follows:
 	In order to keep the mock agent simple, it listens on a single port (4048, the
 	same as the regular agent).  The mock agent binds to all available IP addresses
 	on the system and it uses the destination IP address to determine which data it
-	is to respond with.  In my usage I simply ran the mock agent on the same machine
+	is to respond with.  While Prophasis was being developed, the mock agent was
+	run on the same machine
 	as the core and used loopback IP addresses picked from \texttt{127.0.0.0/8} to
 	add multiple mock agents to the system giving each a different IP addresses.
 	Each of these IP addresses is used as a key in the JSON file which maps to a
@@ -1254,8 +1260,8 @@ evaluate them on several points as follows:
 	The JSON file is read every time a request reaches the mock agent.  This means
 	that the test data can be changed on the fly while the mock agent is running by
 	simply changing the data in the file and saving it.  For example, to test what
-	happens if the CPU load on a machine is too high one can simply change the
-	value in the JSON file to the new CPU load and save it, the next time the CPU
+	happens if the CPU load on a machine is too high the value in the JSON file can
+	simply be changed to the new CPU load, the next time the CPU
 	load plugin is executed on that specific agent, the new CPU load will then be
 	sent out.
 	
@@ -1265,10 +1271,11 @@ evaluate them on several points as follows:
 	% Better word for the environment?
 	as Prophasis in a clean environment through the use of the mock agent and unit
 	tests.  In order to see how Prophasis performs when deployed in a real world
-	environment I installed and ran Prophasis in two different real world
+	environment Prophasis was installed and run in two different real world
 	environments.
 	
 \subsection{The Tardis Project}
+\label{testing-tardis}
 \paragraph*{}
 	The Tardis Project\footnote{http://www.tardis.ed.ac.uk/} is a computer system
 	operated and maintained by students at the University of Edinburgh.
@@ -1298,37 +1305,37 @@ evaluate them on several points as follows:
 	infrequently or after the system had been running for a reasonable period of
 	time.
 	
-\paragraph*{Scheduler Deadlock} % Is this a deadlock?
-	One issue that was discovered while running on Tardis is where the scheduler
+\paragraph*{Scheduler Deadlock} %TODO Is this a deadlock?
+	One issue that was discovered while running on Tardis was where the scheduler
 	could, in rare cases completely lock preventing future checks from being
 	executed.  This issue was caused where a check could take too long to run
 	resulting in the time at which it was next meant to execute being set to a
-	time which, by the time the check had completed, was in the past.  Therefore
-	the check would never be executed again.  This issue was later solved by
-	allowing checks to execute "late" up until a defined threshold, if they are
+	time which, by the time the check had completed, was in the past.  The result
+	was that the check would never be executed again.  This issue was later solved by
+	allowing checks to execute "late" up until a defined threshold. If they are
 	later than this threshold, the time at which the check is to execute next will
 	still be incremented.  This prevents this locking issue from occurring. Since
 	this issue occurred very rarely, it was extremely useful to be able to use
 	Tardis as the core could be left running 24/7 which allowed this issue to be
-	noticed, if Prophasis had only ever been run on a single machine for short
+	noticed. If Prophasis had only ever been run on a single machine for short
 	periods of time during development, it is possible that this issue would never
 	have been discovered.
 
 \pagebreak
 \subsection{Lynchpin Analytics Limited}
 \paragraph*{}
-	My employer, Lynchpin Analytics Limited is full service analytics consultancy.
+	Lynchpin Analytics Limited ("Lynchpin") is full service analytics consultancy.
 	Lynchpin is a small business without a dedicated systems administrator yet
 	operates a reasonably sized network running entirely on their own hardware.
-	This is the sort of environment which Prophasis is aimed at and where existing
+	This is typical of environment that Prophasis is aimed at and where existing
 	tools fall short.  Prophasis was deployed at Lynchpin when it was nearly
 	complete in order to evaluate how the finished product works in a heterogeneous
 	environment and to highlight any major issues that occur.
 
 \paragraph*{}
-	Lynchpin operates a selection of vastly different systems which makes it an
+	Lynchpin operates a range of vastly different systems which makes it an
 	ideal environment to test Prophasis.  Unlike on Tardis where the majority of
-	systems run Debian, Lynchpin operates systems running Citrix XenServer (where
+	systems run Debian Linux, Lynchpin operates systems running Citrix XenServer (where
 	Dom0 is based on CentOS 5), Debian and FreeBSD with a wide variety of different
 	types of hardware.  The Prophsis core, database and web interface were
 	installed in a Debian Linux Virtual Machine running on one of the XenServer
@@ -1372,8 +1379,9 @@ evaluate them on several points as follows:
 	been collected and stored within the Prophasis database without causing any
 	sort of major performance degradation, this shows that the system will not slow
 	down over time due to the database filling up.  There was also no incidents of
-	the scheduler locking which, while it doesn't prove the absence of issues of
-	this type, shows that the scheduler is stable enough for production use.
+	the scheduler locking as described in Section \ref{testing-tardis} which,
+	while it doesn't prove the absence of issues of this type, shows that the
+	scheduler is stable enough for production use.
 	
 \paragraph*{Documentation}
 	Deploying Prophasis on several different systems at Lynchpin gave a valuable
@@ -1419,9 +1427,9 @@ evaluate them on several points as follows:
 	Windows. %TODO - How did we fix this?
 	
 \paragraph*{Ideas for Future Work}
-	My experiences of deploying and using Prophasis at Lynchpin also gave me
-	several ideas for future features that could be implemented.  While the system
-	was operating, one of the XenServer hosts decided to check the consistency of
+	Deploying and using Prophasis at Lynchpin provided several ideas for future
+	features that could be implemented.  While the system
+	was operating, one of the XenServer hosts automatically checked the consistency of
 	its RAID arrays.  This resulted in extremely high CPU load which sent out
 	alerts warning of this issue despite this being standard operation. Future work
 	to solve this could involve allowing data from one plugin to be retrieved when
@@ -1438,7 +1446,7 @@ evaluate them on several points as follows:
 \paragraph*{}
 	Testing Prophasis by deploying it at Lynchpin was incredibly useful. Lynchpin
 	as a company perfectly suits the type of environment that Prophasis is designed
-	for, this shows that Prophasis works reliably in such an environment.  It also
+	for. Testing showed that Prophasis works reliably in such an environment.  It also
 	provided a valuable opportunity to test on a wide selection of software
 	platforms and hardware configurations to ensure software support.  Deployment
 	%TODO resolve these issues!
@@ -1447,31 +1455,33 @@ evaluate them on several points as follows:
 
 \chapter{Evaluation}
 \paragraph*{}
-	Prophasis is now a complete system that is sufficiently complete that it could
+	Prophasis is now a complete system that is sufficiently developed to be able to
 	be deployed on a network.  It has been tested both in a synthetic environment
-	as well as on multiple real world networks.  The complete system improves on
+	and on multiple real world networks.  The complete system improves on
 	the points at which current systems tend to fall short as described in Section
-	\ref{prior-work}, these enhancements are described below.
+	\ref{analysis-of-existing-tools}. These improvements are described below.
 	
 \paragraph*{Time series monitoring and real time alerting}
 	Prophasis has support for both time series monitoring and real time alerting
 	built in.  Time series data is tightly integrated into the system rather than
 	being bolted on later meaning that historical data can be used to make
-	decisions such as the overall health of a host.  This is a clear improvement
+	decisions such as deciding the overall health of a host.  This is a clear improvement
 	on existing tools where they traditionally only support time series monitoring
 	or real time alerting.
 
 \paragraph*{Support for Custom Metrics}
 	Like all other tools, Prophasis supports monitoring custom metrics using custom
-	code.  However, Prophasis has a much more rigid structure for plugins which
+	code.  Prophasis however has a much more rigid structure for plugins which
 	helps to ensure consistency and reliability of plugins.
 
 \paragraph*{Classification Threshold Definitions}
 	This is an area where Prophasis clearly improves on existing systems.  Other
 	systems rely on the plugin code that is executed on the remote host to
-	determine and return the overall classification which means that classification
-	logic is stored all over the place.  In Prophasis, plugins simply return a raw
-	value that represents the collected data, classification is then done by user
+	determine and return the overall classification. As a result, classification
+	logic is stored in various locations spread out all over the network which makes
+	management difficult.  In
+	Prophasis, plugins simply return a raw
+	value that represents the collected data. Classification is then done by user
 	provided Lua code on the monitoring server itself.  This means that
 	classification code is all stored in one place and can be edited directly from
 	the web interface.  Classification code also has access to historical data so
@@ -1481,20 +1491,20 @@ evaluate them on several points as follows:
 	rigid thresholds defined through a form in the web interface.
 
 \paragraph*{Code/Configuration Delivery to Nodes} %TODO Config?
-	This is another clear area for improvement.  Current systems rely on code for 
+	This is another area that Prophasis has improved on.  Current systems rely on code for 
 	custom plugins to be stored on the machines being monitored but do not provide
-	functionality to handle this.  Therefore a separate tool such as Puppet or
-	Ansible would be required to manage this, tools such as this may not be in
+	functionality to handle this.  This requires a separate tool such as Puppet or
+	Ansible to manage this. Tools such as these may not be in
 	place on smaller networks where each machine has a very distinct role which
-	reduces the need for centralised configuration management.  On the other hand,
+	reduces the need for centralised configuration management.  In contrast,
 	Prophasis stores a central repository of all plugins on the monitoring server
 	and distributes these to remote agents automatically.  This means that plugins
 	only need to be updated in one place by uploading the plugin archive through
-	the web interface, Prophasis transparently handles the rest.
+	the web interface. Prophasis transparently handles the rest.
 
 \paragraph*{How the user configures the system}
-	Current tools also store all of their configuration settings in files stored on
-	disk, these require a deep understanding of the system to configure and
+	Current tools store all of their configuration settings in files stored on
+	disk. These require a deep understanding of the system to configure and
 	maintain. In Prophasis, configuration files only store the minimum amount of
 	information required for the system to be able to start such as database
 	connection settings.  The majority of configuration relating to checks, alerts,
@@ -1504,6 +1514,8 @@ evaluate them on several points as follows:
 	prevent invalid configuration being saved.
 
 \paragraph*{How Dependencies are Handled}
+	Unlike many current tools which only support simple \texttt{AND} dependencies
+	which require all hosts to be operational,
 	Prophasis has a flexible system for handling dependencies. A service can be
 	configured as being dependent on all specified hosts being accessible (an
 	\texttt{AND} dependency) or can be configured for redundant systems where the
@@ -1518,19 +1530,19 @@ evaluate them on several points as follows:
 \label{future-work}
 \paragraph*{}
 	While Prophasis is now a complete system which could be (and has been) used in
-	production environment in its current form, there is considerable additional
-	functionality and enhancements which could be added to the system to improve
+	production environments in its current form, there are additional
+	enhancements and functionality which could be added to the system to improve
 	it even further.
 	
 \paragraph*{Distributed Monitoring}
-	Currently, the Prophasis core runs on a single host and monitors all other
+	The Prophasis core currently runs on a single host and monitors all other
 	hosts in the network.  This is sufficient for most small to medium sized
 	networks (the ones Prophasis targets) but provides no redundancy in terms of
 	the monitoring system.  If the Prophasis host were to fail then no alerts would
 	be sent out. This could be made worse if Prophasis shared a physical machine
 	with more critical services and this machine was to fail as critical services
-	would become unavailable but since Prophasis has also gone down, nobody would
-	be notified.  A solution to this would be to build in support for multiple
+	would become unavailable but since Prophasis has also failed, notifications
+	would be sent out.  A solution to this would be to build in support for multiple
 	cores to be operating simultaneously where each monitors it's own set of nodes.
 	This could be implemented through the use of database replication to keep the
 	database in sync across all monitoring nodes.  One node would then be
