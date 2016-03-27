@@ -1603,6 +1603,15 @@ evaluate them on several points as follows:
  	services thereby reducing duplication of dependency structure.  For example,
  	a website may be redundant across multiple web server hosts and also be
  	dependant on the availability of the storage service.
+ 	
+\paragraph*{Daemon Generation during Setup}
+	In a deployment the agent, core and web interface should be run as a daemon.
+	Currently when the system is installed the daemon needs to be created manually,
+	the way this is done varies between operating systems. Future work could
+	involve enhancing the setup scripts that are included with the agent, core and
+	web interface so that they detect the operating system they are running under
+	and perform the appropriate tasks to install the component correctly as a
+	daemon.  Doing this would greatly ease the setup process.
 
 %TODO - Links in Bibliography instead of footnotes
 
