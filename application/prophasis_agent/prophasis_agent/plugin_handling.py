@@ -46,7 +46,7 @@ def get_data_from_plugin(plugin_id):
     except timeout_decorator.TimeoutError:
         raise PluginExecutionError("Plugin execution timed out")
 
-@timeout_decorator.timeout(10)
+@timeout_decorator.timeout(10, use_signals=False)
 def _timeout_get_data_from_plugin(plugin_id):
     """
         Returns a tuple of (value, message) from the plugin.
