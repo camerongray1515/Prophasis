@@ -1,9 +1,9 @@
 import os
 import json
+import stopit
 from importlib.machinery import SourceFileLoader
 from .agent_config import get_config, get_config_value
 from .exceptions import PluginExecutionError
-import timeout_decorator
 
 def get_plugin_repo_dir():
     config = get_config()
@@ -41,13 +41,6 @@ def get_plugin_metadata(plugin_id):
     return (None, None)
 
 def get_data_from_plugin(plugin_id):
-    try:
-        return _timeout_get_data_from_plugin(plugin_id)
-    except timeout_decorator.TimeoutError:
-        raise PluginExecutionError("Plugin execution timed out")
-
-@timeout_decorator.timeout(10, use_signals=False)
-def _timeout_get_data_from_plugin(plugin_id):
     """
         Returns a tuple of (value, message) from the plugin.
         Raises PluginExecutionError
@@ -59,20 +52,26 @@ def _timeout_get_data_from_plugin(plugin_id):
     if not directory:
         raise PluginExecutionError("Plugin could not be found")
 
-    module = SourceFileLoader("module.{}".format(directory), os.path.join(
-        plugin_repo_dir, directory, "__init__.py")).load_module()
-    try:
-        plugin = module.Plugin()
-    except AttributeError:
-        raise PluginExecutionError("Package does not contain \"Plugin\" class")
+    with stopit.ThreadingTimeout(10) as to_ctx_mgr:
+        module = SourceFileLoader("module.{}".format(directory), os.path.join(
+            plugin_repo_dir, directory, "__init__.py")).load_module()
+        try:
+            plugin = module.Plugin()
+        except AttributeError:
+            raise PluginExecutionError("Package does not contain \"Plugin\" "
+                "class")
 
-    try:
-        data = plugin.get_data()
-    except AttributeError:
-        raise PluginExecutionError("Plugin class does not contain get_data() "
-            "method")
-    except Exception as e:
-        raise PluginExecutionError("The following error occured when executing"
-            " the plugin: ({0}) {1}".format(type(e).__name__, str(e)))
+        try:
+            data = plugin.get_data()
+        except AttributeError:
+            raise PluginExecutionError("Plugin class does not contain "
+                "get_data() method")
+        except Exception as e:
+            raise PluginExecutionError("The following error occured when "
+                "executing the plugin: ({0}) {1}".format(
+                    type(e).__name__, str(e)))
+
+    if to_ctx_mgr.state != to_ctx_mgr.EXECUTED:
+        raise PluginExecutionError("Plugin execution timed out")
 
     return (data.value, data.message)
