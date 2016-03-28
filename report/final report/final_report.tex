@@ -601,6 +601,16 @@ evaluate them on several points as follows:
 
 
 \chapter{Implementation}
+	This chapter discusses the implementation of Prophasis and explains how all the
+	individual components work.  It first explains the various technologies used to
+	implement Prophasis going into detail about the libraries in use explaining
+	the functionality that they provide.  It then explains the structure of each
+	distinct part of the system, first explaining how plugins are structured before
+	going on to explaining the database design.  It then discusses the core along
+	with the functionality that this provides and then explains the operation of
+	the agent. It finally explains the layout of the web interface and demonstrates
+	various aspects of it's design.
+
 \section{Technologies}
 
 	The vast majority of the system is implemented in Python 3.  This allows for a
@@ -1235,6 +1245,15 @@ evaluate them on several points as follows:
 
 
 \chapter{Testing}
+	This chapter explains how Prophasis was tested to ensure both correct operation
+	and to evaluate it's general performance.  It first starts off by explaining
+	the automated unit testing that was set up on certain, complex functionality
+	within the system.  It then explains the ``mock agent'' that was used during
+	development to allow easy simulation of a a network containing many different
+	hosts.  Finally it goes on to explain the use of Prophasis in real world 
+	environments including The Tardis Project within The University of Edinburgh
+	as well as in an external company, Lynchpin Analytics Limited.
+
 \section{Unit Testing}
 
 	Unit tests were used to test the more complex functionality of the system such
@@ -1498,11 +1517,15 @@ evaluate them on several points as follows:
 	for. Testing showed that Prophasis works reliably in such an environment.  It also
 	provided a valuable opportunity to test on a wide selection of software
 	platforms and hardware configurations to ensure software support.  Deployment
-	%TODO resolve these issues!
 	also indicated some potential issues which have now been resolved as well as
 	inspiring ideas for future features and enhancements.
 
 \chapter{Evaluation}
+	This chapter starts off by evaluating Prophasis against the same points which
+	existing tools were evaluated against in Section
+	\ref{analysis-of-existing-tools} to demonstrate the improvements made. It then
+	goes on to describe future work that could be implemented in order to further
+	enhance the functionality of the system.
 
 	Prophasis is now a complete system that is sufficiently developed to be able to
 	be deployed on a network.  It has been tested both in a synthetic environment
