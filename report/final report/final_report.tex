@@ -7,15 +7,26 @@
 
 \title{Prophasis - An IT Infrastructure Monitoring Solution}
 \author{Cameron Gray}
-\abstract{Prophasis is an IT infrastructure monitoring system that is designed
-to suit small to medium size businesses where a system needs to be intuitive to
-manage. With Prophasis management of the entire system can be handled from a
-single, responsive web interface. Prophasis is also suitable as a one-stop tool
-with support for both time series monitoring in addition to real time alerting.
-Whereas traditionally two different tools would be needed to gain this level of
-monitoring.  Prophasis also has extensive support for custom plugins to enable
-data to be collected from a huge variety of different software and hardware.}
-%TODO Expand Abstract - length limit?
+
+\abstract{
+\paragraph*{}
+Current systems for monitoring IT infrastructure are designed for use
+on large networks operated by dedicated IT staff.  They are complex to manage
+and often multiple tools are required to obtain a suitable level of monitoring.
+
+\paragraph*{}
+This project involves developing a new IT infrastructure monitoring system from
+the ground up for use in SME environments.  The aim is to develop a tool that
+is powerful enough to monitor a network on its own as well as being simple to
+use and manage.
+
+\paragraph*{}
+The new system has comprehensive support for time series monitoring as well as
+real time alerting which is an area where two separate tools would traditionally
+be required.  The entire system can be managed from a responsive web interface
+and has extensive support for plugins allowing for the system to be extended to
+support monitoring of a variety of different systems.
+}
 
 \begin{document}
 \maketitle
@@ -222,6 +233,19 @@ evaluate them on several points as follows:
 %	SMEs
 
 \chapter{Design}
+\paragraph*{} %TODO Check
+	This chapter will explain the design of Prophasis and explain various different
+	design decisions that were made.  First it will go into detail explaining
+	the choice of different technologies used in Prophasis and will explain the
+	reasoning behind these decisions.  Next it explains the terminology used within
+	Prophasis to give a better idea how everything is structured. It will then
+	explain the layout of the various components in the system and will go into
+	detail about the purpose of each of these components and how they operate.
+	%TODO Do we want this here?
+	It then goes into detail about the design decisions made for how Prophasis
+	determines the overall health of a given host or service from the individual
+	data points that it has collected.
+
 \section{Technology Choice}
 \paragraph*{Implementation Language}
 	It was decided to use Python as the language of choice to implement Prophasis
@@ -260,6 +284,123 @@ evaluate them on several points as follows:
 	benefit of using HTTP is how many well documented HTTP libraries and servers
 	there are available, this means that alternative agents can be implemented with
 	ease versus SSH which would involve having to handle a custom wire protocol.
+
+\section{Terminology}
+\paragraph*{}
+	This section explains the terminology used throughout the system to give a
+	better idea of how everything is structured.
+
+\subsection{Hosts \& Host Groups}
+\paragraph*{}
+	In Prophasis, a ``host'' refers to a single machine that is being monitored. To
+	aid management and organisation, it is possible to organise hosts into ``Host
+	Groups.''  These can be comprised of hosts or other groups and can be used in
+	place of hosts when defining services and checks.  Hosts can be grouped in
+	various ways such as their role (Web server, VM Host), hardware configuration
+	(Hardware RAID, Contains GPU), location (Edinburgh Office, Datacenter) or any
+	other way that makes sense given the specific implementation.
+
+\subsection{Plugins}
+\paragraph*{}
+	A ``plugin'' is a package that checks a single attribute of a system.  For
+	example a plugin could check the CPU load of a given machine or be used to
+	check the health of all the hard drives in a system.  Plugins are implemented
+	as Python modules that implement a specific API, they can return both a ``value''
+	(a numerical representation of the data they collected) and/or a ``message'' (a
+	string representation of the collected data).  Plugins are then packaged in a
+	.tar.gz archive along with a manifest JSON file which contains information
+	about the plugin for use when it is installed.
+
+\paragraph*{}
+	Plugins are automatically distributed from the core to remote machines and when
+	executed by the agent the value and message are returned to the core for
+	classification and storage in the database.
+
+\subsection{Checks}
+\paragraph*{}
+	A ``check'' is a named set of hosts/host groups and a set of plugins to be
+	executed on them.  When a check is executed, all of the plugins specified in
+	the check will be executed across all of the hosts specified in the check.
+
+\paragraph*{}
+	Checks allow logical grouping of various plugins.  For example you may have a
+	check for ``Web server Resource Usage'' which will execute plugins to check the
+	CPU load and memory across all hosts in the ``Web servers'' host group.
+
+\subsection{Schedules}
+\label{methodology-schedules}
+\paragraph*{}
+	A schedule defines when one or more checks are to be executed.  Each schedule
+	can contain multiple ``intervals'' which define when the check is run.  An
+	interval has a start date/time and a time delta that defines how regularly it
+	is to be implemented.
+
+\subsection{Services}
+\label{methodology-services}
+\paragraph*{}
+	A service is defined in terms of ``dependencies'' and ``redundancy groups''. Each
+	dependency represents a host that must be operational for the service to work.
+	A redundancy group can contain multiple hosts where at least one must be
+	operational for the service to work.
+
+\paragraph*{}
+	As an example, there may be a ``Website'' service that has a dependency on the
+	single router but has a redundancy group containing multiple web servers.
+	In this case, if the router fails then the website will be marked as failed.
+	If however one of the web servers fails but at least one other web server is
+	still operational, the website service will only be marked as degraded.
+
+\paragraph*{}
+	The use of services provides a clearer view of the impact of a given failure on
+	the functionality of the network.  It also allows alerts to be set up so that
+	they are only triggered when the service functionality is severely impacted and
+	prevents alerts from being sent out for host failures that do not have a severe
+	impact.
+
+\subsection{Alerts}
+\paragraph*{}
+	In Prophasis, alerts are set up to communicate with a specific person/group of
+	people in a certain situation.  Alerts are defined in terms of to/from stage
+	changes where an alert will be sent if the state of a host/service changes from
+	one state to another (e.g. ``ok'' to ``critical'').  These can then be restricted
+	to certain hosts, host groups, services, plugins and checks.
+
+\paragraph*{}
+	The system supports ``alert modules'' - Python modules that are used to send
+	alerts using various methods.  Examples of alert modules could be email, SMS or
+	telephone call.
+
+\paragraph*{}
+	Multiple alerts can be set up to handle different severities of issues.  For
+	example, if a redundant service becomes degraded, a SMS or email message may be
+	sufficient but if a service becomes critical it may be desirable to use a
+	telephone call to gain quicker attention.
+
+\subsection{Classification}
+	A classification defines how serious or important the data from a plugin is,
+	for example, the CPU load being slightly higher than normal would probably be
+	classed as a minor issue whereas a system not responding to checks from
+	Prophasis would be likely to be classed as a critical issue. Table
+	\ref{table-classifications} lists all the different classifications ordered
+	by severity.
+
+%TODO Heighht of rows without vdots
+\begin{table}[H]
+	\centering
+	\caption{Different classifications that can be given to data ordered by severity}
+	\label{table-classifications}
+    \begin{tabular}{|c|l|l|}
+    \hline
+    Severity     & Classification & Notes                                       \\ \hline
+    Most severe  & Critical       & ~                                           \\
+    \vdots       & Major          & ~                                           \\
+    \vdots       & Minor          & ~                                           \\
+    \vdots       & Degraded       & Only applies to services                    \\
+    \vdots       & Unknown        & ~                                           \\
+    \vdots       & OK             & ~                                           \\
+    Least severe & No data        & Plugin has never been executed on this host \\ \hline
+    \end{tabular}
+\end{table}
 
 \section{System Structure}
 \paragraph*{}
@@ -410,125 +551,6 @@ evaluate them on several points as follows:
 	The web interface provides dashboards for visualisation of data collected from
 	plugins.  The collected data can then be displayed using graphs, tables, lists
 	of messages or any other way that suits the type of data collected.
-
-\section{Monitoring Methodology}
-\paragraph*{}
-	This section explains how Prophasis is laid out and introduces terminology used
-	throughout the system.
-
-%TODO What is a host?
-
-\subsection{Host Management}
-\paragraph*{}
-	In Prophasis, a ``host'' refers to a single machine that is being monitored. To
-	aid management and organisation, it is possible to organise hosts into ``Host
-	Groups.''  These can be comprised of hosts or other groups and can be used in
-	place of hosts when defining services and checks.  Hosts can be grouped in
-	various ways such as their role (Web server, VM Host), hardware configuration
-	(Hardware RAID, Contains GPU), location (Edinburgh Office, Datacenter) or any
-	other way that makes sense given the specific implementation.
-
-\subsection{Plugins}
-\paragraph*{}
-	A ``plugin'' is a package that checks a single attribute of a system.  For
-	example a plugin could check the CPU load of a given machine or be used to
-	check the health of all the hard drives in a system.  Plugins are implemented
-	as Python modules that implement a specific API, they can return both a ``value''
-	(a numerical representation of the data they collected) and/or a ``message'' (a
-	string representation of the collected data).  Plugins are then packaged in a
-	.tar.gz archive along with a manifest JSON file which contains information
-	about the plugin for use when it is installed.
-
-\paragraph*{}
-	Plugins are automatically distributed from the core to remote machines and when
-	executed by the agent the value and message are returned to the core for
-	classification and storage in the database.
-
-\subsection{Checks}
-\paragraph*{}
-	A ``check'' is a named set of hosts/host groups and a set of plugins to be
-	executed on them.  When a check is executed, all of the plugins specified in
-	the check will be executed across all of the hosts specified in the check.
-
-\paragraph*{}
-	Checks allow logical grouping of various plugins.  For example you may have a
-	check for ``Web server Resource Usage'' which will execute plugins to check the
-	CPU load and memory across all hosts in the ``Web servers'' host group.
-
-\subsection{Schedules}
-\label{methodology-schedules}
-\paragraph*{}
-	A schedule defines when one or more checks are to be executed.  Each schedule
-	can contain multiple ``intervals'' which define when the check is run.  An
-	interval has a start date/time and a time delta that defines how regularly it
-	is to be implemented.
-
-\subsection{Services}
-\label{methodology-services}
-\paragraph*{}
-	A service is defined in terms of ``dependencies'' and ``redundancy groups''. Each
-	dependency represents a host that must be operational for the service to work.
-	A redundancy group can contain multiple hosts where at least one must be
-	operational for the service to work.
-
-\paragraph*{}
-	As an example, there may be a ``Website'' service that has a dependency on the
-	single router but has a redundancy group containing multiple web servers.
-	In this case, if the router fails then the website will be marked as failed.
-	If however one of the web servers fails but at least one other web server is
-	still operational, the website service will only be marked as degraded.
-
-\paragraph*{}
-	The use of services provides a clearer view of the impact of a given failure on
-	the functionality of the network.  It also allows alerts to be set up so that
-	they are only triggered when the service functionality is severely impacted and
-	prevents alerts from being sent out for host failures that do not have a severe
-	impact.
-
-\subsection{Alerts}
-\paragraph*{}
-	In Prophasis, alerts are set up to communicate with a specific person/group of
-	people in a certain situation.  Alerts are defined in terms of to/from stage
-	changes where an alert will be sent if the state of a host/service changes from
-	one state to another (e.g. ``ok'' to ``critical'').  These can then be restricted
-	to certain hosts, host groups, services, plugins and checks.
-
-\paragraph*{}
-	The system supports ``alert modules'' - Python modules that are used to send
-	alerts using various methods.  Examples of alert modules could be email, SMS or
-	telephone call.
-
-\paragraph*{}
-	Multiple alerts can be set up to handle different severities of issues.  For
-	example, if a redundant service becomes degraded, a SMS or email message may be
-	sufficient but if a service becomes critical it may be desirable to use a
-	telephone call to gain quicker attention.
-
-\subsection{Classification}
-	A classification defines how serious or important the data from a plugin is,
-	for example, the CPU load being slightly higher than normal would probably be
-	classed as a minor issue whereas a system not responding to checks from
-	Prophasis would be likely to be classed as a critical issue. Table
-	\ref{table-classifications} lists all the different classifications ordered
-	by severity.
-
-%TODO Heighht of rows without vdots
-\begin{table}[H]
-	\centering
-	\caption{Different classifications that can be given to data ordered by severity}
-	\label{table-classifications}
-    \begin{tabular}{|c|l|l|}
-    \hline
-    Severity     & Classification & Notes                                       \\ \hline
-    Most severe  & Critical       & ~                                           \\
-    \vdots       & Major          & ~                                           \\
-    \vdots       & Minor          & ~                                           \\
-    \vdots       & Degraded       & Only applies to services                    \\
-    \vdots       & Unknown        & ~                                           \\
-    \vdots       & OK             & ~                                           \\
-    Least severe & No data        & Plugin has never been executed on this host \\ \hline
-    \end{tabular}
-\end{table}
 
 \section{User Interface}
 \paragraph*{}
@@ -1391,7 +1413,6 @@ evaluate them on several points as follows:
     \end{tabular}
 \end{table}
 
-%TODO Reword this
 \paragraph*{}
 	The deployment was extremely successful with Prophasis reliably monitoring all
 	systems.  Performing this deployment on Lynchpin's systems was extremely
@@ -1450,8 +1471,10 @@ evaluate them on several points as follows:
 	agent when running under Windows (previously it had only ever been executed on
 	UNIX-like operating systems).  It was found that the ``timeout-decorator''
 	library being used to allow plugin execution to halted if a plugin was taking
-	too long to execute used \texttt{SIGALARM} signals which are not supported by
-	Windows. %TODO - How did we fix this?
+	too long to execute used \texttt{SIGALRM} signals which are not supported by
+	Windows. The solution was to swap the ``timeout-decorator'' library out for
+	``stopit'' which can use multithreading to implement timeouts instead of UNIX
+	signals.  This solution works Windows as well as UNIX-like operating systems.
 
 \paragraph*{Ideas for Future Work}
 	Deploying and using Prophasis at Lynchpin provided several ideas for future

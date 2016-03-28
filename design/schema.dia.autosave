@@ -13,22 +13,22 @@
           <dia:string>#A4#</dia:string>
         </dia:attribute>
         <dia:attribute name="tmargin">
-          <dia:real val="2"/>
+          <dia:real val="0"/>
         </dia:attribute>
         <dia:attribute name="bmargin">
-          <dia:real val="3"/>
+          <dia:real val="0"/>
         </dia:attribute>
         <dia:attribute name="lmargin">
-          <dia:real val="2"/>
+          <dia:real val="0"/>
         </dia:attribute>
         <dia:attribute name="rmargin">
-          <dia:real val="3"/>
+          <dia:real val="0"/>
         </dia:attribute>
         <dia:attribute name="is_portrait">
           <dia:boolean val="false"/>
         </dia:attribute>
         <dia:attribute name="scaling">
-          <dia:real val="0.29195252060890198"/>
+          <dia:real val="0.35105222463607788"/>
         </dia:attribute>
         <dia:attribute name="fitto">
           <dia:boolean val="true"/>
