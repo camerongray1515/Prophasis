@@ -1,4 +1,4 @@
-\documentclass[bsc,logo,twoside,singlespacing,notimes]{infthesis}
+\documentclass[bsc,logo,twoside,parskip,singlespacing,notimes]{infthesis}
 
 \usepackage{graphicx}
 \usepackage{float}
@@ -9,18 +9,17 @@
 \author{Cameron Gray}
 
 \abstract{
-\paragraph*{}
 Current systems for monitoring IT infrastructure are designed for use
 on large networks operated by dedicated IT staff.  They are complex to manage
 and often multiple tools are required to obtain a suitable level of monitoring.
 
-\paragraph*{}
+
 This project involves developing a new IT infrastructure monitoring system from
 the ground up for use in SME environments.  The aim is to develop a tool that
 is powerful enough to monitor a network on its own as well as being simple to
 use and manage.
 
-\paragraph*{}
+
 The new system has comprehensive support for time series monitoring as well as
 real time alerting which is an area where two separate tools would traditionally
 be required.  The entire system can be managed from a responsive web interface
@@ -37,7 +36,7 @@ support monitoring of a variety of different systems.
 \chapter{Introduction}
 %TODO See project page for stuff about what to put in intro
 \section{Background}
-\paragraph*{}
+
 	In recent years, almost all businesses have been expanding their IT
 	infrastructure to handle the modern demand for IT systems.  As these systems
 	grow and become increasingly important for business operation it is crucial
@@ -48,7 +47,7 @@ support monitoring of a variety of different systems.
 	complicated to set up and manage and multiple tools are often required to gain
 	a suitable level of monitoring.
 
-\paragraph*{}
+
 	Current tools generally either fall into the category of real time
 	alerting (sending an alert when there is a problem) and time series
 	monitoring (capturing data about the performance of systems and presenting
@@ -57,7 +56,7 @@ support monitoring of a variety of different systems.
 	time required to manage the system as it eliminates the need to set up and
 	configure two completely separate tools.
 
-\paragraph*{}
+
 	Current tools are also generally managed and configured through various
 	configuration files split across different machines on the network. This means
 	that in order to efficiently use these tools a configuration management system
@@ -66,7 +65,7 @@ support monitoring of a variety of different systems.
 
 \section{Analysis of Existing Tools}
 \label{analysis-of-existing-tools}
-\paragraph*{}
+
 This section will review current IT infrastructure monitoring systems and
 evaluate them on several points as follows:
 \begin{itemize}
@@ -81,7 +80,7 @@ evaluate them on several points as follows:
 %TODO List current tools being investigated
 
 \subsection{Time series monitoring and real time alerting}
-\paragraph*{}
+
 	There is currently a lack of tools that support both
 	time series monitoring as well as real time alerting in any reasonable capacity.
 	Nagios and Icinga2 are mainly focused on real time alerting so do not have much
@@ -93,14 +92,14 @@ evaluate them on several points as follows:
 	collected data but has no built in support for alerting about faults or working
 	out the health of a system.
 
-\paragraph*{}
+
 	It was identified that that there is no single tool that performs well for
 	both real time alerting as well as time series monitoring.  This means that
 	in order to gain both of these, two separate tools (e.g. Nagios and Munin)
 	need to be installed, configured and maintained completely separately.
 
 \subsection{Support for Custom Metrics}
-\paragraph*{}
+
 	Nagios, Icinga 2 and Munin all operate in similar ways here through the use of
 	simple scripts that can be written in any language.  Both Nagios and Icinga 2
 	execute the shell script and use the exit code to determine the health of the
@@ -111,7 +110,7 @@ evaluate them on several points as follows:
 	also, when passed ``config'' as a command line argument, print out information
 	such as the title of the graph.
 
-\paragraph*{}
+
 	In this area, current tools are all very much the same in the sense that they
 	execute scripts and parse the output. This can be quite fragile as a badly
 	written script could fairly easily output data in the wrong format. Using exit
@@ -120,14 +119,14 @@ evaluate them on several points as follows:
 
 \subsection{Classification Threshold Definitions}
 \label{classification-threshold-definitions}
-\paragraph*{}
+
 	Both Nagios and Icinga2 classify the result of a check within the plugin itself
 	by the plugin exiting with the appropriate exit code to define the result. This
 	means that the thresholds are also generally stored inside the plugin script.
 	Because Munin does not support real time alerting, there is no support for
 	classifying data.
 
-\paragraph*{}
+
 	This is a clear issue with current systems, all classification is performed on
 	remote machines meaning that the logic used for this along with any threshold
 	values are located on every machine in the network making it difficult to
@@ -136,7 +135,7 @@ evaluate them on several points as follows:
 	classification.
 
 \subsection{Code/Configuration Delivery to Nodes}
-\paragraph*{}
+
 	Nagios, Icinga2 and Munin are configured through several different
 	configuration files and scripts stored on the disks of the server running the
 	monitoring as well as the hosts being monitored.  There is no built in
@@ -144,7 +143,7 @@ evaluate them on several points as follows:
 	respective machines.  For this, separate configuration management tools such as
 	Puppet or Ansible would need to be used.
 
-\paragraph*{}
+
 	This is a clear area for improvement. In a small business environment with a
 	limited number of machines, each with their own separate role, configuration
 	management tools are often not deployed.  Deploying an existing tool
@@ -155,11 +154,11 @@ evaluate them on several points as follows:
 	hosts if one gets missed during an update or updated incorrectly.
 
 \subsection{How the user configures the system}
-\paragraph*{}
+
 	Nagios, Icinga 2 and Munin are all configured entirely using configuration
 	files stored on disk.
 
-\paragraph*{}
+
 	This is another area for improvement. While configuration files are suitable
 	for tools targeted towards expert users, they require a rather in depth amount
 	of knowledge about ow the system is configured.  When configuring the system,
@@ -168,7 +167,7 @@ evaluate them on several points as follows:
 	for broken configuration to be saved.
 
 \subsection{How Dependencies are Handled}
-\paragraph*{}
+
 	Nagios and Icinga 2 both handle dependencies as a rigid tree where hosts can
 	be set as dependent on other hosts.  There is however no support for redundancy
 	where the availability of a service can be dependant on one of several hosts
@@ -177,13 +176,13 @@ evaluate them on several points as follows:
 	dependency functionality due to its lack of real time alerting.
 
 %TODO Repetition of ``clear area''
-\paragraph*{}
+
 	This is also a clear area for improvement. In a modern environment it is
 	important for a monitoring system to be able to understand redundancy.
 
 \section{Improvements on Existing Tools} %TODO Something
 % TODO: Find a better place for this?
-\paragraph*{}
+
 	After looking into the weaknesses in existing offerings	Prophasis was designed.
 	This tool was designed specifically for use in a small to medium business with limited IT
 	resources.  Such businesses may have a small IT team with limited resources or may not
@@ -194,7 +193,7 @@ evaluate them on several points as follows:
 	be no requirement for additional tooling to be deployed across the company.
 
 \subsection{Configuration Management}
-\paragraph*{}
+
 	It should be possible to manage the configuration of the system from a single
 	location.  Prophasis provides a responsive web interface where every
 	aspect of the system's operation can be configured, Prophasis then handles
@@ -204,7 +203,7 @@ evaluate them on several points as follows:
 	appropriate remote machines when it is required.
 
 \subsection{Time Series Monitoring \& Real Time Alerting}
-\paragraph*{}
+
 	Prophasis provides both the ability to alert administrators in real time when a
 	system fault is discovered and functionality to collect
 	performance metrics over time. This data can be used to generate statistics about
@@ -214,7 +213,7 @@ evaluate them on several points as follows:
 
 \subsection{Expandability}
 %TODO Why is this important?
-\paragraph*{}
+
 	It is important that a monitoring tool can be expanded to support the
 	monitoring of custom hardware and software.  An example of this would be
 	hardware RAID cards.  Getting the drive health from these types of devices can
@@ -233,7 +232,7 @@ evaluate them on several points as follows:
 %	SMEs
 
 \chapter{Design}
-\paragraph*{} %TODO Check
+ %TODO Check
 	This chapter will explain the design of Prophasis and explain various different
 	design decisions that were made.  First it will go into detail explaining
 	the choice of different technologies used in Prophasis and will explain the
@@ -286,12 +285,12 @@ evaluate them on several points as follows:
 	ease versus SSH which would involve having to handle a custom wire protocol.
 
 \section{Terminology}
-\paragraph*{}
+
 	This section explains the terminology used throughout the system to give a
 	better idea of how everything is structured.
 
 \subsection{Hosts \& Host Groups}
-\paragraph*{}
+
 	In Prophasis, a ``host'' refers to a single machine that is being monitored. To
 	aid management and organisation, it is possible to organise hosts into ``Host
 	Groups.''  These can be comprised of hosts or other groups and can be used in
@@ -301,7 +300,7 @@ evaluate them on several points as follows:
 	other way that makes sense given the specific implementation.
 
 \subsection{Plugins}
-\paragraph*{}
+
 	A ``plugin'' is a package that checks a single attribute of a system.  For
 	example a plugin could check the CPU load of a given machine or be used to
 	check the health of all the hard drives in a system.  Plugins are implemented
@@ -311,25 +310,25 @@ evaluate them on several points as follows:
 	.tar.gz archive along with a manifest JSON file which contains information
 	about the plugin for use when it is installed.
 
-\paragraph*{}
+
 	Plugins are automatically distributed from the core to remote machines and when
 	executed by the agent the value and message are returned to the core for
 	classification and storage in the database.
 
 \subsection{Checks}
-\paragraph*{}
+
 	A ``check'' is a named set of hosts/host groups and a set of plugins to be
 	executed on them.  When a check is executed, all of the plugins specified in
 	the check will be executed across all of the hosts specified in the check.
 
-\paragraph*{}
+
 	Checks allow logical grouping of various plugins.  For example you may have a
 	check for ``Web server Resource Usage'' which will execute plugins to check the
 	CPU load and memory across all hosts in the ``Web servers'' host group.
 
 \subsection{Schedules}
 \label{methodology-schedules}
-\paragraph*{}
+
 	A schedule defines when one or more checks are to be executed.  Each schedule
 	can contain multiple ``intervals'' which define when the check is run.  An
 	interval has a start date/time and a time delta that defines how regularly it
@@ -337,20 +336,20 @@ evaluate them on several points as follows:
 
 \subsection{Services}
 \label{methodology-services}
-\paragraph*{}
+
 	A service is defined in terms of ``dependencies'' and ``redundancy groups''. Each
 	dependency represents a host that must be operational for the service to work.
 	A redundancy group can contain multiple hosts where at least one must be
 	operational for the service to work.
 
-\paragraph*{}
+
 	As an example, there may be a ``Website'' service that has a dependency on the
 	single router but has a redundancy group containing multiple web servers.
 	In this case, if the router fails then the website will be marked as failed.
 	If however one of the web servers fails but at least one other web server is
 	still operational, the website service will only be marked as degraded.
 
-\paragraph*{}
+
 	The use of services provides a clearer view of the impact of a given failure on
 	the functionality of the network.  It also allows alerts to be set up so that
 	they are only triggered when the service functionality is severely impacted and
@@ -358,19 +357,19 @@ evaluate them on several points as follows:
 	impact.
 
 \subsection{Alerts}
-\paragraph*{}
+
 	In Prophasis, alerts are set up to communicate with a specific person/group of
 	people in a certain situation.  Alerts are defined in terms of to/from stage
 	changes where an alert will be sent if the state of a host/service changes from
 	one state to another (e.g. ``ok'' to ``critical'').  These can then be restricted
 	to certain hosts, host groups, services, plugins and checks.
 
-\paragraph*{}
+
 	The system supports ``alert modules'' - Python modules that are used to send
 	alerts using various methods.  Examples of alert modules could be email, SMS or
 	telephone call.
 
-\paragraph*{}
+
 	Multiple alerts can be set up to handle different severities of issues.  For
 	example, if a redundant service becomes degraded, a SMS or email message may be
 	sufficient but if a service becomes critical it may be desirable to use a
@@ -403,7 +402,7 @@ evaluate them on several points as follows:
 \end{table}
 
 \section{System Structure}
-\paragraph*{}
+
 	The system is split into three separate components; Agent, Core and Web. Web
 	and Core share the same relational database allowing data to be shared
 	between them.  Figure \ref{system_structure} shows the individual components of
@@ -417,7 +416,7 @@ evaluate them on several points as follows:
 \end{figure}
 
 \subsection{Agent}
-\paragraph*{}
+
 	The agent runs on every machine that is being monitored and provides an API for
 	communication with the monitoring server.  It listens on port 4048 (by default)
 	and exposes an HTTPS API.  This API includes methods to check the version of a
@@ -425,7 +424,7 @@ evaluate them on several points as follows:
 	the agent and another method to execute a plugin and to retrieve the value and
 	message produced by it.
 
-\paragraph*{}
+
 	The agent's API is authenticated using a long, pre-shared key of which a salted
 	hash is stored on the agent in a configuration file.  Being hashed prevents
 	users who may have access to read the configuration file (possibly through
@@ -433,12 +432,12 @@ evaluate them on several points as follows:
 	agent.
 
 \subsection{Core}
-\paragraph*{}
+
 	The core runs on the machine that is performing the monitoring, it has several
 	different roles; scheduling, dispatching, classification and alerting.
 
 \subsubsection{Scheduling}
-\paragraph*{}
+
 	The core is responsible for looking at the schedules stored in the database and
 	executing the appropriate checks on the correct hosts at the correct time.
 	There is a configuration value for ``maximum lateness'' that defines how late
@@ -447,7 +446,7 @@ evaluate them on several points as follows:
 	time at which a given schedule was last executed.  If it decides that a
 	schedule is due to be executed it passes this onto the dispatcher.
 
-\paragraph*{}
+
 	Figure \ref{scheduler_flowchart} describes how the scheduler operates.  Each
 	schedule has a \linebreak\texttt{start\_timestamp} which is defined by the user
 	when the schedule is created, an \texttt{interval} which is how often the
@@ -471,7 +470,7 @@ evaluate them on several points as follows:
 
 
 \subsubsection{Dispatching}
-\paragraph*{}
+
 	The dispatcher component of the core is responsible for issuing checks to
 	agents when they are due to be run (as decided by the scheduler).  Checks may
 	take some time to execute so executing these all in series would all be
@@ -508,7 +507,7 @@ evaluate them on several points as follows:
 
 \subsubsection{Classification}
 \label{core-classification}
-\paragraph*{}
+
 	When data is collected from an agent, it needs to be classified as ``ok'',
 	``major'', ``minor'', ``critical'' or ``unknown''.  Classification is performed by Lua
 	code that is stored alongside each plugin.  When the core finishes collecting a
@@ -523,7 +522,7 @@ evaluate them on several points as follows:
 	stored and the other containing the previous $n$ ``messages''.
 
 \subsubsection{Alerting}
-\paragraph*{}
+
 	Once the core has classified a piece of data, it now needs to work out
 	whether it needs to send an alert or not.  To do this it looks at the previous
 	state for the plugin and host along with the current state.  It then looks
@@ -533,7 +532,7 @@ evaluate them on several points as follows:
 	state change.
 
 \subsection{Web Interface}
-\paragraph*{}
+
 	Prophasis provides a web interface for both configuring the system and viewing
 	collected data.  The interface is designed to be clear and easy to understand
 	for users.  It is also built to be fully responsive so will work correctly on
@@ -542,18 +541,18 @@ evaluate them on several points as follows:
 	not currently be in easy reach of a computer so will need to use a mobile
 	device to investigate the issue.
 
-\paragraph*{}
+
 	The web interface will connect to the same database as the core, and will
 	update the configuration data stored in this database and will retrieve
 	the data about hosts.
 
-\paragraph*{}
+
 	The web interface provides dashboards for visualisation of data collected from
 	plugins.  The collected data can then be displayed using graphs, tables, lists
 	of messages or any other way that suits the type of data collected.
 
 \section{User Interface}
-\paragraph*{}
+
 	The nature of a monitoring system means that it will often need to be used from
 	mobile devices when systems need to be checked on the move or out of hours. This
 	requires that Prophasis's web interface must work correctly on both mobile devices
@@ -561,13 +560,13 @@ evaluate them on several points as follows:
 	responsive web interface that will scale automatically based on the screen size
 	of the device without any loss of functionality.
 
-\paragraph*{}
+
 	In order to keep Prophasis as intuitive as possible, the user interface should
 	contain clear explanations of different functionality as well as help text and
 	detailed error messages.
 
 \section{Determining the Overall Health of a Host or Service}
-\paragraph*{}
+
 	In Prophasis, although the data returned by each plugin is classified individually,
 	in order to display the collected data or to create alerts it is necessary to
 	be able to decide on a general health classification for an entire machine or
@@ -603,13 +602,13 @@ evaluate them on several points as follows:
 
 \chapter{Implementation}
 \section{Technologies}
-\paragraph*{}
+
 	The vast majority of the system is implemented in Python 3.  This allows for a
 	large variety of modules to be used during development. Python is also widely
 	available on UNIX systems and is easy to install on machines where it is not
 	included.
 
-\paragraph*{}
+
 	The Python ``Virtual Environment'' (Virtualenv) system is also extremely useful
 	in this system.  It allows all dependencies to be kept totally separate from
 	the rest of the system, this is particularly important for the agent as it
@@ -617,7 +616,7 @@ evaluate them on several points as follows:
 	systems it is running on.
 
 \subsection{Flask Web Framework}
-\paragraph*{}
+
 	The agent and web interface are both built using the Flask web framework which
 	handles routing URLs to the correct Python functions as well as handling
 	request data and building the correct HTTP responses. The agent purely uses the
@@ -627,7 +626,7 @@ evaluate them on several points as follows:
 	Flask-Login package to provide login and user session management functionality.
 
 \subsection{Tornado HTTP Server}
-\paragraph*{}
+
 	While Flask does provide a built in web server, it is only designed for
 	development	use.  In order to provide a production suitable web server for the
 	%TODO Did we use Tornado for the web interface too?
@@ -637,7 +636,7 @@ evaluate them on several points as follows:
 	installed/configured on the system.
 
 \subsection{SQLAlchemy ORM}
-\paragraph*{}
+
 	All database functionality in Prophasis is handled through the SQLAlchemy ORM
 	which abstracts the database into a set of Python classes (known as models).
 	This not only reduces development time, it also reduces the likelihood of
@@ -646,7 +645,7 @@ evaluate them on several points as follows:
 	the web interface and the core preventing duplication of database query logic.
 
 \subsection{Lupa}
-\paragraph*{}
+
 	Lupa provides an interface between the system's Lua runtime and Python.  It is
 	used by Prophasis to execute the user provided Lua code that is used to
 	classify the results of checks. A sandboxed Lua environment is configured to
@@ -654,7 +653,7 @@ evaluate them on several points as follows:
 	Sandboxing is covered further in section \ref{classification_sandboxing}.
 
 \subsection{PostgreSQL Database}
-\paragraph*{}
+
 	Prophasis has been officially developed to support PostgreSQL databases,
 	however through the use of an ORM it is possible to easily move to different
 	database platforms such as MySQL or Oracle.  SQLAlchemy transparently handles
@@ -662,7 +661,7 @@ evaluate them on several points as follows:
 	queries.
 
 \subsection{Appdirs}
-\paragraph*{}
+
 	Prophasis has been designed to support a variety of different operating
 	systems.  Different platforms have different conventions for where an
 	application should store configuration files and other application data.
@@ -672,7 +671,7 @@ evaluate them on several points as follows:
 	or an other supported platform.
 
 \subsection{AdminLTE \& Bootstrap}
-\paragraph*{}
+
 	AdminLTE is an open source theme for building administration dashboards and
 	control panels.  It is MIT licensed and is therefore compatible with the MIT
 	licence Prophasis is built under.  AdminLTE is built on top of Twitter's
@@ -682,7 +681,7 @@ evaluate them on several points as follows:
 	user interface responsive to work well on both desktop and mobile devices.
 
 \subsection{Handlebars.js}
-\paragraph*{}
+
 	Handlebars.js is a very lightweight JavaScript templating engine.  It is used
 	in the frontend of the web interface for rendering portions of the page that
 	are generated after the page has loaded. In Prophasis alerts and items that are
@@ -696,7 +695,7 @@ evaluate them on several points as follows:
 	and handlebars.
 	
 \subsection{Stopit}
-\paragraph*{}
+
 	Stopit is a Python library that provides an easy interface for setting timeouts
 	on blocks of code or function calls.  This means that if the code inside the
 	block takes longer than the timeout, it will be terminated and an exception
@@ -706,7 +705,7 @@ evaluate them on several points as follows:
  	since UNIX's \texttt{SIGALRM} is not supported under Microsoft Windows.
 
 \section{Plugin Structure}
-\paragraph*{}
+
 	Plugins are packaged as gziped TAR archive containing several different files.
 
 \paragraph*{Manifest File}
@@ -775,7 +774,7 @@ evaluate them on several points as follows:
 	which is exposed in \texttt{\_\_init\_\_.py}.
 
 \subsection{Plugin Logic} %TODO Better title!
-\paragraph*{}
+
 	The plugin is a Python module and can therefore contain any logic that it needs
 	in order to be able to retrieve the appropriate data.  This may be as simple as
 	using built in Python logic to get data such as CPU load, executing shell
@@ -791,7 +790,7 @@ evaluate them on several points as follows:
 	\vspace{-5em}
 \end{figure}
 
-\paragraph*{}
+
 	All plugins must contain a class that extends from \texttt{PluginInterface}.
 	This class must contain a \texttt{get\_data()} method which is called by the
 	agent to get the data from the plugin.  The \texttt{get\_data()} method must
@@ -801,7 +800,7 @@ evaluate them on several points as follows:
 	The message defaults to being the empty string so does not need to be
 	specified.
 
-\paragraph*{}
+
 	The plugin's main class (the one containing the \texttt{get\_data()} method)
 	must be exposed through \texttt{\_\_init\_\_.py} under the name \texttt{Plugin}.
 	If the plugin's main class was called \texttt{CPULoad} in a module called
@@ -809,7 +808,7 @@ evaluate them on several points as follows:
 	\texttt{from plugin import CPULoad as Plugin} in the \texttt{\_\_init\_\_.py}
 	file.
 
-\paragraph*{}
+
 	Structuring plugins in this way provides a large amount of flexibility.  The
 	plugin can have any sort of internal implementation (it can even call out to
 	shell scripts if desired) as long as the external interface follows the correct
@@ -819,7 +818,7 @@ evaluate them on several points as follows:
 	very fragile.
 
 \section{Database}
-\paragraph*{}
+
 	The database is at the very center of Prophasis, it is used to store the
 	configuration of the system along with data collected from agents, it is also
 	the primary means of communication between the core and the web interface.
@@ -827,7 +826,7 @@ evaluate them on several points as follows:
 	ensure that the database design was built to be efficient and flexible enough
 	to allow for future expansion.
 
-\paragraph*{}
+
 	The database was designed in a traditional manner using tables and relations
 	between them in order to build an efficient and normalised design however it
 	was implemented using the SQLAlchemy ORM which abstracts the database into a
@@ -849,7 +848,7 @@ evaluate them on several points as follows:
 	functionality to make multiple database operations atomic, this is important
 	since there are multiple processes/threads writing to the same database.
 
-\paragraph*{}
+
 	Figure \ref{database-diagram} shows a diagram that represents the structure
 	of the entire database.  The colours have no significance and are simply used
 	to illustrate which lines are crossing over and which are not.
@@ -870,13 +869,13 @@ evaluate them on several points as follows:
 \end{figure}
 
 \section{Common Module}
-\paragraph*{}
+
 	Even though the core and web interface are completely separate processes, they
 	still share some common logic: namely the database models, error logging and
 	alert module handling.  It would be impractical to write this functionality
 	twice, especially the database models as this is a huge piece of work.
 
-\paragraph*{}
+
 	The best solution to this problem was to build a ``common'' python module known
 	as \texttt{prophasis\_common}.  This contains the database models as well as
 	error logging and alert module handling and is required by both the core and
@@ -887,14 +886,14 @@ evaluate them on several points as follows:
 
 \section{Core}
 \subsection{Dispatcher}
-\paragraph*{}
+
 	The dispatcher is the system which sends off requests to the agent and waits
 	for the responses back which are then classified and then stored in the
 	database.  Due to the time it may take to execute some checks it would be
 	impractical to execute them in series, therefore the dispatcher is
 	multi-threaded.
 
-\paragraph*{}
+
 	The Prophasis dispatcher uses Python's built in ``multiprocessing'' library. This
 	provides various methods to manage processes as well as thread-safe data
 	structures for communicating between them.  The dispatcher uses\linebreak
@@ -916,7 +915,7 @@ evaluate them on several points as follows:
 	schedules are only called at most every second.
 
 \subsection{Classification}
-\paragraph*{}
+
 	When data is collected from the agent it needs to be ``classified'' to determine
 	whether it is ``ok'', ``major'', ``critical''.etc.  Classification is done by Lua
 	code that is bundled with the plugin and can also be modified by the user
@@ -926,7 +925,7 @@ evaluate them on several points as follows:
 
 \subsubsection{Sandboxing}
 \label{classification_sandboxing}
-\paragraph*{}
+
 	Classification code is executed directly on the machine under the same user as
 	the core.  Since this classification code can be changed through the Prophasis
 	web interface it is critical that this code cannot perform malicious operations
@@ -938,7 +937,7 @@ evaluate them on several points as follows:
 	operating system functions such as file handling.
 
 \subsubsection{Functions}
-\paragraph*{}
+
 	In order to make developing classification code easier, several predefined
 	functions are provided to handle common operations such as
 	\texttt{arrayMax(array)} which will return the maximum value in an array and
@@ -948,7 +947,7 @@ evaluate them on several points as follows:
 	before it is executed.
 
 \subsubsection{Handling Errors}
-\paragraph*{}
+
 	When dealing with user defined code there is always the potential for errors
 	to occur when the classification code is executed.  In this situation the
 	system will automatically fall back and classify the result as ``unknown''. The
@@ -956,7 +955,7 @@ evaluate them on several points as follows:
 	in the web interface's ``System Logs'' area.
 
 \section{Agent}
-\paragraph*{}
+
 	The agent is implemented using the Flask web framework to expose a HTTPS API
 	that the core communicates with.  Requests are sent to the agent using regular
 	HTTP GET and POST requests with information passed using URL parameters or HTTP
@@ -1003,7 +1002,7 @@ evaluate them on several points as follows:
 	\texttt{SIGALRM} signal which is not supported by Microsoft Windows.
 
 \section{Web Interface}
-\paragraph*{}
+
 	The web interface is implemented using the Flask web framework.  The frontend
 	is built using AdminLTE which in turn is based on Twitter's Bootstrap
 	framework.  The web interface is built to be fully responsive so that it
@@ -1017,7 +1016,7 @@ evaluate them on several points as follows:
 %TODO - Describe error logging to web interface.
 
 \subsection{Configuration}
-\paragraph*{}
+
 	All of the different configuration options are accessible through a clearly
 	organised menu displayed on every page.  This allows the user to access all of
 	the different configuration options from a single location.  This navigation
@@ -1030,7 +1029,7 @@ evaluate them on several points as follows:
 	\includegraphics[scale=0.7]{assets/screenshots/settings-nav.pdf}
 \end{figure}
 
-\paragraph*{}
+
 	Clicking each of these links will take the user to the management area for
 	that section allowing them to configure that part of the system.  The first
 	page of any of these sections is an index page that lists all objects (e.g.
@@ -1046,7 +1045,7 @@ evaluate them on several points as follows:
 	\includegraphics[scale=0.55]{assets/screenshots/alerts-index.pdf}
 \end{figure}
 
-\paragraph*{}
+
 	When the user chooses to add or edit an object a form is loaded.  The add and
 	edit forms are both rendered using the exact same template files ensuring that
 	both forms are consistent.  A \texttt{method} parameter is passed into these
@@ -1059,7 +1058,7 @@ evaluate them on several points as follows:
 	\includegraphics[scale=0.45]{assets/screenshots/edit-check.pdf}
 \end{figure}
 
-\paragraph*{}
+
 	This form has a pair of text boxes to specify a name and description for the
 	check and then a pair of lists of checkboxes: the first lists hosts and host
 	groups that the check will be executed on and the second lists plugins that
@@ -1106,7 +1105,7 @@ evaluate them on several points as follows:
 	\includegraphics[scale=0.54]{assets/screenshots/schedule-intervals.pdf}
 \end{figure}
 
-\paragraph*{}
+
 	In order to display confirmation messages to users,
 	Bootbox.js\footnote{http://bootboxjs.com/} is used which provides a convenient
 	abstraction around Bootstrap's build in modal functionality.  This allows
@@ -1136,7 +1135,7 @@ evaluate them on several points as follows:
 	\includegraphics[scale=0.44]{assets/screenshots/edit-service.pdf}
 \end{figure}
 
-\paragraph*{}
+
 	In this interface, dependencies and redundancy groups are represented as boxes
 	each containing the host(s) and host group(s) that are a member of that
 	dependency or redundancy group.  Individual hosts can be added to redundancy
@@ -1160,14 +1159,14 @@ evaluate them on several points as follows:
 \end{figure}
 
 \subsection{Reporting}
-\paragraph*{}
+
 	In addition to being used to configure the system, the web interface is also
 	used to visualise the collected data.  There are currently two reports, one
 	to show the health of all hosts in the system and another to show the health
 	of all services.  There is scope to add more reports to give different views
 	of the data.
 \subsubsection{Host Health}
-\paragraph*{}
+
 	Figure \ref{host-health-index} shows the host health report for
 	a selection of machines.  This report lists all the machines in the system
 	as well as displaying their health in both a textual and colour representation.
@@ -1183,7 +1182,7 @@ evaluate them on several points as follows:
 	\includegraphics[scale=0.7]{assets/screenshots/host-health-index.pdf}
 \end{figure}
 
-\paragraph*{}
+
 	Clicking on any of these hosts will open a page displaying more detailed
 	breakdowns of the data stored for that host.  This is where the time series
 	data can be visualised.  Figure \ref{host-information} shows a sample
@@ -1201,7 +1200,7 @@ evaluate them on several points as follows:
 \end{figure}
 
 \subsubsection{Service Health}
-\paragraph*{}
+
 	In order to give a view of the overall health of the services running on a
 	system or to show the impact that a fault with a host has on the overall
 	functionality of a system, a report is available to list the health of all
@@ -1218,7 +1217,7 @@ evaluate them on several points as follows:
 	\includegraphics[scale=0.6]{assets/screenshots/service-health-index.pdf}
 \end{figure}
 
-\paragraph*{}
+
 	Clicking on each of these services will load a view that shows the status of
 	all hosts in the service as well as how they are structured in terms of
 	dependencies and redundancy groups.  This is shown in Figure
@@ -1237,7 +1236,7 @@ evaluate them on several points as follows:
 
 \chapter{Testing}
 \section{Unit Testing}
-\paragraph*{}
+
 	Unit tests were used to test the more complex functionality of the system such
 	as getting all member hosts in a host group or determining the overall health
 	of a host or service.  These algorithms are somewhat complex so having unit
@@ -1246,7 +1245,7 @@ evaluate them on several points as follows:
 	system.  The Python \texttt{unittest} library was used as it is included as part of
 	a standard Python install and is well documented.
 
-\paragraph*{}
+
 	Each test case was implemented as a single class with each different test in a
 	separate function within this.  Each \texttt{TestCase} has a \texttt{setUp()}
 	method which is called before each test in the class is executed.  The
@@ -1254,7 +1253,7 @@ evaluate them on several points as follows:
 	structure from the models file and will then insert sample data for use in the
 	tests.  This ensures that every test starts on a clean database.
 
-\paragraph*{}
+
 	In order to prevent tests from affecting the main database or requiring a new
 	database to be set up, SQLite is used.  A temporary, in memory database is
 	created when the tests are executed which is then destroyed when the tests are
@@ -1268,14 +1267,14 @@ evaluate them on several points as follows:
 %TODO Bit more here about structure/design of tests?
 
 \section{Mock Agent}
-\paragraph*{}
+
 	When developing and testing Prophasis, it was important to be able to simulate a
 	network of multiple machines all being monitored and in addition to this it
 	was essential to be able to simulate faults with these machines. While it would
 	have been possible to run multiple agents and then use plugins to return data
 	and to simulate faults this would have been impractical to set up, run and maintain.
 
-\paragraph*{}
+
 	As a solution to this, a mock agent was developed.  This is a simple application
 	that implements enough of the agent's functionality to allow the core to
 	communicate with it as though it is a regular agent.  It does not use plugins
@@ -1293,7 +1292,7 @@ evaluate them on several points as follows:
 	\lstinputlisting[basicstyle=\footnotesize\ttfamily,frame=single]{assets/mock-agent-data.json}
 \end{figure}
 
-\paragraph*{}
+
 	In order to keep the mock agent simple, it listens on a single port (4048, the
 	same as the regular agent).  The mock agent binds to all available IP addresses
 	on the system and it uses the destination IP address to determine which data it
@@ -1305,7 +1304,7 @@ evaluate them on several points as follows:
 	JSON schema containing plugin IDs mapped to the data that should be sent in
 	response to requests for that plugin.
 
-\paragraph*{}
+
 	The JSON file is read every time a request reaches the mock agent.  This means
 	that the test data can be changed on the fly while the mock agent is running by
 	simply changing the data in the file and saving it.  For example, to test what
@@ -1315,7 +1314,7 @@ evaluate them on several points as follows:
 	sent out.
 
 \section{Use in the Field}
-\paragraph*{}
+
 	There is only so much information that can be gained from testing a system such
 	% Better word for the environment?
 	as Prophasis in a clean environment through the use of the mock agent and unit
@@ -1325,28 +1324,28 @@ evaluate them on several points as follows:
 
 \subsection{The Tardis Project}
 \label{testing-tardis}
-\paragraph*{}
+
 	The Tardis Project\footnote{http://www.tardis.ed.ac.uk/} is a computer system
 	operated and maintained by students at the University of Edinburgh.
 	It provides services to students including shell accounts, web hosting and mail
 	services.  The project currently runs off of 9 physical servers and on these
 	operates a large number of virtual machines.
 
-\paragraph*{}
+
 	Prophasis was installed on the Tardis system somewhat early in its development
 	so that it could be operated in a running environment 24 hours a day. A virtual
 	machine was created to run the core, web interface, an agent and the database,
 	the agent was also installed on several different hosts including the shell
 	server and the machine that provides network storage to the rest of the system.
 
-\paragraph*{}
+
 	Tardis's primary storage host uses Linux MD RAID to provide redundancy.  For
 	this a custom plugin was developed to parse the file at \texttt{/proc/mdstat}
 	which provides information about the health of the disks in the system. This
 	allowed Prophasis to be able to monitor the health of the Tardis system's
 	primary storage.
 
-\paragraph*{}
+
 	The deployment on Tardis was extremely useful as it allowed Prophasis to be
 	tested in a real world environment from the very beginning where new features
 	could be launched and tested on live servers rapidly.  It also highlighted
@@ -1372,7 +1371,7 @@ evaluate them on several points as follows:
 
 \pagebreak
 \subsection{Lynchpin Analytics Limited}
-\paragraph*{}
+
 	Lynchpin Analytics Limited (``Lynchpin'') is full service analytics consultancy.
 	Lynchpin is a small business yet
 	operates a reasonably sized network running entirely on their own hardware.
@@ -1381,7 +1380,7 @@ evaluate them on several points as follows:
 	complete in order to evaluate how the finished product works in a heterogeneous
 	environment and to highlight any major issues that occur.
 
-\paragraph*{}
+
 	Lynchpin operates a range of vastly different systems which makes it an
 	ideal environment to test Prophasis.  Unlike on Tardis where the majority of
 	systems run Debian Linux, Lynchpin operates systems running Citrix XenServer (where
@@ -1413,7 +1412,7 @@ evaluate them on several points as follows:
     \end{tabular}
 \end{table}
 
-\paragraph*{}
+
 	The deployment was extremely successful with Prophasis reliably monitoring all
 	systems.  Performing this deployment on Lynchpin's systems was extremely
 	valuable and both demonstrated that Prophasis works well in such a deployment
@@ -1493,7 +1492,7 @@ evaluate them on several points as follows:
 	check the free space on different disks.  These features are described in more
 	detail in Section \ref{future-work}
 
-\paragraph*{}
+
 	Testing Prophasis by deploying it at Lynchpin was incredibly useful. Lynchpin
 	as a company perfectly suits the type of environment that Prophasis is designed
 	for. Testing showed that Prophasis works reliably in such an environment.  It also
@@ -1504,7 +1503,7 @@ evaluate them on several points as follows:
 	inspiring ideas for future features and enhancements.
 
 \chapter{Evaluation}
-\paragraph*{}
+
 	Prophasis is now a complete system that is sufficiently developed to be able to
 	be deployed on a network.  It has been tested both in a synthetic environment
 	and on multiple real world networks.  The complete system improves on
@@ -1578,7 +1577,7 @@ evaluate them on several points as follows:
 
 \section{Future Work}
 \label{future-work}
-\paragraph*{}
+
 	While Prophasis is now a complete system which could be (and has been) used in
 	production environments in its current form, there are additional
 	enhancements and functionality which could be added to the system to improve
