@@ -714,9 +714,16 @@ evaluate them on several points as follows:
 	through the use of UNIX signals.  Prophasis uses the multithreading variant
  	since UNIX's \texttt{SIGALRM} is not supported under Microsoft Windows.
 
-\section{Plugin Structure}
+\section{Plugins}
+	Plugins are bundles of code that are developed to monitor a specific aspect of
+	a system, a plugin for example could be developed to monitor the CPU load of a
+	system or to check the health of all RAID arrays on a given type of RAID
+	controller.  Plugins are not bundled as part of the Prophasis distribution and
+	are instead installed afterwards by uploading them through the web interface.
+	
 
-	Plugins are packaged as gziped TAR archive containing several different files.
+	Plugins are packaged as gziped TAR archives containing several different files.
+	The contents of a plugin archive explained below.
 
 \paragraph*{Manifest File}
 	All plugins must contain a file to store information about the plugin called
@@ -783,8 +790,7 @@ evaluate them on several points as follows:
 	there will be a single Python source file containing the \texttt{Plugin} class
 	which is exposed in \texttt{\_\_init\_\_.py}.
 
-\subsection{Plugin Logic} %TODO Better title!
-
+\subsection{Plugin Logic}
 	The plugin is a Python module and can therefore contain any logic that it needs
 	in order to be able to retrieve the appropriate data.  This may be as simple as
 	using built in Python logic to get data such as CPU load, executing shell
