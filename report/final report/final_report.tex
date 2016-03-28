@@ -660,6 +660,7 @@ evaluate them on several points as follows:
 	user interface responsive to work well on both desktop and mobile devices.
 
 \subsection{Handlebars.js}
+\paragraph*{}
 	Handlebars.js is a very lightweight JavaScript templating engine.  It is used
 	in the frontend of the web interface for rendering portions of the page that
 	are generated after the page has loaded. In Prophasis alerts and items that are
@@ -671,6 +672,16 @@ evaluate them on several points as follows:
 	functionality such as conditionals and loops require slightly different syntax.
 	Therefore care must be taken when rendering the same template with both Jinja2
 	and handlebars.
+	
+\subsection{Stopit}
+\paragraph*{}
+	Stopit is a Python library that provides an easy interface for setting timeouts
+	on blocks of code or function calls.  This means that if the code inside the
+	block takes longer than the timeout, it will be terminated and an exception
+	will be thrown.  This is used to ensure that plugins do not take too long to
+	execute.  Stopit can implement timeouts either by using multithreading or
+	through the use of UNIX signals.  Prophasis uses the multithreading variant
+ 	since UNIX's \texttt{SIGALRM} is not supported under Microsoft Windows.
 
 \section{Plugin Structure}
 \paragraph*{}
@@ -952,6 +963,22 @@ evaluate them on several points as follows:
 	errors such as the authentication check being moved after some restricted
 	functionality or accidentally being removed during changes to the function
 	body.
+	
+\paragraph*{Plugin Execution}
+	When a call is made to the Agent's \texttt{get-plugin-data} method, the agent
+	will execute the plugin and return the data (value and message) returned by it.
+	The agent uses \texttt{importlib.machinery.SourceFileLoader} to load the
+	plugin's \texttt{\_\_init\_\_.py} file.  A new instance of the module's
+	\texttt{Plugin} class is then instantiated and it's \texttt{get\_data()} method
+	is called.  The data returned by this method is then returned to the core.
+	It must be guaranteed that plugin execution will terminate in a timely manner
+	as a plugin taking too long to execute will delay the execution of future
+	plugins.  In order to ensure this, a timeout is set so that plugin execution 
+	must complete within a predetermined amount of time, otherwise the execution
+	will be terminated and an error will be logged by the core. The ``stopit''
+	python library is used which uses threading to implement this.  Initially
+	the ``timeout-decorator'' library was used however this uses the UNIX
+	\texttt{SIGALRM} signal which is not supported by Microsoft Windows.
 
 \section{Web Interface}
 \paragraph*{}
@@ -1325,7 +1352,7 @@ evaluate them on several points as follows:
 \subsection{Lynchpin Analytics Limited}
 \paragraph*{}
 	Lynchpin Analytics Limited (``Lynchpin'') is full service analytics consultancy.
-	Lynchpin is a small business without a dedicated systems administrator yet
+	Lynchpin is a small business yet
 	operates a reasonably sized network running entirely on their own hardware.
 	This is typical of environment that Prophasis is aimed at and where existing
 	tools fall short.  Prophasis was deployed at Lynchpin when it was nearly
