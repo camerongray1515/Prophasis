@@ -1456,6 +1456,16 @@ is a tool that focuses on time series monitoring.
 \end{table}
 
 
+	During the time in which Prophasis was installed, one of the XenServer hosts
+	experienced a prolonged period of very high CPU load.  Prophasis
+	correctly detected this and sent out the appropriate alerts.  It was then 
+	possible to look at the time series data for the CPU load on the host which
+	had experienced the issue. This data the start and end times of the period
+	with high load. This information was useful when looking through log files
+	to find the cause of the issue which ultimately turned out to be a MD RAID
+	consistency check.
+
+
 	The deployment was extremely successful with Prophasis reliably monitoring all
 	systems.  Performing this deployment on Lynchpin's systems was extremely
 	valuable and both demonstrated that Prophasis works well in such a deployment
