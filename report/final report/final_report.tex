@@ -16,16 +16,16 @@ and often multiple tools are required to obtain a suitable level of monitoring.
 
 
 This project involves developing a new IT infrastructure monitoring system from
-the ground up for use in SME environments.  The aim is to develop a tool that
-is powerful enough to monitor a network on its own as well as being simple to
-use and manage.
-
-
-The new system has comprehensive support for time series monitoring as well as
-real time alerting which is an area where two separate tools would traditionally
-be required.  The entire system can be managed from a responsive web interface
-and has extensive support for plugins allowing for the system to be extended to
-support monitoring of a variety of different systems.
+the ground up for use in small and medium-sized enterprise (SME) environments.
+First it will take a look at a selection of tools that are currently popular
+and evaluate them based off of several points that are important in an SME
+environment.  From this several key weaknesses with current tools are identified
+and potential improvements on these are discussed. The project then discusses
+the design and structure of a solution to the identified issues and then
+describes the implementation of a new system that is designed for use in SME
+environments. It then goes on to explain how the implemented tool was tested
+and deployed in real world environments and discusses how it the system behaved
+in these deployments.
 }
 
 \begin{document}
@@ -61,7 +61,7 @@ support monitoring of a variety of different systems.
 	Current tools are also generally managed and configured through various
 	configuration files split across different machines on the network. This means
 	that in order to efficiently use these tools a configuration management system
-	such as	Puppet or Ansible must be used. In a small business with limited IT
+	such as	Puppet or Ansible must be used. In an SME environment with limited IT
 	resources, a completely self contained system is often preferable.
 
 \section{Analysis of Existing Tools}
@@ -179,7 +179,7 @@ networks.
 	hosts from within OpenNMS.
 
 
-	This is a clear area for improvement. In a small business environment with a
+	This is a clear area for improvement. In a SME environment with a
 	limited number of machines, each with their own separate role, configuration
 	management tools are often not deployed.  Deploying an existing tool
 	in such an environment would be time consuming as configuration would need
@@ -232,7 +232,8 @@ networks.
 
 \section{Improvements over Existing Tools}
 	After looking into the weaknesses in existing offerings	Prophasis was designed.
-	This tool was designed specifically for use in a small to medium business with limited IT
+	This tool was designed specifically for use in small and medium-sized enterprise
+	(SME) environments with limited IT
 	resources.  Such businesses may have a small IT team with limited resources or may not
 	even have a dedicated IT team at all, instead relying on one or two employees
 	in other roles who manage the business's IT systems in addition to their
