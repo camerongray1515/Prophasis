@@ -832,6 +832,20 @@ is a tool that focuses on time series monitoring.
 	\texttt{PluginResult} object forces them to return data in a sensible manner
 	unlike existing tools which attempt to parse stdout of a shell script which is
 	very fragile.
+	
+\subsection{PGP Signing}
+	Since plugins are sent to agents over the network from the monitoring server 
+	and then executed, This introduces a risk that if the monitoring server is
+	compromised, malicious code can be sent to and executed on all hosts being
+	monitored.  As a solution to this, it is possible to PGP sign plugins, a
+	detached signature file can be uploaded along with the plugin archive file
+	through the web interface, agents can then store public keys locally. If an
+	agent is configured to enforce checking of signatures it will only allow
+	plugins with valid signatures to be installed and executed.  Due to the
+	additional complexity that this introduces, it is possible to disable this
+	functionality although it is strongly recommended that it is used.  GNU
+	Privacy Guard (GnuPG) is used to verify signatures, this is available on most
+	major operating systems.
 
 \section{Database}
 
