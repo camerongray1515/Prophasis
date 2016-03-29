@@ -1392,7 +1392,7 @@ is a tool that focuses on time series monitoring.
 	infrequently or after the system had been running for a reasonable period of
 	time.
 
-\paragraph*{Scheduler Deadlock} %TODO Is this a deadlock?
+\paragraph*{Scheduler Deadlock}
 	One issue that was discovered while running on Tardis was where the scheduler
 	could, in rare cases completely lock preventing future checks from being
 	executed.  This issue was caused where a check could take too long to run
@@ -1406,7 +1406,11 @@ is a tool that focuses on time series monitoring.
 	Tardis as the core could be left running 24/7 which allowed this issue to be
 	noticed. If Prophasis had only ever been run on a single machine for short
 	periods of time during development, it is possible that this issue would never
-	have been discovered.
+	have been discovered.  This also highlights the danger of a system such as
+	Prophasis deadlocking. In order to ensure that the system cannot deadlock in
+	any other way, the scheduler and dispatching algorithms should be checked
+	carefully by hand to ensure that there is no situations where a deadlock can
+	arise.
 
 \pagebreak
 \subsection{Lynchpin Analytics Limited}
