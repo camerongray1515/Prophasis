@@ -1333,15 +1333,15 @@ is a tool that focuses on time series monitoring.
 
 
 	In order to keep the mock agent simple, it listens on a single port (4048, the
-	same as the regular agent).  The mock agent binds to all available IP addresses
-	on the system and it uses the destination IP address to determine which data it
-	is to respond with.  While Prophasis was being developed, the mock agent was
-	run on the same machine
-	as the core and used loopback IP addresses picked from \texttt{127.0.0.0/8} to
-	add multiple mock agents to the system giving each a different IP addresses.
-	Each of these IP addresses is used as a key in the JSON file which maps to a
-	JSON schema containing plugin IDs mapped to the data that should be sent in
-	response to requests for that plugin.
+	same as the regular agent) and binds to the system's loopback address 
+	(typically \texttt{127.0.0.1}).  Multiple hostnames should then be configured
+	to point to the loopback address either through the system's hosts file or on
+	the DNS server itself.  For each of these hostnames, a host should be added
+	within Prophasis.  The HTTP \texttt{host} request header field is used as the
+	key to look up the data to return from the JSON file. This header contains the
+	hostname that the core is connecting to allowing, for example, requests for
+	data from \texttt{host1} to be differentiated from requests for data from 
+	\texttt{host2}.
 
 
 	The JSON file is read every time a request reaches the mock agent.  This means
