@@ -79,8 +79,8 @@ evaluate them on several points as follows:
 \end{itemize}
 The tools being reviewed are Nagios which is generally seen as the ``industry
 standard'' monitoring tool along with Icinga 2 which attempts to improve on
-Nagios to provide a more modern solution. Finally, Munin is investigated as this
-is a tool that focuses on time series monitoring.
+Nagios to provide a more modern solution. Munin and collectd were also
+investigated as they focus on time series monitoring.
 
 
 \subsection{Time series monitoring and real time alerting}
@@ -94,7 +94,11 @@ is a tool that focuses on time series monitoring.
 	health of a host. On the other hand, Munin is designed primarily as a tool for time
 	series monitoring.  Therefore it has extensive functionality for graphing
 	collected data but has no built in support for alerting about faults or working
-	out the health of a system.
+	out the health of a system. Collectd, as it's name suggests is used to collect
+	information about a system and can be used to transfer it across the network. It
+	has no built in functionality for viewing or analysing the collected data,
+	instead the data is stored in RRD files which can be processed with separate
+	software such as RRDtool.
 
 
 	It was identified that that there is no single tool that performs well for
@@ -112,7 +116,9 @@ is a tool that focuses on time series monitoring.
 	of the check.  Munin plugins are similar where the field name and a numerical
 	value are written to stdout and then picked up by the plugin.  Plugins must
 	also, when passed ``config'' as a command line argument, print out information
-	such as the title of the graph.
+	such as the title of the graph. Collectd, in the same fashion as Munin, relies
+	on a custom executable to write the collected data to stdout following a
+	specific format.
 
 
 	In this area, current tools are all very much the same in the sense that they
@@ -127,8 +133,8 @@ is a tool that focuses on time series monitoring.
 	Both Nagios and Icinga2 classify the result of a check within the plugin itself
 	by the plugin exiting with the appropriate exit code to define the result. This
 	means that the thresholds are also generally stored inside the plugin script.
-	Because Munin does not support real time alerting, there is no support for
-	classifying data.
+	Because Munin and Collectd do not support real time alerting, there is no
+	support for classifying data.
 
 
 	This is a clear issue with current systems, all classification is performed on
@@ -140,7 +146,7 @@ is a tool that focuses on time series monitoring.
 
 \subsection{Code/Configuration Delivery to Nodes}
 
-	Nagios, Icinga2 and Munin are configured through several different
+	Nagios, Icinga2, Collectd and Munin are configured through several different
 	configuration files and scripts stored on the disks of the server running the
 	monitoring as well as the hosts being monitored.  There is no built in
 	functionality in any of these tools for distributing these files to their
@@ -159,8 +165,8 @@ is a tool that focuses on time series monitoring.
 
 \subsection{How the user configures the system}
 
-	Nagios, Icinga 2 and Munin are all configured entirely using configuration
-	files stored on disk.
+	Nagios, Icinga2, Collectd and Munin are all configured entirely using
+	configuration files stored on disk.
 
 
 	This is another area for improvement. While configuration files are suitable
@@ -176,8 +182,8 @@ is a tool that focuses on time series monitoring.
 	be set as dependent on other hosts.  There is however no support for redundancy
 	where the availability of a service can be dependant on one of several hosts
 	being available. This is increasingly common in modern environments which often
-	include large amounts of redundancy and fail over capacity. Munin has no
-	dependency functionality due to its lack of real time alerting.
+	include large amounts of redundancy and fail over capacity. Munin and Collectd
+	have no dependency functionality due to its lack of real time alerting.
 
 	This is another area for improvement. In a modern environment it is
 	important for a monitoring system to be able to understand redundancy.
