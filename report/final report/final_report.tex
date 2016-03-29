@@ -80,7 +80,9 @@ evaluate them on several points as follows:
 The tools being reviewed are Nagios which is generally seen as the ``industry
 standard'' monitoring tool along with Icinga 2 which attempts to improve on
 Nagios to provide a more modern solution. Munin and collectd were also
-investigated as they focus on time series monitoring.
+investigated as they focus on time series monitoring. Finally, OpenNMS is
+investigated as this is a very comprehensive tool designed for large scale
+networks.
 
 
 \subsection{Time series monitoring and real time alerting}
@@ -98,13 +100,18 @@ investigated as they focus on time series monitoring.
 	information about a system and can be used to transfer it across the network. It
 	has no built in functionality for viewing or analysing the collected data,
 	instead the data is stored in RRD files which can be processed with separate
-	software such as RRDtool.
+	software such as RRDtool.  It it also possible to alert based on this RRD data,
+	however this would require additional tooling or custom scripts which are
+	non-trivial to configure and manage.  OpenNMS on the other hand supports both
+	real time alerting as well as collection and visualisation of time series data.
 
 
-	It was identified that that there is no single tool that performs well for
-	both real time alerting as well as time series monitoring.  This means that
-	in order to gain both of these, two separate tools (e.g. Nagios and Munin)
-	need to be installed, configured and maintained completely separately.
+	It was identified that that the majority of tools only support either real time
+	alerting or time series monitoring.  This means that in order to gain both of
+	these, two separate tools (e.g. Nagios and Munin) need to be installed,
+	configured and maintained completely separately.  OpenNMS supports both and can
+	be used perform both real time alerting and time series data
+	collection/visualisation.
 
 \subsection{Support for Custom Metrics}
 
@@ -118,14 +125,21 @@ investigated as they focus on time series monitoring.
 	also, when passed ``config'' as a command line argument, print out information
 	such as the title of the graph. Collectd, in the same fashion as Munin, relies
 	on a custom executable to write the collected data to stdout following a
-	specific format.
+	specific format.  OpenNMS primarily uses SNMP to collect data from remote
+	hosts.  Custom SNMP modules can be built to monitor custom metrics. 
+	Alternatively, OpenNMS can be configured to read XML or JSON data over HTTP
+	from an existing server. %TODO "Existing server"?
 
 
-	In this area, current tools are all very much the same in the sense that they
+	In this area, most current tools are all much the same in the sense that they
 	execute scripts and parse the output. This can be quite fragile as a badly
 	written script could fairly easily output data in the wrong format. Using exit
 	codes to output the overall health of a check is also very restrictive as
-	described in subsection \ref{classification-threshold-definitions}.
+	described in subsection \ref{classification-threshold-definitions}. Using SNMP
+	such as OpenNMS gives a much more well defined interface for exposing data
+	about a system however this requires extensive configuration on the host being
+	monitored.  Using XML or JSON over HTTP with OpenNMS is another option however
+	this would require a custom application to be developed to expose the API.
 
 \subsection{Classification Threshold Definitions}
 \label{classification-threshold-definitions}
@@ -133,16 +147,22 @@ investigated as they focus on time series monitoring.
 	Both Nagios and Icinga2 classify the result of a check within the plugin itself
 	by the plugin exiting with the appropriate exit code to define the result. This
 	means that the thresholds are also generally stored inside the plugin script.
-	Because Munin and Collectd do not support real time alerting, there is no
-	support for classifying data.
+	OpenNMS allows thresholds to be defined on the raw data however these are
+	complex to configure and are essentially defined as either upper/lower limits
+	or are based off of changes between two samples. Because Munin and Collectd do
+	not support real time alerting, there is no support for classifying data.
 
 
-	This is a clear issue with current systems, all classification is performed on
-	remote machines meaning that the logic used for this along with any threshold
-	values are located on every machine in the network making it difficult to
-	update. This also means that classifications can only use the current data
-	collected and can't easily use historical data when deciding on a
-	classification.
+	This is a clear issue with current systems, with most of them classification is
+	performed on remote machines meaning that the logic used for this along with
+	any threshold values are located on every machine in the network making it
+	difficult to update. This also means that classifications can only use the
+	current data collected and can't easily use historical data when deciding on a
+	classification.  OpenNMS is somewhat better in this respect as it performs
+	classification on the monitoring server itself however thresholds are somewhat
+	limited as instead of being able to use arbitrary logic (as can be done in
+	the shell scripts used by Nagios and Icinga2), thresholds must be defined as
+	upper/lower limits or be based off of changes between two data points.
 
 \subsection{Code/Configuration Delivery to Nodes}
 
@@ -151,7 +171,12 @@ investigated as they focus on time series monitoring.
 	monitoring as well as the hosts being monitored.  There is no built in
 	functionality in any of these tools for distributing these files to their
 	respective machines.  For this, separate configuration management tools such as
-	Puppet or Ansible would need to be used.
+	Puppet or Ansible would need to be used.  OpenNMS does not have any component
+	that runs on the remote hosts, instead relying on the SNMP protocol or JSON/XML
+	to be served over HTTP from the remote hosts.  This requires extensive
+	configuration to be performed on all remote hosts.  This configuration is
+	completely separate from OpenNMS hence there is no way to manage the remote
+	hosts from within OpenNMS.
 
 
 	This is a clear area for improvement. In a small business environment with a
@@ -166,7 +191,11 @@ investigated as they focus on time series monitoring.
 \subsection{How the user configures the system}
 
 	Nagios, Icinga2, Collectd and Munin are all configured entirely using
-	configuration files stored on disk.
+	configuration files stored on disk. OpenNMS configuration is stored in a
+	variety of XML files on disk.  These can either be edited directly or through
+	a web interface.  However, due to the complexity of the XML files, the web
+	interface for configuration is very complex due to the vast number of options
+	available.
 
 
 	This is another area for improvement. While configuration files are suitable
@@ -174,8 +203,10 @@ investigated as they focus on time series monitoring.
 	of knowledge about ow the system is configured.  When configuring the system,
 	users will continuously need to reference large amounts of documentation. Using
 	configuration files also provides no mechanism for input sanitisation allowing
-	for broken configuration to be saved.
-
+	for broken configuration to be saved. OpenNMS's web interface does make
+	configuration somewhat more accessible however it is somewhat complex and still
+	requires reference to extensive documentation.
+	
 \subsection{How Dependencies are Handled}
 
 	Nagios and Icinga 2 both handle dependencies as a rigid tree where hosts can
@@ -183,10 +214,21 @@ investigated as they focus on time series monitoring.
 	where the availability of a service can be dependant on one of several hosts
 	being available. This is increasingly common in modern environments which often
 	include large amounts of redundancy and fail over capacity. Munin and Collectd
-	have no dependency functionality due to its lack of real time alerting.
+	have no dependency functionality due to its lack of real time alerting. OpenNMS
+	does not have explicit functionality to define services which are dependent on
+	multiple hosts, instead this can be
+	accomplished by creating a "virtual node" which behaves the same as a regular
+	node in the system. This can be then configured to run an external script which
+	would check the health of all hosts in the service and return the health of the
+	overall service.
 
 	This is another area for improvement. In a modern environment it is
-	important for a monitoring system to be able to understand redundancy.
+	important for a monitoring system to be able to understand redundancy. While
+	OpenNMS could be configured to check the health of a service where
+	redundancy/failover is in place, however is a very complex process requiring
+	custom scripts to be written.
+	
+	%TODO Reference http://marc.info/?l=opennms-discuss&m=121432325032252
 
 \section{Improvements over Existing Tools}
 	After looking into the weaknesses in existing offerings	Prophasis was designed.
@@ -389,7 +431,7 @@ investigated as they focus on time series monitoring.
 	\ref{table-classifications} lists all the different classifications ordered
 	by severity.
 
-%TODO Heighht of rows without vdots
+%TODO Height of rows without vdots
 \begin{table}[H]
 	\centering
 	\caption{Different classifications that can be given to data ordered by severity}
