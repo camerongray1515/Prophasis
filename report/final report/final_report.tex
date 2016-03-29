@@ -76,8 +76,11 @@ evaluate them on several points as follows:
 	\item How the user configures the system
 	\item How dependencies are handled
 \end{itemize}
+The tools being reviewed are Nagios which is generally seen as the ``industry
+standard'' monitoring tool along with Icinga 2 which attempts to improve on
+Nagios to provide a more modern solution. Finally, Munin is investigated as this
+is a tool that focuses on time series monitoring.
 
-%TODO List current tools being investigated
 
 \subsection{Time series monitoring and real time alerting}
 
@@ -175,14 +178,10 @@ evaluate them on several points as follows:
 	include large amounts of redundancy and fail over capacity. Munin has no
 	dependency functionality due to its lack of real time alerting.
 
-%TODO Repetition of ``clear area''
-
-	This is also a clear area for improvement. In a modern environment it is
+	This is another area for improvement. In a modern environment it is
 	important for a monitoring system to be able to understand redundancy.
 
-\section{Improvements on Existing Tools} %TODO Something
-% TODO: Find a better place for this?
-
+\section{Improvements over Existing Tools}
 	After looking into the weaknesses in existing offerings	Prophasis was designed.
 	This tool was designed specifically for use in a small to medium business with limited IT
 	resources.  Such businesses may have a small IT team with limited resources or may not
