@@ -1363,8 +1363,19 @@ networks.
 	file. The SQLAlchemy ORM completely transparently handles the differences
 	between PostgreSQL and SQLite therefore requiring no changes to the database
 	code for use during testing.
+	
+	For each function, the input space was divided into inputs that are to be
+	expected by the code and tests are used to ensure that the correct output is
+	given.  Inputs are also provided that are invalid to ensure that the
+	appropriate exceptions are raised.  Inputs are built with the logic under
+	test in mind to ensure that behaviour is correct even in edge cases.  For
+	example, the test that retrieves a list of hosts inside a host group tests
+	the case where group $A$ contains group $B$ and group $B$ contains group $A$.
+	If care was not taken, attempting to recursively get a list of hosts from
+	either of these groups
+	could recurse indefinitely.  Having a test for this case ensures that this does
+	not happen.
 
-%TODO Bit more here about structure/design of tests?
 
 \section{Mock Agent}
 
@@ -1701,8 +1712,6 @@ networks.
 	enhancements and functionality which could be added to the system to improve
 	it even further.
 	
-	%TODO Testing
-
 \paragraph*{Distributed Monitoring}
 	The Prophasis core currently runs on a single host and monitors all other
 	hosts in the network.  This is sufficient for most small to medium sized
@@ -1789,6 +1798,13 @@ networks.
 	web interface so that they detect the operating system they are running under
 	and perform the appropriate tasks to install the component correctly as a
 	daemon.  Doing this would greatly ease the setup process.
+	
+\paragraph*{Testing}
+	Prophasis has already been tested with both unit tests as well as through
+	deployment in multiple real world environments.  It would however be valuable
+	to extend the unit test suite to provide higher code coverage.  It would also
+	be useful to formally analyse the algorithms in the scheduler and dispatcher
+	to ensure that they perform reliably without the risk of deadlocks occurring.
 
 %TODO - Links in Bibliography instead of footnotes
 
