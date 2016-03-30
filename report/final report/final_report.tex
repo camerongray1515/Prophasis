@@ -55,10 +55,7 @@ university career.
 
 \tableofcontents
 
-%TODO Acknowledements section.
-
 \chapter{Introduction}
-%TODO See project page for stuff about what to put in intro
 	In recent years, almost all businesses have been expanding their IT
 	infrastructure to handle the modern demand for IT systems.  As these systems
 	grow and become increasingly important for business operation it is crucial
@@ -86,6 +83,13 @@ university career.
 	resources, a completely self contained system is often preferable.
 
 \chapter{Analysis of Existing Tools \& Suggested Improvements}
+	This chapter investigates existing tools and then suggests improvements on
+	these.  Firstly it will take a look at a selection of current tools which are
+	widely used in industry.  It will then evaluate these to establish their 
+	suitability for SME environments.  From here, several areas for improvement
+	are identified.  Finally, suggestions are made as to how a new tool could be
+	designed for use in SME environments.
+
 \section{Analysis of Existing Tools}
 \label{analysis-of-existing-tools}
 
@@ -286,10 +290,10 @@ networks.
 	future failures by looking at trends in the	collected data.
 
 \subsection{Expandability}
-%TODO Why is this important?
-
 	It is important that a monitoring tool can be expanded to support the
-	monitoring of custom hardware and software.  An example of this would be
+	monitoring of custom hardware and software.  Without this, Prophasis would be
+	limited to monitoring the hardware and software that it was designed with.
+	An example of this would be
 	hardware RAID cards.  Getting the drive health from these types of devices can
 	range from probing for SMART data all the way to communicating with the card
 	over a serial port.  It is therefore crucial that Prophasis can be easily
@@ -301,12 +305,16 @@ networks.
 	eliminating the need for every user to implement custom monitoring code for the
 	systems they are using.
 
-%TODO - Section on ``What Prophasis is aimed at''
-%	Not designed for huge networks with thousands of hosts
-%	SMEs
+\section{What Prophasis is Aimed At}
+	Prophasis is designed for monitoring the IT infrastructure of SMEs. This may
+	consist of a network of several physical or virtual servers potentially split
+	between branch offices and a central datacenter.  These environments usually
+	contain tens of hosts rather than thousands.  Prophasis is designed to monitor
+	networks such as this in a clear and intuitive way.  It is not designed for
+	monitoring massive multinational networks with many internationally 
+	distributed networks containing thousands of machines.
 
 \chapter{Design}
- %TODO Check
 	This chapter will explain the design of Prophasis and explain various different
 	design decisions that were made.  First it will go into detail explaining
 	the choice of different technologies used in Prophasis and will explain the
@@ -314,7 +322,6 @@ networks.
 	Prophasis to give a better idea how everything is structured. It will then
 	explain the layout of the various components in the system and will go into
 	detail about the purpose of each of these components and how they operate.
-	%TODO Do we want this here?
 	It then goes into detail about the design decisions made for how Prophasis
 	determines the overall health of a given host or service from the individual
 	data points that it has collected.
