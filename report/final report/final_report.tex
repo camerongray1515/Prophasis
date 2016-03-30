@@ -44,6 +44,15 @@ identified with the existing systems and provides a solution for the SME sector.
 
 \begin{document}
 \maketitle
+\section*{Acknowledgements}
+I would like to thank my supervisor, William Waites for his help and support
+throughout the project. I would also like to thank the members of The Tardis
+Project and CompSoc IRC channels for their advice and suggestions for Prophasis.
+Additionally I would like to thank my employer, Lynchpin Analytics Limited for
+generously allowing me to test Prophasis on their IT infrastructure.  Finally,
+I would like to thank my family for their help and support throughout my
+university career.
+
 \tableofcontents
 
 %TODO Acknowledements section.
@@ -131,7 +140,8 @@ networks.
 	Nagios, Icinga 2 and Munin all operate in similar ways here through the use of
 	simple scripts that can be written in any language.  Both Nagios and Icinga 2
 	execute the shell script and use the exit code to determine the health of the
-	output (e.g. Exit code 0 means ``OK'' and exit code 2 means ``CRITICAL'').  They
+	output (e.g. Exit code 0 means ``OK'' and exit code 2 means ``CRITICAL'').
+	\cite{nagios-custom}  They
 	also read data from stdout which can contain more information about the status
 	of the check.  Munin plugins are similar where the field name and a numerical
 	value are written to stdout and then picked up by the plugin.  Plugins must
@@ -141,7 +151,7 @@ networks.
 	specific format.  OpenNMS primarily uses SNMP to collect data from remote
 	hosts.  Custom SNMP modules can be built to monitor custom metrics. 
 	Alternatively, OpenNMS can be configured to read XML or JSON data over HTTP
-	from an existing server. %TODO "Existing server"?
+	from an existing web application.\cite{opennms-http}
 
 
 	In this area, most current tools are all much the same in the sense that they
@@ -158,11 +168,13 @@ networks.
 \label{classification-threshold-definitions}
 
 	Both Nagios and Icinga2 classify the result of a check within the plugin itself
-	by the plugin exiting with the appropriate exit code to define the result. This
+	by the plugin exiting with the appropriate exit code to define the
+	result.\cite{icinga2-dependencies}\cite{nagios-dependencies} This
 	means that the thresholds are also generally stored inside the plugin script.
 	OpenNMS allows thresholds to be defined on the raw data however these are
 	complex to configure and are essentially defined as either upper/lower limits
-	or are based off of changes between two samples. Because Munin and Collectd do
+	or are based off of changes between two samples.\cite{opennms-thresholding}
+	Because Munin and Collectd do
 	not support real time alerting, there is no support for classifying data.
 
 
@@ -223,7 +235,8 @@ networks.
 \subsection{How Dependencies are Handled}
 
 	Nagios and Icinga 2 both handle dependencies as a rigid tree where hosts can
-	be set as dependent on other hosts.  There is however no support for redundancy
+	be set as dependent on other hosts.\cite{icinga2-dependencies}
+	\cite{nagios-dependencies}  There is however no support for redundancy
 	where the availability of a service can be dependant on one of several hosts
 	being available. This is increasingly common in modern environments which often
 	include large amounts of redundancy and fail over capacity. Munin and Collectd
@@ -239,9 +252,8 @@ networks.
 	important for a monitoring system to be able to understand redundancy. While
 	OpenNMS could be configured to check the health of a service where
 	redundancy/failover is in place, however is a very complex process requiring
-	custom scripts to be written.
+	custom scripts to be written.\cite{opennms-redundancy}
 	
-	%TODO Reference http://marc.info/?l=opennms-discuss&m=121432325032252
 
 \section{Improvements over Existing Tools}
 	After looking into the weaknesses in existing offerings	Prophasis was designed.
@@ -700,7 +712,8 @@ networks.
 \subsection{Tornado HTTP Server}
 
 	While Flask does provide a built in web server, it is only designed for
-	development	use.  In order to provide a production suitable web server for the
+	development	use.\cite{flask-deployment}  In order to provide a production
+	suitable web server for the
 	%TODO Did we use Tornado for the web interface too?
 	agent.  Tornado uses the uWSGI interface provided by Flask.  Tornado was chosen
 	as it can easily be integrated directly into the Flask application and
@@ -906,8 +919,8 @@ networks.
 	plugins with valid signatures to be installed and executed.  Due to the
 	additional complexity that this introduces, it is possible to disable this
 	functionality although it is strongly recommended that it is used.  GNU
-	Privacy Guard (GnuPG) is used to verify signatures, this is available on most
-	major operating systems.
+	Privacy Guard (GnuPG)\cite{gnupg} is used to verify signatures, this is
+	available on most major operating systems.
 
 \section{Database}
 
@@ -994,7 +1007,8 @@ networks.
 	into these worker processes.
 
 \paragraph*{Fork vs Spawn}
-	The multiprocessing library supports three different ways to start a process.
+	The multiprocessing library supports three different ways to start a
+	process.\cite{multiprocessing-start-methods}
 	By default on UNIX systems it uses \texttt{os.fork()} to fork the existing
 	process. This is unsuitable in this situation as the process creates a copy of
 	the already open database connection - this causes conflicts when the workers
@@ -1021,7 +1035,8 @@ networks.
 	Classification code is executed directly on the machine under the same user as
 	the core.  Since this classification code can be changed through the Prophasis
 	web interface it is critical that this code cannot perform malicious operations
-	on the system.  In order to resolve this, a Lua sandbox is created.  This is
+	on the system.  In order to resolve this, a Lua sandbox is
+	created.\cite{lupa-sandbox}  This is
 	done by creating a Lua table with only specific, trusted functions such as
 	\texttt{math} and \texttt{ipairs} added to it.  Lua's \texttt{setfenv} (set
 	function environment) function is then called to ensure that all user provided
@@ -1199,7 +1214,7 @@ networks.
 
 
 	In order to display confirmation messages to users,
-	Bootbox.js\footnote{http://bootboxjs.com/} is used which provides a convenient
+	Bootbox.js\cite{bootbox} is used which provides a convenient
 	abstraction around Bootstrap's build in modal functionality.  This allows
 	confirmation messages to be displayed to users without any manual HTML markup
 	and responses to be collected straight into JavaScript.  An example of a
@@ -1472,8 +1487,8 @@ networks.
 \subsection{The Tardis Project}
 \label{testing-tardis}
 
-	The Tardis Project\footnote{http://www.tardis.ed.ac.uk/} is a computer system
-	operated and maintained by students at the University of Edinburgh.
+	The Tardis Project is a computer system operated and maintained by students at 
+	the University of Edinburgh.\cite{tardis}
 	It provides services to students including shell accounts, web hosting and mail
 	services.  The project currently runs off of 9 physical servers and on these
 	operates a large number of virtual machines.
@@ -1523,8 +1538,8 @@ networks.
 \pagebreak
 \subsection{Lynchpin Analytics Limited}
 
-	Lynchpin Analytics Limited (``Lynchpin'') is full service analytics consultancy.
-	Lynchpin is a small business yet
+	Lynchpin Analytics Limited (``Lynchpin'') is full service analytics
+	consultancy.\cite{lynchpin} Lynchpin is a small business yet
 	operates a reasonably sized network running entirely on their own hardware.
 	This is typical of environment that Prophasis is aimed at and where existing
 	tools fall short.  Prophasis was deployed at Lynchpin when it was nearly
@@ -1605,12 +1620,12 @@ networks.
 	deployed provided a valuable opportunity to develop plugins for the different
 	storage configurations.  A plugin was developed to read the health of the
 	drives running on an HP SmartArray P410 RAID controller under FreeBSD through
-	the use of \texttt{camcontrol}.  Another plugin was written to check the
+	the use of \texttt{camcontrol}.\cite{smartarray-bsd}  Another plugin was written to check the
 	health of a ZFS zpool which executes \texttt{zpool status} and parses the
 	output.  In order to check the health of the disks running behind the Dell PERC
 	H330 RAID controller, a plugin was developed which read SMART data by calling
 	\texttt{smartctl} with \texttt{-d megaraid,nn} to access the disks behind the
-	Dell PERC (a rebranded LSI MegaRAID) RAID controller.
+	Dell PERC (a rebranded LSI MegaRAID) RAID controller.\cite{smartctl-megaraid}
 
 \paragraph*{Plugin Execution Timeouts}
 	While testing the deployment at Lynchpin, an issue was discovered with the
