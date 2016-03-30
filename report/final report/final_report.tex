@@ -22,8 +22,8 @@ this research several key weaknesses with current tools and potential
 improvements on these were identified. 
 
 
-The main part of the project involved developing, deploying and testing from
-the ground up a new IT infrastructure monitoring system for use in SME
+The main part of the project involved developing from the ground up, deploying
+and testing  a new IT infrastructure monitoring system for use in SME
 environments.  This has been named ``Prophasis''.
 
 
@@ -36,7 +36,7 @@ and evaluated.  Areas for further development were also identified.
 In summary this project has demonstrated that existing systems for monitoring IT
 infrastructure have some major drawbacks in terms of their suitability for use
 in the SME environment.  Prophasis, which has been successfully developed and
-deployed in a real world environment has improved on the problems which were
+deployed in a real world environment has improved on the shortcomings which were
 identified with the existing systems and provides a solution for the SME sector.
 }
 
@@ -1700,6 +1700,8 @@ networks.
 	production environments in its current form, there are additional
 	enhancements and functionality which could be added to the system to improve
 	it even further.
+	
+	%TODO Testing
 
 \paragraph*{Distributed Monitoring}
 	The Prophasis core currently runs on a single host and monitors all other
@@ -1791,14 +1793,23 @@ networks.
 %TODO - Links in Bibliography instead of footnotes
 
 \chapter{Conclusion}
-	Current IT infrastructure monitoring solutions are largely aimed at large
-	networks operated by dedicated staff.  These tools are generally not suited for
-	the small and medium-sized enterprise (SME) sector.  They can be complex to set
+	From personal experience in the SME environment and The Tardis Project weaknesses
+	were discovered in current IT infrastructure monitoring tools in terms
+	of their suitability for the SME sector.  This project examined in depth the
+	suitability and limitations of existing tools to develop a complete system to
+	suit the specific needs of the SME sector.
+	
+	
+	Research was split into two areas.  Firstly existing tools namely Nagios, Icinga2,
+	Munin, collectd and OpenNMS were reviewed.  In the second part the design of a
+	tool for use in the SME sector was researched.
+	
+	
+	From the research carried out it was found that existing tools are often
+	complex to set
 	up and configure and often only provide part of the information required to
 	monitor a network meaning that multiple tools are required in order to gain a
-	sufficient level of monitoring. Prophasis resolves these issues and provides a
-	complete system aimed primarily at the SME sector that is ready for use in a
-	real world environment.
+	sufficient level of monitoring.
 	
 	In order to sufficiently monitor a network it is important to have both real
 	time alerting to provide notifications about issues along with time series
@@ -1818,20 +1829,36 @@ networks.
 	management being handled internally.
 	
 	It is important for an IT infrastructure monitoring system to be easily
-	expandable for monitoring czustom hardware/software.  Most current tools
+	expandable for monitoring custom hardware/software.  Most current tools
 	rely on custom scripts with no defined structure to be manually set up on
-	remote hosts being monitored.  On the other hand, Prophasis has a clear
+	remote hosts being monitored.  Prophasis, on the other hand, has a clear
 	structure for plugins which are stored as self contained ``packages''. Plugin
 	packages can simply be uploaded to the monitoring server and assigned to
 	specific hosts.  Prophasis handles the rest by distributing the plugin to the
 	correct hosts.
 	
-	In conclusion, Prophasis improves on the weaknesses found in current tools when
-	they are deployed in SME environments.  It has been well tested in both
+	%TODO Make into English
+	One improvement would be to perform more testing on the finished system. It
+	was only used in a production environment for a month during which only minor
+	issues arose.  If it were to have been deployed for longer there would be a
+	higher likelihood of a more serious problem arising allowing Prophasis's
+	behaviour when detecting major faults to be investigated further. It would
+	also be beneficial to increase unit testing to have higher code coverage.
+	Formal methods could also be used to analyse algorithms in order to ensure
+	there is no risk of faults such as deadlocks.
+
+
+	In conclusion, the project demonstrated that current tools are not best suited
+	for use in SME environment and that it was possible to develop a fit for purpose
+	solution. Prophasis improves on these issues and provides a complete system that
+	is ready for use in a real world environment.  It has been tested in both
 	synthetic and real world environments and performed reliably in both.  There is
-	a large amount of scope for future expansion and enhancements however, in it's
+	a large amount of scope for future expansion and enhancements however, in its
 	current form, Prophasis is sufficiently complete for use in a production
 	environment.
+	
+%TODO
+%	Future work "such as", "my recommendation"
 
 %TODO Formatting?  Should Prophasis be in itallics throughout?
 %TODO Bit in intro about only doing time series or alerting, make this a bit
