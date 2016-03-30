@@ -464,7 +464,6 @@ networks.
 	\ref{table-classifications} lists all the different classifications ordered
 	by severity.
 
-%TODO Height of rows without vdots
 \begin{table}[H]
 	\centering
 	\caption{Different classifications that can be given to data ordered by severity}
@@ -489,7 +488,6 @@ networks.
 	between them.  Figure \ref{system_structure} shows the individual components of
 	the system and how they all interact.
 
-%TODO B/W?
 \begin{figure}[H]
 	\caption{Diagram showing the layout of the components of the system}
 	\includegraphics[scale=0.5]{assets/system_structure.pdf}
@@ -718,12 +716,11 @@ networks.
 
 \subsection{Tornado HTTP Server}
 
-	While Flask does provide a built in web server, it is only designed for
+	While Flask provides a built in web server, it is only designed for
 	development	use.\cite{flask-deployment}  In order to provide a production
-	suitable web server for the
-	%TODO Did we use Tornado for the web interface too?
-	agent.  Tornado uses the uWSGI interface provided by Flask.  Tornado was chosen
-	as it can easily be integrated directly into the Flask application and
+	suitable web server for the agent it was decided to use the Tornado HTTP
+	server which uses the uWSGI interface provided by Flask.  Tornado was
+	chosen as it can easily be integrated directly into the Flask application and
 	therefore does not require any sort of external web server to be
 	installed/configured on the system.
 
