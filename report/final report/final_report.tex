@@ -1,6 +1,8 @@
 \documentclass[bsc,deptreport,twoside,parskip,singlespacing,notimes]{infthesis}
 
 \usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{float}
 \usepackage{listings}
 \usepackage[colorlinks=true,linkcolor=black]{hyperref}
@@ -1322,6 +1324,41 @@ networks.
 	\caption{Page showing the overall health of all services in the system}
 	\label{service-information}
 	\includegraphics[scale=0.44]{assets/screenshots/service-information.pdf}
+\end{figure}
+
+\section{Responsive Design}
+	It is important that Prophasis works equally as well on both mobile and desktop
+	devices with no loss of functionality on either.  For this responsive design
+	was chosen as this will automatically scale and rearrange the user interface
+	based on the screen size.  When being viewed on a small screen, certain items
+	that are normally displayed side by side will be stacked as shown with the
+	host health screen shown in Figure \ref{responsive-host-health}. The navigation
+	bar is also automatically collapsed to save screen space. It can be expanded
+	by pressing the menu button (three horizontal lines) in the top left hand
+	corner of any page.  This operation of the menu can be seen in Figure 
+	\ref{responsive-nav-bar-expanded}.  Forms are also adapted so that they are
+	stacked vertically as seen with the alert creation form shown in Figure
+	\ref{responsive-alert-form}.
+	
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{assets/screenshots/responsive-host-health.pdf}
+        \caption{Host Health}
+        \label{responsive-host-health}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{assets/screenshots/responsive-nav-bar-expanded.pdf}
+        \caption{Expanded Navigation Bar}
+        \label{responsive-nav-bar-expanded}
+    \end{subfigure}
+
+    \begin{subfigure}[b]{0.5\textwidth}
+        \includegraphics[width=\textwidth]{assets/screenshots/responsive-alert-form.pdf}
+        \caption{Alert Creation Form}
+        \label{responsive-alert-form}
+    \end{subfigure}
+    \caption{Parts of the Web Interface being Viewed on a Small Screen}\label{fig:animals}
 \end{figure}
 
 
