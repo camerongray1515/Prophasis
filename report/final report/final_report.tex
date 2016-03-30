@@ -3,10 +3,11 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{listings}
+\usepackage[colorlinks=true,linkcolor=black]{hyperref}
 
 \raggedbottom %lol
 
-\title{Prophasis - An IT Infrastructure Monitoring Solution}
+\title{Prophasis - An IT Infrastructure Monitoring Solution for Small and Medium-sized Enterprises}
 \author{Cameron Gray}
 
 \abstract{
@@ -244,8 +245,8 @@ networks.
 \section{Improvements over Existing Tools}
 	After looking into the weaknesses in existing offerings	Prophasis was designed.
 	This tool was designed specifically for use in small and medium-sized enterprise
-	(SME) environments with limited IT
-	resources.  Such businesses may have a small IT team with limited resources or may not
+	(SME) environments. Such businesses may have a small IT team with limited
+	resources or may not
 	even have a dedicated IT team at all, instead relying on one or two employees
 	in other roles who manage the business's IT systems in addition to their
 	regular jobs. The system therefore needs to be quick to deploy and manage without
@@ -1790,5 +1791,49 @@ networks.
 %TODO - Links in Bibliography instead of footnotes
 
 \chapter{Conclusion}
+	Current IT infrastructure monitoring solutions are largely aimed at large
+	networks operated by dedicated staff.  These tools are generally not suited for
+	the small and medium-sized enterprise (SME) sector.  They can be complex to set
+	up and configure and often only provide part of the information required to
+	monitor a network meaning that multiple tools are required in order to gain a
+	sufficient level of monitoring. Prophasis resolves these issues and provides a
+	complete system aimed primarily at the SME sector that is ready for use in a
+	real world environment.
+	
+	In order to sufficiently monitor a network it is important to have both real
+	time alerting to provide notifications about issues along with time series
+	monitoring which can be used to both investigate issues post-mortem along with
+	being usable to predict future issues before they occur.  Many existing tools
+	only provide one of these which means that businesses need to deploy and
+	maintain two different pieces of software to monitor their network.  Prophasis
+	was developed with support for time series monitoring and real time alerting
+	from the very beginning.  This means that only one tool needs to be deployed
+	and managed to gain a suitable level of monitoring.
+	
+	Current tools are generally configured through configuration files stored on
+	various different hosts on the network.  This requires both an expert user to
+	edit as well as some sort of configuration management tool to ensure that
+	configuration is kept consistent across the network.  In contrast, Prophasis
+	can be managed from a single, responsive web interface with all configuration
+	management being handled internally.
+	
+	It is important for an IT infrastructure monitoring system to be easily
+	expandable for monitoring czustom hardware/software.  Most current tools
+	rely on custom scripts with no defined structure to be manually set up on
+	remote hosts being monitored.  On the other hand, Prophasis has a clear
+	structure for plugins which are stored as self contained ``packages''. Plugin
+	packages can simply be uploaded to the monitoring server and assigned to
+	specific hosts.  Prophasis handles the rest by distributing the plugin to the
+	correct hosts.
+	
+	In conclusion, Prophasis improves on the weaknesses found in current tools when
+	they are deployed in SME environments.  It has been well tested in both
+	synthetic and real world environments and performed reliably in both.  There is
+	a large amount of scope for future expansion and enhancements however, in it's
+	current form, Prophasis is sufficiently complete for use in a production
+	environment.
 
+%TODO Formatting?  Should Prophasis be in itallics throughout?
+%TODO Bit in intro about only doing time series or alerting, make this a bit
+%	weaker due to OpenNMS.
 \end{document}
