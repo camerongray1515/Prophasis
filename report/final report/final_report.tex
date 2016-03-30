@@ -5,7 +5,7 @@
 \usepackage{subcaption}
 \usepackage{float}
 \usepackage{listings}
-\usepackage[colorlinks=true,linkcolor=black]{hyperref}
+\usepackage[colorlinks=true,allcolors=black]{hyperref}
 
 \raggedbottom %lol
 
@@ -1166,7 +1166,7 @@ networks.
 	the results retrieved from plugins.  In order to maintain the ability to manage
 	everything through the web interface, it needs to be possible to edit this code
 	through the web interface.  For this, the
-	CodeMirror\footnote{https://codemirror.net/} editor is used which provides an
+	CodeMirror\cite{codemirror} editor is used which provides an
 	editor with syntax highlighting and support for using the tab key to indent
 	blocks of code as well as intelligently handling indentation when pressing
 	return.  The form for editing classification code can be seen in Figure
@@ -1915,4 +1915,7 @@ networks.
 %TODO Formatting?  Should Prophasis be in itallics throughout?
 %TODO Bit in intro about only doing time series or alerting, make this a bit
 %	weaker due to OpenNMS.
+
+	\bibliography{bibliography}
+	\bibliographystyle{plain}
 \end{document}
