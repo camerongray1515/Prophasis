@@ -67,10 +67,10 @@ university career.
 	a suitable level of monitoring.
 
 
-	Current tools generally either fall into the category of real time
+	Many current tools either fall into the category of real time
 	alerting (sending an alert when there is a problem) and time series
 	monitoring (capturing data about the performance of systems and presenting
-	graphs and statistics based on it). There is a large gap in the market for a
+	graphs and statistics based on it). There is a gap in the market for a
 	tool that provide both of these in one package. Such a tool would reduce the
 	time required to manage the system as it eliminates the need to set up and
 	configure two completely separate tools.
@@ -122,7 +122,7 @@ networks.
 	health of a host. On the other hand, Munin is designed primarily as a tool for time
 	series monitoring.  Therefore it has extensive functionality for graphing
 	collected data but has no built in support for alerting about faults or working
-	out the health of a system. Collectd, as it's name suggests is used to collect
+	out the health of a system. Collectd, as its name suggests is used to collect
 	information about a system and can be used to transfer it across the network. It
 	has no built in functionality for viewing or analysing the collected data,
 	instead the data is stored in RRD files which can be processed with separate
@@ -141,15 +141,15 @@ networks.
 
 \subsection{Support for Custom Metrics}
 
-	Nagios, Icinga 2 and Munin all operate in similar ways here through the use of
-	simple scripts that can be written in any language.  Both Nagios and Icinga 2
+	Nagios, Icinga 2, collectd and Munin all operate in similar ways here through the
+	use of simple scripts that can be written in any language.  Both Nagios and Icinga 2
 	execute the shell script and use the exit code to determine the health of the
 	output (e.g. Exit code 0 means ``OK'' and exit code 2 means ``CRITICAL'').
 	\cite{nagios-custom}  They
 	also read data from stdout which can contain more information about the status
 	of the check.  Munin plugins are similar where the field name and a numerical
-	value are written to stdout and then picked up by the plugin.  Plugins must
-	also, when passed ``config'' as a command line argument, print out information
+	value are written to stdout and then picked up by the plugin. When passed
+	``config'' as a command line argument, Munin plugins must print out information
 	such as the title of the graph. Collectd, in the same fashion as Munin, relies
 	on a custom executable to write the collected data to stdout following a
 	specific format.  OpenNMS primarily uses SNMP to collect data from remote
@@ -210,7 +210,7 @@ networks.
 
 	This is a clear area for improvement. In a SME environment with a
 	limited number of machines, each with their own separate role, configuration
-	management tools are often not deployed.  Deploying an existing tool
+	management tools are often not deployed.  Deploying an existing monitoring tool
 	in such an environment would be time consuming as configuration would need
 	to be manually copied between hosts. In addition editing the configuration later on
 	would be a manual process of logging into every machine and changing the
@@ -233,7 +233,7 @@ networks.
 	users will continuously need to reference large amounts of documentation. Using
 	configuration files also provides no mechanism for input sanitisation allowing
 	for broken configuration to be saved. OpenNMS's web interface does make
-	configuration somewhat more accessible however it is somewhat complex and still
+	configuration somewhat more accessible however it is complex and still
 	requires reference to extensive documentation.
 	
 \subsection{How Dependencies are Handled}
@@ -255,7 +255,7 @@ networks.
 	This is another area for improvement. In a modern environment it is
 	important for a monitoring system to be able to understand redundancy. While
 	OpenNMS could be configured to check the health of a service where
-	redundancy/failover is in place, however is a very complex process requiring
+	redundancy/failover is in place, however is a non-trivial process requiring
 	custom scripts to be written.\cite{opennms-redundancy}
 	
 
@@ -287,7 +287,7 @@ networks.
 	performance metrics over time. This data can be used to generate statistics about
 	how the system has been performing.  This time series data can be used to both
 	investigate the cause of a failure in post-mortem investigations and to predict
-	future failures by looking at trends in the	collected data.
+	future failures by analysing trends in the collected data.
 
 \subsection{Expandability}
 	It is important that a monitoring tool can be expanded to support the
@@ -301,21 +301,21 @@ networks.
 	supports a system of custom ``plugins'' which can be written and uploaded to the
 	monitoring server where they can then be configured to monitor machines. These
 	plugins are designed to be self contained and to follow a well defined and
-	documented structure.  This provides scope for a plugin ``marketplace'' therefore
+	documented structure.  This provides scope for a plugin ``marketplace''
 	eliminating the need for every user to implement custom monitoring code for the
 	systems they are using.
 
 \section{What Prophasis is Aimed At}
 	Prophasis is designed for monitoring the IT infrastructure of SMEs. This may
 	consist of a network of several physical or virtual servers potentially split
-	between branch offices and a central datacenter.  These environments usually
+	between branch offices and a central datacentre.  These environments usually
 	contain tens of hosts rather than thousands.  Prophasis is designed to monitor
-	networks such as this in a clear and intuitive way.  It is not designed for
+	networks such as these in a clear and intuitive way.  It is not designed for
 	monitoring massive multinational networks with many internationally 
-	distributed networks containing thousands of machines.
+	distributed datacentres containing thousands of machines.
 
 \chapter{Design}
-	This chapter will explain the design of Prophasis and explain various different
+	This chapter will explain the design of Prophasis and discuss various different
 	design decisions that were made.  First it will go into detail explaining
 	the choice of different technologies used in Prophasis and will explain the
 	reasoning behind these decisions.  Next it explains the terminology used within
@@ -351,8 +351,8 @@ networks.
 	security and support. HTTPS provides suitable encryption and certificate
 	validation technologies to secure the system. HTTP is also widely permitted
 	through firewalls and can be routed through web/reverse proxies.  This means
-	that Prophasis can be operated on most networks without causing problems with
-	firewalling.  HTTP also includes methods for transferring simple data as well
+	that Prophasis can be operated on most networks problems being caused by
+	firewalls.  HTTP also includes methods for transferring plain text as well
 	as large binary files which is required for sending plugins to remote agents.
 	Originally an attempt was made to use SSH to implement communication between
 	the core and the agent.  However, it was found that this introduced a huge
@@ -363,7 +363,7 @@ networks.
 	SSH was also more difficult to route through restricted networks.  Another
 	benefit of using HTTP is how many well documented HTTP libraries and servers
 	there are available, this means that alternative agents can be implemented with
-	ease versus SSH which would involve having to handle a custom wire protocol.
+	ease versus SSH which would involve having to develop a custom wire protocol.
 
 \section{Terminology}
 
@@ -377,7 +377,7 @@ networks.
 	Groups.''  These can be comprised of hosts or other groups and can be used in
 	place of hosts when defining services and checks.  Hosts can be grouped in
 	various ways such as their role (Web server, VM Host), hardware configuration
-	(Hardware RAID, Contains GPU), location (Edinburgh Office, Datacenter) or any
+	(Hardware RAID, Contains GPU), location (Datacentre, Edinburgh Office) or any
 	other way that makes sense given the specific implementation.
 
 \subsection{Plugins}
@@ -405,7 +405,7 @@ networks.
 
 	Checks allow logical grouping of various plugins.  For example you may have a
 	check for ``Web server Resource Usage'' which will execute plugins to check the
-	CPU load and memory across all hosts in the ``Web servers'' host group.
+	CPU load and memory usage across all hosts in the ``Web servers'' host group.
 
 \subsection{Schedules}
 \label{methodology-schedules}
@@ -413,7 +413,7 @@ networks.
 	A schedule defines when one or more checks are to be executed.  Each schedule
 	can contain multiple ``intervals'' which define when the check is run.  An
 	interval has a start date/time and a time delta that defines how regularly it
-	is to be implemented.
+	is to be executed.
 
 \subsection{Services}
 \label{methodology-services}
@@ -435,12 +435,12 @@ networks.
 	the functionality of the network.  It also allows alerts to be set up so that
 	they are only triggered when the service functionality is severely impacted and
 	prevents alerts from being sent out for host failures that do not have a severe
-	impact.
+	impact on the availability of a service.
 
 \subsection{Alerts}
 
 	In Prophasis, alerts are set up to communicate with a specific person/group of
-	people in a certain situation.  Alerts are defined in terms of to/from stage
+	people in a certain situation.  Alerts are defined in terms of to/from state
 	changes where an alert will be sent if the state of a host/service changes from
 	one state to another (e.g. ``ok'' to ``critical'').  These can then be restricted
 	to certain hosts, host groups, services, plugins and checks.
@@ -508,7 +508,7 @@ networks.
 	hash is stored on the agent in a configuration file.  Being hashed prevents
 	users who may have access to read the configuration file (possibly through
 	misconfiguration) from getting the key to be able to communicate with the
-	agent.
+	agent which may have privileges that the user does not have.
 
 \subsection{Core}
 
@@ -539,7 +539,7 @@ networks.
 	(\texttt{execute\_next} is in the past) and executes them, it then calls
 	\texttt{walk\_execute\_next} on each of these to set the \texttt{execute\_next}
 	value to the time that the schedule should be run again.  The algorithm will
-	then wait for 1 second before executing the process again.
+	then wait for one second before executing the process again.
 
 \begin{figure}[H]
 	\caption{Flowchart describing the operation of the scheduler}
@@ -549,6 +549,7 @@ networks.
 
 
 \subsubsection{Dispatching}
+\label{dispatching}
 
 	The dispatcher component of the core is responsible for issuing checks to
 	agents when they are due to be run (as decided by the scheduler).  Checks may
@@ -559,7 +560,8 @@ networks.
 	agent in the order that they were dispatched.  This way only one plugin can be
 	executing on a given agent at any moment in time.  This both prevents agents
 	from becoming overwhelmed and means that plugin developers do not need to be
-	concerned about other plugins interfering with their plugin.  Figure
+	concerned about other plugins interfering with their plugin while it is being
+	executed.  Figure
 	\ref{dispatcher_flowchart} shows the operation of the dispatcher.
 
 \begin{figure}[H]
@@ -575,7 +577,8 @@ networks.
 	Once this is done the core will then request the agent to execute the plugin
 	and the data will be returned for classification.  Figure
 	\ref{core_agent_communication} describes the communication between the core and
-	the agent.
+	the agent.  The vertically dashed line separates the actions that occur on the
+	core on the left from the actions performed by the agent on the right.
 
 \begin{figure}[H]
 	\caption{Flowchart describing the communication between the core and the agent
@@ -615,33 +618,19 @@ networks.
 	Prophasis provides a web interface for both configuring the system and viewing
 	collected data.  The interface is designed to be clear and easy to understand
 	for users.  It is also built to be fully responsive so will work correctly on
-	mobile device without any loss of functionality.  Designing it to be responsive
+	mobile devices without any loss of functionality.  Designing it to be responsive
 	was the aim from the outset as servers often fail when the administrator may
 	not currently be in easy reach of a computer so will need to use a mobile
 	device to investigate the issue.
-
-
-	The web interface will connect to the same database as the core, and will
-	update the configuration data stored in this database and will retrieve
-	the data about hosts.
 
 
 	The web interface provides dashboards for visualisation of data collected from
 	plugins.  The collected data can then be displayed using graphs, tables, lists
 	of messages or any other way that suits the type of data collected.
 
-\section{User Interface}
 
-	The nature of a monitoring system means that it will often need to be used from
-	mobile devices when systems need to be checked on the move or out of hours. This
-	requires that Prophasis's web interface must work correctly on both mobile devices
-	and conventional desktops and laptops.  It was therefore decided to build a
-	responsive web interface that will scale automatically based on the screen size
-	of the device without any loss of functionality.
-
-
-	In order to keep Prophasis as intuitive as possible, the user interface should
-	contain clear explanations of different functionality as well as help text and
+	In order to keep Prophasis as intuitive as possible, the user interface
+	contains clear explanations of different functionality as well as help text and
 	detailed error messages.
 
 \section{Determining the Overall Health of a Host or Service}
@@ -688,7 +677,7 @@ networks.
 	going on to explaining the database design.  It then discusses the core along
 	with the functionality that this provides and then explains the operation of
 	the agent. It finally explains the layout of the web interface and demonstrates
-	various aspects of it's design.
+	various aspects of its design.
 
 \section{Technologies}
 
@@ -699,10 +688,10 @@ networks.
 
 
 	The Python ``Virtual Environment'' (Virtualenv) system is also extremely useful
-	in this system.  It allows all dependencies to be kept totally separate from
-	the rest of the system, this is particularly important for the agent as it
-	ensures that the agent cannot interfere with the Python environment of the
-	systems it is running on.
+	for developing and deploying Prophasis. It allows Prophasis's dependencies to be kept
+	totally separate from the system's Python environment, this is particularly
+	important for the agent as it ensures that it cannot interfere with
+	anything else running on the system.
 
 \subsection{Flask Web Framework}
 
@@ -712,7 +701,8 @@ networks.
 	routing and request/response functionality provided by Flask whereas the web
 	interface also uses Flask's bundled templating engine, Jinja2, to render the
 	HTML pages that are displayed to the user. The web interface also uses the
-	Flask-Login package to provide login and user session management functionality.
+	Flask-Login\cite{flask-login} package to provide login and user session
+	management functionality.
 
 \subsection{Tornado HTTP Server}
 
@@ -739,7 +729,7 @@ networks.
 	used by Prophasis to execute the user provided Lua code that is used to
 	classify the results of checks. A sandboxed Lua environment is configured to
 	prevent this user provided code from performing undesired operations.
-	Sandboxing is covered further in section \ref{classification_sandboxing}.
+	Sandboxing is covered further in Section \ref{classification_sandboxing}.
 
 \subsection{PostgreSQL Database}
 
@@ -757,7 +747,7 @@ networks.
 	Appdirs is a Python library that works out the correct path for various types
 	of files for the detected platform.  This means that files are stored in the
 	correct directory no matter if Prophasis is installed on Linux, BSD, Windows
-	or an other supported platform.
+	or any other supported platform.
 
 \subsection{AdminLTE \& Bootstrap}
 
@@ -766,16 +756,18 @@ networks.
 	licence Prophasis is built under.  AdminLTE is built on top of Twitter's
 	Bootstrap framework which is well supported with a large range of plugins
 	available.  AdminLTE and Bootstrap have extensive support for responsive user
-	interfaces and therefore very little manual work needs to be done to make the
-	user interface responsive to work well on both desktop and mobile devices.
+	interfaces and therefore very little manual work needs to be carried out to
+	make the user interface responsive to work well on both desktop and mobile
+	devices.
 
 \subsection{Handlebars.js}
 
 	Handlebars.js is a very lightweight JavaScript templating engine.  It is used
 	in the frontend of the web interface for rendering portions of the page that
-	are generated after the page has loaded. In Prophasis alerts and items that are
+	are generated after the page has loaded. In Prophasis, Handlebars templates are
+	used to render alerts and items that are
 	dynamically added to the DOM such as dependencies when editing services or
-	intervals when editing schedules.  This means that any HTML logic can be
+	intervals when editing schedules.  This means that any HTML markup can be
 	totally separated from the JavaScript source code.  Unfortunately Handlebars
 	templates are slightly different to Jinja2 ones.  For simply filling in
 	placholders they are compatible with one another however, more advanced
@@ -871,7 +863,7 @@ networks.
 
 \subsection{Plugin Logic}
 	The plugin is a Python module and can therefore contain any logic that it needs
-	in order to be able to retrieve the appropriate data.  This may be as simple as
+	in order to be able to retrieve the appropriate data.  This may involve
 	using built in Python logic to get data such as CPU load, executing shell
 	commands and parsing the result or reading system files.  However, the external
 	interface for a plugin must follow a defined structure.  The structure of a
@@ -914,9 +906,9 @@ networks.
 	
 \subsection{PGP Signing}
 	Since plugins are sent to agents over the network from the monitoring server 
-	and then executed, This introduces a risk that if the monitoring server is
+	and then executed, this introduces a risk that if the monitoring server is
 	compromised, malicious code can be sent to and executed on all hosts being
-	monitored.  As a solution to this, it is possible to PGP sign plugins, a
+	monitored.  As a solution to this, it is possible to PGP sign plugins. A
 	detached signature file can be uploaded along with the plugin archive file
 	through the web interface, agents can then store public keys locally. If an
 	agent is configured to enforce checking of signatures it will only allow
@@ -941,7 +933,8 @@ networks.
 	was implemented using the SQLAlchemy ORM which abstracts the database into a
 	series of classes which saves time and reduces errors as queries do not need
 	to be written manually.  The manual design was carefully implemented using
-	extensive use of SQLAlchemy's \texttt{relationship()} function.  This allows
+	extensive use of SQLAlchemy's \texttt{relationship()}
+	function.\cite{sqlalchemy-relationship}  This allows
 	relationships in the database to be traversed as easily as properties of an
 	object.  For example, if you have an entity \texttt{h} of class \texttt{Host}
 	and an entity \texttt{r} of class \texttt{PluginResult} then it is possible
@@ -950,7 +943,7 @@ networks.
 	from the plugin result with \texttt{r.host.name}.  The ORM handles all the
 	logic of building the queries to gather the correct data.  The ORM also makes
 	it easy to edit data in the database, it is a simple case of retrieving the
-	object, changing it's attributes and committing the session.  It is also
+	object, changing its attributes and committing the session.  It is also
 	transactional which means that changes can be staged up and then either
 	committed or rolled back, this is ideal as it makes it easy to abort from
 	changes to the database in the event of an error.  This also provides
@@ -1067,7 +1060,7 @@ networks.
 
 \section{Agent}
 
-	The agent is implemented using the Flask web framework to expose a HTTPS API
+	The agent is implemented using the Flask web framework to expose an HTTPS API
 	that the core communicates with.  Requests are sent to the agent using regular
 	HTTP GET and POST requests with information passed using URL parameters or HTTP
 	form data respectively.  Responses are formatted as JSON.  The Tornado HTTP
@@ -1101,8 +1094,8 @@ networks.
 	will execute the plugin and return the data (value and message) returned by it.
 	The agent uses \texttt{importlib.machinery.SourceFileLoader} to load the
 	plugin's \texttt{\_\_init\_\_.py} file.  A new instance of the module's
-	\texttt{Plugin} class is then instantiated and it's \texttt{get\_data()} method
-	is called.  The data returned by this method is then returned to the core.
+	\texttt{Plugin} class is then instantiated and its \texttt{get\_data()} method
+	is called.  The data returned by the plugin is then returned to the core.
 	It must be guaranteed that plugin execution will terminate in a timely manner
 	as a plugin taking too long to execute will delay the execution of future
 	plugins.  In order to ensure this, a timeout is set so that plugin execution 
@@ -1122,9 +1115,6 @@ networks.
 	certain pieces of template logic to be reused preventing code duplication and
 	enforces a clear separation of logic between the processing and templating
 	logic.
-
-%TODO - Explain responsive design!
-%TODO - Describe error logging to web interface.
 
 \subsection{Configuration}
 
@@ -1207,7 +1197,7 @@ networks.
 	specify the start time for the schedule as well as a text box and drop down menu
 	to enter the interval period.  The green ``Add Interval'' button will add another
 	row to this list allowing more intervals to be added and the red ``X'' button will
-	remove the row it's in from the table.  This is all handled purely in frontend
+	remove the row its in from the table.  This is all handled purely in frontend
 	JavaScript.
 
 \begin{figure}[H]
@@ -1279,7 +1269,7 @@ networks.
 \subsubsection{Host Health}
 
 	Figure \ref{host-health-index} shows the host health report for
-	a selection of machines.  This report lists all the machines in the system
+	a selection of machines.  This report lists all the hosts in the system
 	as well as displaying their health in both a textual and colour representation.
 	The results here are sorted in order from least to most healthy.  This ensures
 	that even in a network with a large number of systems, unhealthy hosts will not
@@ -1333,7 +1323,8 @@ networks.
 	all hosts in the service as well as how they are structured in terms of
 	dependencies and redundancy groups.  This is shown in Figure
 	\ref{service-information}.  Clicking on each of the hosts on this page loads
-	the host information view as shown above.  This view clearly shows the reason
+	the host information view as shown in Figure \ref{host-information}.  This
+	view clearly shows the reason
 	for a service's health status and allows issues affecting a service to be
 	clearly seen.
 
@@ -1358,7 +1349,7 @@ networks.
 	stacked vertically as seen with the alert creation form shown in Figure
 	\ref{responsive-alert-form}.
 	
-\begin{figure}
+\begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \includegraphics[width=\textwidth]{assets/screenshots/responsive-host-health.pdf}
@@ -1379,10 +1370,31 @@ networks.
     \caption{Parts of the Web Interface being Viewed on a Small Screen}\label{fig:animals}
 \end{figure}
 
+\section{Error Logging}
+	In order to provide notifications about any error conditions or problems that
+	occur anywhere in the Prophasis system the web interface provides a system for
+	displaying system logs.  The navigation bar contains an item which will display
+	the number of unread system logs if any exist as shown in Figure
+	\ref{system-logs-unread}.  Clicking this will load the page shown in Figure
+	\ref{system-logs-page} which allows the full logs to be seen.
+	
+\begin{figure}[H]
+	\centering
+	\caption{Navigation bar showing unread system logs}
+	\label{system-logs-unread}
+	\includegraphics[scale=1]{assets/screenshots/system-logs-unread.pdf}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\caption{Page showing system logs}
+	\label{system-logs-page}
+	\includegraphics[scale=0.44]{assets/screenshots/system-logs-page.pdf}
+\end{figure}
 
 \chapter{Testing}
 	This chapter explains how Prophasis was tested to ensure both correct operation
-	and to evaluate it's general performance.  It first starts off by explaining
+	and to evaluate its general performance.  It first starts off by explaining
 	the automated unit testing that was set up on certain, complex functionality
 	within the system.  It then explains the ``mock agent'' that was used during
 	development to allow easy simulation of a a network containing many different
@@ -1398,7 +1410,7 @@ networks.
 	tests was useful to both verify the functionality during development as well
 	as to ensure this functionality is not broken by changes to other parts of the
 	system.  The Python \texttt{unittest} library was used as it is included as part of
-	a standard Python install and is well documented.
+	a standard Python distribution and is well documented.
 
 
 	Each test case was implemented as a single class with each different test in a
@@ -1415,7 +1427,7 @@ networks.
 	completed.  When a test is started it sets an OS environment variable called
 	\texttt{UNDER\_TEST}.  If this is set the models module will set the database
 	connection string to \texttt{"sqlite://"} instead of the one stored in the config
-	file. The SQLAlchemy ORM completely transparently handles the differences
+	file. The SQLAlchemy ORM transparently handles the differences
 	between PostgreSQL and SQLite therefore requiring no changes to the database
 	code for use during testing.
 	
@@ -1443,7 +1455,7 @@ networks.
 
 	As a solution to this, a mock agent was developed.  This is a simple application
 	that implements enough of the agent's functionality to allow the core to
-	communicate with it as though it is a regular agent.  It does not use plugins
+	communicate with it as though were is a regular agent.  It does not use plugins
 	and instead reads the data to respond with from a JSON file stored on disk. The
 	agent's \texttt{ping} method is implemented as normal, the
 	\texttt{check\_plugin\_version} method always responds saying that an update for
@@ -1476,14 +1488,13 @@ networks.
 	simply changing the data in the file and saving it.  For example, to test what
 	happens if the CPU load on a machine is too high the value in the JSON file can
 	simply be changed to the new CPU load, the next time the CPU
-	load plugin is executed on that specific agent, the new CPU load will then be
+	load plugin is executed on that specific agent, the new CPU load will be
 	sent out.
 
 \section{Use in the Field}
 
 	There is only so much information that can be gained from testing a system such
-	% Better word for the environment?
-	as Prophasis in a clean environment through the use of the mock agent and unit
+	as Prophasis in a synthetic environment through the use of the mock agent and unit
 	tests.  In order to see how Prophasis performs when deployed in a real world
 	environment Prophasis was installed and run in two different real world
 	environments.
@@ -1539,13 +1550,12 @@ networks.
 	carefully by hand to ensure that there is no situations where a deadlock can
 	arise.
 
-\pagebreak
 \subsection{Lynchpin Analytics Limited}
 
 	Lynchpin Analytics Limited (``Lynchpin'') is full service analytics
 	consultancy.\cite{lynchpin} Lynchpin is a small business yet
 	operates a reasonably sized network running entirely on their own hardware.
-	This is typical of environment that Prophasis is aimed at and where existing
+	This is typical of the environment that Prophasis is aimed at and where existing
 	tools fall short.  Prophasis was deployed at Lynchpin when it was nearly
 	complete in order to evaluate how the finished product works in a heterogeneous
 	environment and to highlight any major issues that occur.
@@ -1554,12 +1564,12 @@ networks.
 	Lynchpin operates a range of vastly different systems which makes it an
 	ideal environment to test Prophasis.  Unlike on Tardis where the majority of
 	systems run Debian Linux, Lynchpin operates systems running Citrix XenServer (where
-	Dom0 is based on CentOS 5), Debian and FreeBSD with a wide variety of different
+	dom0 is based on CentOS 5), Debian and FreeBSD with a wide variety of different
 	types of hardware.  The Prophsis core, database and web interface were
 	installed in a Debian Linux Virtual Machine running on one of the XenServer
 	hosts.  The agent was then installed on several different systems.  Table
 	\ref{table-lypn-hosts} lists the systems on which the Prophasis agent was
-	installed.  This allowed me to test Prophasis on a selection of different
+	installed.  This allowed Prophasis to be tested on a selection of different
 	operating system families (Linux, BSD and Windows) and storage configurations
 	(Linux MD RAID, Dell Hardware RAID and ZFS on top of an HP SmartArray
 	controller).
@@ -1587,7 +1597,7 @@ networks.
 	experienced a prolonged period of very high CPU load.  Prophasis
 	correctly detected this and sent out the appropriate alerts.  It was then 
 	possible to look at the time series data for the CPU load on the host which
-	had experienced the issue. This data the start and end times of the period
+	had experienced the issue. This data showed the start and end times of the period
 	with high load. This information was useful when looking through log files
 	to find the cause of the issue which ultimately turned out to be a MD RAID
 	consistency check.
@@ -1637,8 +1647,9 @@ networks.
 	hosts developed an issue resulting in the \texttt{zpool status} command simply
 	hanging.  Prophasis had no timeout for this so once this plugin had been
 	executed, any future plugins would be stuck in the dispatch queue in the core
-	and would never be executed (due to the one simultaneous check per host
-	policy).  The solution for this was to implement timeouts on the agent so that
+	and would never be executed (due to the ``one simultaneous check per host''
+	policy as described in Subsection \ref{dispatching}).  The solution for this
+	was to implement timeouts on the agent so that
 	if a plugin takes longer than a predetermined time limit to execute, the
 	execution will be terminated and an error would be logged.  This prevented
 	the dispatch queue from being blocked up in the event of a long/infinitely
@@ -1653,13 +1664,13 @@ networks.
 	too long to execute used \texttt{SIGALRM} signals which are not supported by
 	Windows. The solution was to swap the ``timeout-decorator'' library out for
 	``stopit'' which can use multithreading to implement timeouts instead of UNIX
-	signals.  This solution works Windows as well as UNIX-like operating systems.
+	signals.  This solution works on Windows as well as UNIX-like operating systems.
 
 \paragraph*{Ideas for Future Work}
 	Deploying and using Prophasis at Lynchpin provided several ideas for future
 	features that could be implemented.  While the system
 	was operating, one of the XenServer hosts automatically checked the consistency of
-	its RAID arrays.  This resulted in extremely high CPU load which sent out
+	its MD RAID arrays.  This resulted in extremely high CPU load which sent out
 	alerts warning of this issue despite this being standard operation. Future work
 	to solve this could involve allowing data from one plugin to be retrieved when
 	classifying data from another plugin. This would mean that the CPU load
@@ -1705,35 +1716,35 @@ networks.
 \paragraph*{Support for Custom Metrics}
 	Like all other tools, Prophasis supports monitoring custom metrics using custom
 	code.  Prophasis however has a much more rigid structure for plugins which
-	helps to ensure consistency and reliability of plugins.
+	helps to ensure consistency between and reliability of plugins.
 
 \paragraph*{Classification Threshold Definitions}
-	This is an area where Prophasis clearly improves on existing systems.  Other
+	This is an area where Prophasis clearly improves on existing systems.  Many other
 	systems rely on the plugin code that is executed on the remote host to
 	determine and return the overall classification. As a result, classification
 	logic is stored in various locations spread out all over the network which makes
 	management difficult.  In
 	Prophasis, plugins simply return a raw
-	value that represents the collected data. Classification is then done by user
+	value that represents the collected data. Classification is then performed by user
 	provided Lua code on the monitoring server itself.  This means that
-	classification code is all stored in one place and can be edited directly from
+	classification logic is all stored in one place and can be edited directly from
 	the web interface.  Classification code also has access to historical data so
 	it can make better decisions than it could if it only knew the current state of
 	a host.  Using short blocks of Lua code provides total flexibility to allow any
 	sort of logic to be used to classify the data instead of simply having
 	rigid thresholds defined through a form in the web interface.
 
-\paragraph*{Code/Configuration Delivery to Nodes} %TODO Config?
+\paragraph*{Code/Configuration Delivery to Nodes}
 	This is another area that Prophasis has improved on.  Current systems rely on code for
 	custom plugins to be stored on the machines being monitored but do not provide
 	functionality to handle this.  This requires a separate tool such as Puppet or
-	Ansible to manage this. Tools such as these may not be in
+	Ansible to manage configuration. Tools such as these may not be in
 	place on smaller networks where each machine has a very distinct role which
 	reduces the need for centralised configuration management.  In contrast,
 	Prophasis stores a central repository of all plugins on the monitoring server
 	and distributes these to remote agents automatically.  This means that plugins
 	only need to be updated in one place by uploading the plugin archive through
-	the web interface. Prophasis transparently handles the rest.
+	the web interface. Prophasis automatically handles the rest.
 
 \paragraph*{How the user configures the system}
 	Current tools store all of their configuration settings in files stored on
@@ -1776,7 +1787,7 @@ networks.
 	with more critical services and this machine was to fail as critical services
 	would become unavailable but since Prophasis has also failed, notifications
 	would be sent out.  A solution to this would be to build in support for multiple
-	cores to be operating simultaneously where each monitors it's own set of nodes.
+	cores to be operating simultaneously where each monitors its own set of nodes.
 	This could be implemented through the use of database replication to keep the
 	database in sync across all monitoring nodes.  One node would then be
 	designated the ``master'' and would handle the web interface, all other nodes can
@@ -1822,8 +1833,8 @@ networks.
 
 \paragraph*{External API}
 	An API could be developed to allow data collected by Prophasis to be accessed.
-	This would allow external tools to be integrated with for various different
-	tools.  This could allow deeper analysis and better use of the collected data
+	This would allow external tools to use the data collected by Prophasis.  This
+	could allow deeper analysis and better use of the collected data
 	such as automatically provisioning additional servers on a cloud platform in
 	the event of current hosts becoming overloaded.  This API could also be used
 	to manage the configuration of the system such as adding new hosts
@@ -1846,7 +1857,7 @@ networks.
  	dependant on the availability of the storage service.
 
 \paragraph*{Daemon Generation during Setup}
-	In a deployment the agent, core and web interface should be run as a daemon.
+	In a deployment, the agent, core and web interface should be run as a daemon.
 	Currently when the system is installed the daemon needs to be created manually,
 	the way this is done varies between operating systems. Future work could
 	involve enhancing the setup scripts that are included with the agent, core and
@@ -1860,8 +1871,6 @@ networks.
 	to extend the unit test suite to provide higher code coverage.  It would also
 	be useful to formally analyse the algorithms in the scheduler and dispatcher
 	to ensure that they perform reliably without the risk of deadlocks occurring.
-
-%TODO - Links in Bibliography instead of footnotes
 
 \chapter{Conclusion}
 	From personal experience in an SME environment and The Tardis Project weaknesses
@@ -1885,7 +1894,7 @@ networks.
 	In order to sufficiently monitor a network it is important to have both real
 	time alerting to provide notifications about issues along with time series
 	monitoring which can be used to both investigate issues post-mortem along with
-	being usable to predict future issues before they occur.  Many existing tools
+	being usable to predict future issues before they occur.  Existing tools often
 	only provide one of these which means that businesses need to deploy and
 	maintain two different pieces of software to monitor their network.  Prophasis
 	was developed with support for time series monitoring and real time alerting
@@ -1908,19 +1917,19 @@ networks.
 	specific hosts.  Prophasis handles the rest by distributing the plugin to the
 	correct hosts.
 	
-	%TODO Make into English
 	One improvement would be to perform more testing on the finished system. It
 	was only used in a production environment for a month during which only minor
-	issues arose.  If it were to have been deployed for longer there would be a
+	issues arose with hosts being monitored.  If it were to have been deployed for
+	longer there would be a
 	higher likelihood of a more serious problem arising allowing Prophasis's
 	behaviour when detecting major faults to be investigated further. It would
 	also be beneficial to increase unit testing to have higher code coverage.
 	Formal methods could also be used to analyse algorithms in order to ensure
-	there is no risk of faults such as deadlocks.
+	there is no risk of faults such as deadlocks occurring.
 
 
 	In conclusion, the project demonstrated that current tools are not best suited
-	for use in SME environment and that it was possible to develop a fit for purpose
+	for use in an SME environment and that it was possible to develop a fit for purpose
 	solution. Prophasis improves on these issues and provides a complete system that
 	is ready for use in a real world environment.  It has been tested in both
 	synthetic and real world environments and performed reliably in both.  There is
@@ -1928,13 +1937,6 @@ networks.
 	current form, Prophasis is sufficiently complete for use in a production
 	environment.
 	
-%TODO
-%	Future work "such as", "my recommendation"
-
-%TODO Formatting?  Should Prophasis be in itallics throughout?
-%TODO Bit in intro about only doing time series or alerting, make this a bit
-%	weaker due to OpenNMS.
-
 	\bibliography{bibliography}
 	\bibliographystyle{plain}
 \end{document}
