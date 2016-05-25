@@ -454,6 +454,7 @@ def scheduling_edit():
         try:
             start_timestamp = datetime.strptime(interval[0], "%Y-%m-%d %H:%M:%S")
         except ValueError:
+            session.rollback()
             return error_response("Start timestamp for interval was not "
                 "understood")
         si = ScheduleInterval(schedule_id=s.id,
@@ -461,6 +462,7 @@ def scheduling_edit():
         try:
             si.set_interval(int(interval[1]), interval[2])
         except ValueError:
+            session.rollback()
             return error_response("Interval must be an integer")
         session.add(si)
 
