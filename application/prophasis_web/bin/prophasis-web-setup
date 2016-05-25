@@ -3,6 +3,7 @@ import os
 import random
 import hashlib
 import json
+import uuid
 from binascii import hexlify
 from appdirs import site_config_dir, site_data_dir
 
@@ -20,7 +21,8 @@ def main():
             "temp_dir": os.path.join(site_data_dir("Prophasis", "Prophasis"),
                 "tmp"),
             "plugin_repo": os.path.join(site_data_dir("Prophasis", "Prophasis"),
-                "plugin_repo")
+                "plugin_repo"),
+            "secret_key": str(uuid.uuid4())
             }
 
     print("Prophasis Web Setup Script")

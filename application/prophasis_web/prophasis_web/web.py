@@ -11,14 +11,14 @@ from jinja2 import Markup
 from prophasis_common.alerting import get_alert_modules
 from .api import api
 from .reports import reports
+from .config import get_config, get_config_value
+
+config = get_config()
 
 web = Flask(__name__)
 web.register_blueprint(api)
 web.register_blueprint(reports)
-# TODO: Store in config file or something?
-web.secret_key = b'\x0bi\xcb\r\x8f\x8f\x06:\x8f\x0b\x0cw\x7f\x8dJ\x0fd\xdbH'\
-    b'\x86\x0egNq\xd0n\xa9\xa7\xdd\xb2\xbf\xa9\x13\x1f\xce\x8f\x9a=\xbc.\xcaV'\
-    b'\x85zC\xf1\x86Z[e'
+web.secret_key = get_config_value(config, "secret_key")
 
 # Allows us to include blocks in templates without Jinja parsing them, this is
 # useful when we want to pass the template unmodified to the frontend so
