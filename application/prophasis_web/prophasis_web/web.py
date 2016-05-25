@@ -425,7 +425,7 @@ def alerts_edit(alert_id):
         states.append((state, state.replace("_", " ").title()))
 
     return render_template("alert-form.html", nav_section="alerts",
-        section="Alerts", title="Add Alert", method="edit", hosts=hosts,
+        section="Alerts", title="Edit Alert", method="edit", hosts=hosts,
         host_groups=host_groups, services=services, checks=checks,
         states=states, plugins=plugins, alert=alert,
         module_options=module_options, alert_modules=alert_modules)
